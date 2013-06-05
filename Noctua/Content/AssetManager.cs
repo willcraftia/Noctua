@@ -26,15 +26,17 @@ namespace Noctua.Content
 
         static readonly Logger logger = new Logger(typeof(AssetManager).Name);
 
+        ResourceManager resourceManager;
+
         AssetCollection assets = new AssetCollection();
 
-        Dictionary<Type, IAssetSerializer> serializerMap;
+        Dictionary<Type, IAssetSerializer> serializerMap = new Dictionary<Type, IAssetSerializer>();
 
-        public AssetManager(IServiceProvider serviceProvider)
+        public AssetManager(ResourceManager resourceManager)
         {
-            if (serviceProvider == null) throw new ArgumentNullException("serviceProvider");
+            if (resourceManager == null) throw new ArgumentNullException("resourceManager");
 
-            serializerMap = new Dictionary<Type, IAssetSerializer>();
+            this.resourceManager = resourceManager;
         }
 
         public void RegisterLoader(Type type, IAssetSerializer serializer)
@@ -60,12 +62,13 @@ namespace Noctua.Content
             return false;
         }
 
-        public T Load<T>(IResource resource)
+        public T Load<T>(string uri) where T : IAsset
         {
-            return (T) Load(resource, typeof(T));
+            var resource = resourceManager.Load(uri);
+            return Load<T>(resource);
         }
 
-        public IAsset Load(IResource resource, Type type)
+        public T Load<T>(IResource resource) where T : IAsset
         {
             if (resource == null) throw new ArgumentNullException("resource");
 
@@ -76,10 +79,10 @@ namespace Noctua.Content
             }
             else
             {
-                asset = LoadNew(resource, type);
+                asset = LoadNew(resource, typeof(T));
             }
 
-            return asset;
+            return (T) asset;
         }
 
         IAsset LoadNew(IResource resource, Type type)
@@ -115,58 +118,77 @@ namespace Noctua.Content
                 Unload(assets[assets.Count - 1].Resource);
         }
 
-        // ※保存に関する注意
+        // ※永続化に関する注意
         //
-        // アセットはキャッシュされるため、一度ロードしたアセットを編集し、これを異なる URI で保存しようとすると、
-        // 二つの URI にアセットが関連付けられることとなる。
+        // アセット キャッシュは、アセットと URI が一対一関連であることを前提とする。
+        // 既に URI に関連付く永続化済みアセットを、異なる URI で永続化したい場合には、
+        // アセットを複製してから永続化を試行するものとする。
         //
-        // このような関連付けの問題を起こさないために、AssetManager は、アセットが保存要求とは異なる URI に関連付いている場合、
-        // その関連付けを破棄してから保存を行う。
-        // これは、キャッシュの破棄であり、アセットに対する Dipose 処理は伴わない。
-        // 単なるキャッシュの破棄であれば、過去の URI でアセットを得たい場合、Load 処理により新たなアセットがインスタンス化される。
+        // 既に URI に関連付いているアセットは、その URI でのみ永続化できる。
         //
-        // 別の問題として、保存の際に異なるアセットが既に URI に関連づいている場合、
-        // URI をキーとして間接的に参照しているコードとの不整合が発生する。
+        // URI を明示して永続化する場合、マネージャはまだ URI に関連付いていないアセットを要求する。
+        // URI を明示して永続化する際に、その URI に関連付くアセットが存在する場合、
+        // マネージャは永続化を拒否する。
+        // これは、仮に URI に関連付くアセットが、永続化しようとするアセットと同一であったとしても、
+        // 永続化を拒否する。
         //
-        // この解決のために、URI に関連付くアセットがあり、これが保存しようとするアセットとは異なる場合、
-        // AssetManager は保存を拒否する。
-        // 通常、アセットは他のクラスでも参照しているため、既存のアセットを AssetManager の判断では処理できない。
-        // このため、エディタなどの保存要求を出すクラスでは、
-        // 上書きをしたい場合には事前に対象となるアセットの削除処理を行わせる必要がある。
-        // この削除処理では、単に AssetManager でアセットを削除するだけでなく、
-        // 削除したいアセットを参照しているクラスから、その参照を取り除く必要がある。
+        // マネージャからロードしたアセットを上書きする場合、
+        // 仮に URI が示すリソースが外部で削除されていたとしても、新規生成として成功する。
+        //
+        // 読み取り専用コンテナを示すリソースである場合、
+        // いずれのケースにおいてもマネージャからの永続化は失敗する。
+        //
+        // あるアセット A を参照するアセット B があり、
+        // アセット A を複製してアセット A' を永続化した場合、
+        // アセット B は依然としてアセット A を参照する。
+        // アセット B が参照するアセット A を、
+        // 自動的にアセット A' へ変更する仕組みをマネージャは提供しない。
 
-        public void Save(IResource resource, IAsset asset)
+        public void Save(IAsset asset)
+        {
+            if (asset == null) throw new ArgumentNullException("asset");
+            if (asset.Resource == null) throw new ArgumentException("Resource is unknown.", "asset");
+
+            logger.Info("Save: {0}", asset.Resource);
+
+            // リソースが null ではないことを前提とするため、
+            // アセットがキャッシュに存在する前提となる。
+
+            // シリアライズ。
+            var serializer = GetSerializer(asset.GetType());
+            serializer.Serialize(asset.Resource, asset);
+        }
+
+        public void SaveAs(IAsset asset, string uri)
+        {
+            var resource = resourceManager.Load(uri);
+            SaveAs(asset, resource);
+        }
+
+        public void SaveAs(IAsset asset, IResource resource)
         {
             if (resource == null) throw new ArgumentNullException("resource");
             if (asset == null) throw new ArgumentNullException("asset");
-            if (resource.ReadOnly) throw new InvalidOperationException("Read-only resource: " + resource);
 
-            logger.Info("Save: {0}", resource);
+            // 既にリソースと関連付いているアセットの永続化は拒否。
+            if (asset.Resource != null) throw new ArgumentException(
+                string.Format("Asset is associated with the resource '{0}'.", asset.Resource), "asset");
 
-            // 指定の永続先に関連付く他のアセットがある場合は、保存を拒否。
-            IAsset otherAsset = null;
-            if (assets.Contains(resource))
-            {
-                otherAsset = assets[resource];
-            }
-            if (otherAsset != null && !asset.Equals(otherAsset))
-                throw new InvalidOperationException(string.Format("Resource '{0}' is bound to the other asset: ", resource));
+            // 読み取り専用リソースへの永続化は拒否。
+            if (resource.ReadOnly) throw new ArgumentException(
+                string.Format("Resource '{0}' is read-only.", resource), "resource");
 
-            // 永続先の変更の可能性があるため、
-            // キャッシュ済みならば、そのキャッシュを一度削除。
-            if (asset.Resource != null)
-            {
-                assets.Remove(asset);
+            // 既に存在するリソースへの永続化は拒否。
+            if (resource.Exists) throw new ArgumentException(
+                string.Format("Resource '{0}' already exists.", resource), "resource");
 
-                logger.Info("Cache removed: {0}", asset.Resource);
-            }
+            logger.Info("SaveAs: {0}", resource);
 
             // シリアライズ。
             var serializer = GetSerializer(asset.GetType());
             serializer.Serialize(resource, asset);
 
-            // 新ためてキャッシュ。
+            // キャッシュ。
             assets.Add(asset);
         }
 
