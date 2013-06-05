@@ -36,14 +36,14 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AppendNumberOptions.cs" />
-    <Compile Include="CubicSide.cs" />
+    <Compile Include="Content\AssetManager.cs" />
+    <Compile Include="Content\IAsset.cs" />
+    <Compile Include="Content\IAssetSerializer.cs" />
+    <Compile Include="Content\IAssetManagerAware.cs" />
     <Compile Include="HalfByteArray3.cs" />
     <Compile Include="IInitializingObject.cs" />
-    <Compile Include="IntBoundingBox.cs" />
-    <Compile Include="IntVector3.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="StringBuilderExtension.cs" />
+    <Compile Include="TitleContainer.cs" />
     <Compile Include="Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +58,14 @@
     <ProjectReference Include="..\..\Libra\Libra.Input\Libra.Input.csproj">
       <Project>{EBCC5AFA-0E37-4863-B71E-2AC201CB2864}</Project>
       <Name>Libra.Input</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libra\Libra.IO\Libra.IO.csproj">
+      <Project>{2CE30D43-C0FE-4595-B2A4-36873946356C}</Project>
+      <Name>Libra.IO</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libra\Libra.Logging\Libra.Logging.csproj">
+      <Project>{52FBD629-EF0E-46AF-9933-A7A7094DCAE0}</Project>
+      <Name>Libra.Logging</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libra\Libra\Libra.csproj">
       <Project>{BDCF4398-A4F9-48B0-BB3F-1B98CD3131B2}</Project>
