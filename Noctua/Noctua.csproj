@@ -34,14 +34,19 @@
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Content\AssetManager.cs" />
-    <Compile Include="Content\IAsset.cs" />
-    <Compile Include="Content\IAssetSerializer.cs" />
-    <Compile Include="Content\IAssetManagerAware.cs" />
+    <Compile Include="Asset\IAssetLoader.cs" />
+    <Compile Include="Asset\IAssetSerializer.cs" />
+    <Compile Include="Asset\JsonAssetSerializer.cs" />
     <Compile Include="HalfByteArray3.cs" />
     <Compile Include="IInitializingObject.cs" />
+    <Compile Include="Asset\AssetContainer.cs" />
+    <Compile Include="Asset\IAsset.cs" />
+    <Compile Include="Asset\IAssetPostLoad.cs" />
+    <Compile Include="Asset\IAssetPreStore.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TitleContainer.cs" />
     <Compile Include="Triangle.cs" />
