@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\Libs\Json.NET\Json50r6\Net40\Newtonsoft.Json.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="Microsoft.CSharp" />
@@ -39,11 +42,22 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
+    <Compile Include="Asset\XmlObjectSerializer.cs" />
+    <Compile Include="Models\Image2D.cs" />
     <Compile Include="Asset\IObjectSerializer.cs" />
     <Compile Include="Asset\JsonObjectSerializer.cs" />
-    <Compile Include="Asset\Mesh.cs" />
-    <Compile Include="Asset\MeshPart.cs" />
-    <Compile Include="Asset\MeshSerializer.cs" />
+    <Compile Include="Models\Mesh.cs" />
+    <Compile Include="Models\MeshPart.cs" />
+    <Compile Include="Serialization\IndexedUriDefinition.cs" />
+    <Compile Include="Serialization\MeshDefinition.cs" />
+    <Compile Include="Serialization\MeshPartDefinition.cs" />
+    <Compile Include="Serialization\MeshSerializer.cs" />
+    <Compile Include="Models\Tile.cs" />
+    <Compile Include="Models\TileCatalog.cs" />
+    <Compile Include="Serialization\TileCatalogDefinition.cs" />
+    <Compile Include="Serialization\TileCatalogSerializer.cs" />
+    <Compile Include="Serialization\TileDefinition.cs" />
+    <Compile Include="Serialization\TileSerializer.cs" />
     <Compile Include="SideCollection.cs" />
     <Compile Include="HalfByteArray3.cs" />
     <Compile Include="IInitializingObject.cs" />

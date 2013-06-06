@@ -3,6 +3,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using Libra.Graphics;
 using Libra.IO;
 
 #endregion
@@ -17,6 +18,8 @@ namespace Noctua.Asset
 
         Dictionary<object, IResource> reverseCache = new Dictionary<object, IResource>();
 
+        public DeviceContext DeviceContext { get; private set; }
+
         public ResourceManager ResourceManager { get; private set; }
 
         public IObjectSerializer ObjectSerializer { get; private set; }
@@ -25,20 +28,13 @@ namespace Noctua.Asset
         // 異なるコンテナを利用する。
         // 複雑化させたくないので、シリアライザが異なるアセット間での参照は許可しないことにする。
 
-        public AssetContainer(ResourceManager resourceManager)
+        public AssetContainer(DeviceContext deviceContext, ResourceManager resourceManager, IObjectSerializer objectSerializer)
         {
-            if (resourceManager == null) throw new ArgumentNullException("resourceManager");
-
-            // デフォルトは JSON。
-            ObjectSerializer = JsonObjectSerializer.Instance;
-            ResourceManager = resourceManager;
-        }
-
-        public AssetContainer(ResourceManager resourceManager, IObjectSerializer objectSerializer)
-        {
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
             if (resourceManager == null) throw new ArgumentNullException("resourceManager");
             if (objectSerializer == null) throw new ArgumentNullException("objectSerializer");
 
+            DeviceContext = deviceContext;
             ObjectSerializer = objectSerializer;
             ResourceManager = resourceManager;
         }
@@ -78,13 +74,20 @@ namespace Noctua.Asset
             // これを行いたい場合、デタッチ、あるいは、削除してから新規生成を試みる。
             AssetUnmanagedAsset(asset);
 
-            // アセット シリアライザ。
-            var assetSerializer = GetRequiredAssetSerializer(asset.GetType());
-
             // シリアライズ。
             using (var stream = resource.CreateNew())
             {
-                assetSerializer.WriteAsset(stream, resource, asset);
+                // アセット シリアライザ。
+                var assetSerializer = GetAssetSerializer(asset.GetType());
+
+                if (assetSerializer != null)
+                {
+                    assetSerializer.WriteAsset(stream, resource, asset);
+                }
+                else
+                {
+                    ObjectSerializer.WriteObject(stream, asset);
+                }
             }
 
             // キャッシュ登録。
@@ -106,13 +109,20 @@ namespace Noctua.Asset
             object asset;
             if (!cache.TryGetValue(resource, out asset))
             {
-                // アセット シリアライザ。
-                var assetSerializer = GetRequiredAssetSerializer(typeof(T));
-
                 // デシリアライズ。
                 using (var stream = resource.OpenRead())
                 {
-                    asset = assetSerializer.ReadAsset(stream, resource);
+                    // アセット シリアライザ。
+                    var assetSerializer = GetAssetSerializer(typeof(T));
+
+                    if (assetSerializer != null)
+                    {
+                        asset = assetSerializer.ReadAsset(stream, resource);
+                    }
+                    else
+                    {
+                        asset = ObjectSerializer.ReadObject(stream, typeof(T));
+                    }
                 }
 
                 // キャッシュ登録。
@@ -133,13 +143,20 @@ namespace Noctua.Asset
             // リソース。
             var resource = reverseCache[asset];
 
-            // アセット シリアライザ。
-            var assetSerializer = GetRequiredAssetSerializer(asset.GetType());
-
             // シリアライズ。
             using (var stream = resource.OpenWrite())
             {
-                assetSerializer.WriteAsset(stream, resource, asset);
+                // アセット シリアライザ。
+                var assetSerializer = GetAssetSerializer(asset.GetType());
+
+                if (assetSerializer != null)
+                {
+                    assetSerializer.WriteAsset(stream, resource, asset);
+                }
+                else
+                {
+                    ObjectSerializer.WriteObject(stream, asset);
+                }
             }
         }
 
@@ -214,14 +231,10 @@ namespace Noctua.Asset
             }
         }
 
-        AssetSerializer GetRequiredAssetSerializer(Type type)
+        AssetSerializer GetAssetSerializer(Type type)
         {
             AssetSerializer assetSerializer;
-            if (!assetSerializers.TryGetValue(type, out assetSerializer))
-            {
-                throw new InvalidOperationException(
-                    string.Format("AssetSerializer for '{0} does not exist.", type));
-            }
+            assetSerializers.TryGetValue(type, out assetSerializer);
             return assetSerializer;
         }
 

@@ -4,7 +4,7 @@ using System;
 
 #endregion
 
-namespace Noctua.Asset
+namespace Noctua.Models
 {
     public sealed class Mesh
     {
@@ -16,5 +16,14 @@ namespace Noctua.Asset
         {
             MeshParts = new SideCollection<MeshPart>();
         }
+
+        #region ToString
+
+        public override string ToString()
+        {
+            return "{Name:" + Name + "}";
+        }
+
+        #endregion
     }
 }

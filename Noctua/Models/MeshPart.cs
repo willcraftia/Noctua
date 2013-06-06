@@ -5,7 +5,7 @@ using Libra.Graphics;
 
 #endregion
 
-namespace Noctua.Asset
+namespace Noctua.Models
 {
     public sealed class MeshPart
     {

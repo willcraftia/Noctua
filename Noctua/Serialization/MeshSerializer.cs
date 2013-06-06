@@ -3,57 +3,15 @@
 using System;
 using System.IO;
 using Libra.IO;
-using Libra.Graphics;
+using Noctua.Asset;
+using Noctua.Models;
 
 #endregion
 
-namespace Noctua.Asset
+namespace Noctua.Serialization
 {
-    public sealed class MeshSerializer : AssetSerializer
+    public sealed class MeshSerializer : AssetSerializer<Mesh>
     {
-        #region MeshPartDefinition
-
-        public struct MeshPartDefinition
-        {
-            public VertexPositionNormalTexture[] Vertices;
-
-            public ushort[] Indices;
-        }
-
-        #endregion
-
-        #region MeshDefinition
-
-        public struct MeshDefinition
-        {
-            //----------------------------
-            // Editor/Debug
-
-            public string Name;
-
-            //----------------------------
-            // MeshPart
-
-            public MeshPartDefinition Top;
-
-            public MeshPartDefinition Bottom;
-
-            public MeshPartDefinition Front;
-
-            public MeshPartDefinition Back;
-
-            public MeshPartDefinition Left;
-
-            public MeshPartDefinition Right;
-        }
-
-        #endregion
-
-        public override Type AssetType
-        {
-            get { return typeof(Mesh); }
-        }
-
         public override object ReadAsset(Stream stream, IResource resource)
         {
             var definition = ReadObject<MeshDefinition>(stream);
