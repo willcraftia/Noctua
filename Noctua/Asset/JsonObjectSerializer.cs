@@ -9,21 +9,21 @@ using System.Runtime.Serialization.Json;
 
 namespace Noctua.Asset
 {
-    public sealed class JsonAssetSerializer : IAssetSerializer
+    public sealed class JsonObjectSerializer : IObjectSerializer
     {
-        public static readonly JsonAssetSerializer Instance = new JsonAssetSerializer();
+        public static readonly JsonObjectSerializer Instance = new JsonObjectSerializer();
 
         Dictionary<Type, DataContractJsonSerializer> serializers = new Dictionary<Type, DataContractJsonSerializer>();
 
-        JsonAssetSerializer() { }
+        JsonObjectSerializer() { }
 
-        public T ReadAsset<T>(Stream stream) where T : IAsset
+        public object ReadAsset(Stream stream, Type type)
         {
-            var serializer = GetSerializer(typeof(T));
-            return (T) serializer.ReadObject(stream);
+            var serializer = GetSerializer(type);
+            return serializer.ReadObject(stream);
         }
 
-        public void WriteAsset(Stream stream, IAsset asset)
+        public void WriteAsset(Stream stream, object asset)
         {
             var serializer = GetSerializer(asset.GetType());
             serializer.WriteObject(stream, asset);
