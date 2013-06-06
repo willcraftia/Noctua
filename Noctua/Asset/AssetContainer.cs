@@ -107,7 +107,7 @@ namespace Noctua.Asset
             if (!cache.TryGetValue(resource, out asset))
             {
                 // アセット シリアライザ。
-                var assetSerializer = GetRequiredAssetSerializer(asset.GetType());
+                var assetSerializer = GetRequiredAssetSerializer(typeof(T));
 
                 // デシリアライズ。
                 using (var stream = resource.OpenRead())
@@ -227,14 +227,14 @@ namespace Noctua.Asset
 
         void AssetUnmanagedAsset(object asset)
         {
-            if (!reverseCache.ContainsKey(asset))
+            if (reverseCache.ContainsKey(asset))
                 throw new ArgumentException(
                     string.Format("The asset is associated with the resource '{0}'.", reverseCache[asset]), "asset");
         }
 
         void AssetManagedAsset(object asset)
         {
-            if (reverseCache.ContainsKey(asset))
+            if (!reverseCache.ContainsKey(asset))
                 throw new ArgumentException("The asset is associated without any resource.", "asset");
         }
 

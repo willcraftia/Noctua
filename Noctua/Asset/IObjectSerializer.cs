@@ -9,8 +9,8 @@ namespace Noctua.Asset
 {
     public interface IObjectSerializer
     {
-        object ReadAsset(Stream stream, Type type);
+        object ReadObject(Stream stream, Type type);
 
-        void WriteAsset(Stream stream, object asset);
+        void WriteObject(Stream stream, object graph);
     }
 }

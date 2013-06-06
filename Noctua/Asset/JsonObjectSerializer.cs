@@ -17,16 +17,16 @@ namespace Noctua.Asset
 
         JsonObjectSerializer() { }
 
-        public object ReadAsset(Stream stream, Type type)
+        public object ReadObject(Stream stream, Type type)
         {
             var serializer = GetSerializer(type);
             return serializer.ReadObject(stream);
         }
 
-        public void WriteAsset(Stream stream, object asset)
+        public void WriteObject(Stream stream, object graph)
         {
-            var serializer = GetSerializer(asset.GetType());
-            serializer.WriteObject(stream, asset);
+            var serializer = GetSerializer(graph.GetType());
+            serializer.WriteObject(stream, graph);
         }
 
         DataContractJsonSerializer GetSerializer(Type type)
