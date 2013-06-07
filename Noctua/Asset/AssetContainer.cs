@@ -103,7 +103,16 @@ namespace Noctua.Asset
 
         public T Load<T>(IResource resource)
         {
+            return (T) Load(resource, typeof(T));
+        }
+
+        // 引数による Type 指定は、動的に型が定まる場合に必要。
+        // 静的に型が定まる場合は、型引数による指定の方が便利。
+
+        public object Load(IResource resource, Type type)
+        {
             if (resource == null) throw new ArgumentNullException("resource");
+            if (type == null) throw new ArgumentNullException("type");
 
             // キャッシュ検索。
             object asset;
@@ -113,7 +122,7 @@ namespace Noctua.Asset
                 using (var stream = resource.OpenRead())
                 {
                     // アセット シリアライザ。
-                    var assetSerializer = GetAssetSerializer(typeof(T));
+                    var assetSerializer = GetAssetSerializer(type);
 
                     if (assetSerializer != null)
                     {
@@ -121,7 +130,7 @@ namespace Noctua.Asset
                     }
                     else
                     {
-                        asset = ObjectSerializer.ReadObject(stream, typeof(T));
+                        asset = ObjectSerializer.ReadObject(stream, type);
                     }
                 }
 
@@ -130,7 +139,7 @@ namespace Noctua.Asset
                 reverseCache[asset] = resource;
             }
 
-            return (T) asset;
+            return asset;
         }
 
         public void Update(object asset)
