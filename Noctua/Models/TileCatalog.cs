@@ -128,11 +128,11 @@ namespace Noctua.Models
             };
         }
 
-        void GetColorBuffer(DeviceContext context, Image2D image)
+        void GetColorBuffer(DeviceContext context, Texture2D texture)
         {
-            if (image == null || image.Texture == null) return;
+            if (texture == null) return;
 
-            image.Texture.GetData(context, colorBuffer);
+            texture.GetData(context, colorBuffer);
         }
 
         void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds)

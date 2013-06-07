@@ -42,6 +42,12 @@ namespace Samples.AssetSerialization
             var tileCatalogsPath = directoryPath + "/TileCatalogs";
             if (!Directory.Exists(tileCatalogsPath)) Directory.CreateDirectory(tileCatalogsPath);
 
+            var blocksPath = directoryPath + "/Blocks";
+            if (!Directory.Exists(blocksPath)) Directory.CreateDirectory(blocksPath);
+
+            var blockCatalogsPath = directoryPath + "/BlockCatalogs";
+            if (!Directory.Exists(blockCatalogsPath)) Directory.CreateDirectory(blockCatalogsPath);
+
             var meshesPath = directoryPath + "/Meshes";
             if (!Directory.Exists(meshesPath)) Directory.CreateDirectory(meshesPath);
 
@@ -160,6 +166,184 @@ namespace Samples.AssetSerialization
 
             #endregion
 
+            #region ブロック定義
+
+            Console.WriteLine("ブロック定義");
+            {
+                var cube = "../Meshes/Cube.json";
+
+                {
+                    var tile = "../Tiles/Dirt.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Dirt",
+                        Mesh = cube,
+                        TopTile = tile,
+                        BottomTile = tile,
+                        FrontTile = tile,
+                        BackTile = tile,
+                        LeftTile = tile,
+                        RightTile = tile,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Dirt", definition);
+                }
+
+                {
+                    var tileBase = "../Tiles/Grass";
+                    var tileSide = tileBase + "Side.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Grass",
+                        Mesh = cube,
+                        TopTile = tileBase + "Top.json",
+                        BottomTile = tileBase + "Bottom.json",
+                        FrontTile = tileSide,
+                        BackTile = tileSide,
+                        LeftTile = tileSide,
+                        RightTile = tileSide,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Grass", definition);
+                }
+
+                {
+                    var tile = "../Tiles/Mantle.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Mantle",
+                        Mesh = cube,
+                        TopTile = tile,
+                        BottomTile = tile,
+                        FrontTile = tile,
+                        BackTile = tile,
+                        LeftTile = tile,
+                        RightTile = tile,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Mantle", definition);
+                }
+
+                {
+                    var tile = "../Tiles/Sand.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Sand",
+                        Mesh = cube,
+                        TopTile = tile,
+                        BottomTile = tile,
+                        FrontTile = tile,
+                        BackTile = tile,
+                        LeftTile = tile,
+                        RightTile = tile,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Sand", definition);
+                }
+
+                {
+                    var tile = "../Tiles/Snow.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Snow",
+                        Mesh = cube,
+                        TopTile = tile,
+                        BottomTile = tile,
+                        FrontTile = tile,
+                        BackTile = tile,
+                        LeftTile = tile,
+                        RightTile = tile,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Snow", definition);
+                }
+
+                {
+                    var tile = "../Tiles/Stone.json";
+                    var definition = new BlockDefinition
+                    {
+                        Name = "Stone",
+                        Mesh = cube,
+                        TopTile = tile,
+                        BottomTile = tile,
+                        FrontTile = tile,
+                        BackTile = tile,
+                        LeftTile = tile,
+                        RightTile = tile,
+                        Fluid = false,
+                        ShadowCasting = true,
+                        Shape = BlockShape.Cube,
+                        Mass = 1,
+                        StaticFriction = 0.5f,
+                        DynamicFriction = 0.5f,
+                        Restitution = 0.5f
+                    };
+                    SerializeAndDeserialize<BlockDefinition>("Blocks/Stone", definition);
+                }
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region ブロック カタログ定義
+
+            Console.WriteLine("ブロック カタログ定義");
+            {
+                var definition = new BlockCatalogDefinition
+                {
+                    Name = "Default",
+                    Entries = new IndexedUriDefinition[]
+                    {
+                        new IndexedUriDefinition { Index = 1, Uri = "../Blocks/Dirt.json" },
+                        new IndexedUriDefinition { Index = 2, Uri = "../Blocks/Grass.json" },
+                        new IndexedUriDefinition { Index = 3, Uri = "../Blocks/Mantle.json" },
+                        new IndexedUriDefinition { Index = 4, Uri = "../Blocks/Sand.json" },
+                        new IndexedUriDefinition { Index = 5, Uri = "../Blocks/Snow.json" },
+                        new IndexedUriDefinition { Index = 6, Uri = "../Blocks/Stone.json" }
+                    },
+                    Dirt = 1,
+                    Grass = 2,
+                    Mantle = 3,
+                    Sand = 4,
+                    Snow = 5,
+                    Stone = 6
+                };
+                SerializeAndDeserialize<BlockCatalogDefinition>("BlockCatalogs/Default", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
             #region 立方体メッシュ定義
 
             Console.WriteLine("立方体メッシュ定義");
@@ -183,30 +367,24 @@ namespace Samples.AssetSerialization
 
         static void SerializeAndDeserialize<T>(string baseFileName, object graph)
         {
-            JsonObjectSerializer.Instance.JsonSerializer.Formatting = Newtonsoft.Json.Formatting.Indented;
+            JsonObjectSerializer.Instance.Indent = true;
+            JsonObjectSerializer.Instance.IndentChar = '\t';
          
             var jsonPath = Serialize(JsonObjectSerializer.Instance, baseFileName, jsonExtension, graph);
 
-            Console.WriteLine("JSON シリアライズ成功: " + jsonPath);
-
             var jsonResult = Deserialize(JsonObjectSerializer.Instance, jsonPath, typeof(T));
-
-            Console.WriteLine("JSON デシリアライズ成功");
 
             if (generateXml)
             {
-                XmlObjectSerializer.Instance.WriterSettings.Indent = true;
-                XmlObjectSerializer.Instance.WriterSettings.IndentChars = "\t";
-                XmlObjectSerializer.Instance.WriterSettings.OmitXmlDeclaration = true;
+                XmlObjectSerializer.Instance.Indent = true;
+                XmlObjectSerializer.Instance.IndentChar = '\t';
 
                 var xmlPath = Serialize(XmlObjectSerializer.Instance, baseFileName, xmlExtension, graph);
 
-                Console.WriteLine("XML シリアライズ成功: " + xmlPath);
-
                 var xmlResult = Deserialize(XmlObjectSerializer.Instance, xmlPath, typeof(T));
-
-                Console.WriteLine("XML デシリアライズ成功");
             }
+
+            Console.WriteLine("成功: {0}", baseFileName);
         }
 
         static string Serialize(IObjectSerializer serializer, string baseFileName, string extension, object graph)
@@ -218,7 +396,7 @@ namespace Samples.AssetSerialization
             {
                 serializer.WriteObject(stream, graph);
             }
-            
+
             return path;
         }
 

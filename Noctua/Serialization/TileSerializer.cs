@@ -3,6 +3,7 @@
 using System;
 using System.IO;
 using Libra.IO;
+using Libra.Graphics;
 using Noctua.Asset;
 using Noctua.Models;
 
@@ -19,7 +20,7 @@ namespace Noctua.Serialization
             var tile = new Tile
             {
                 Name = definition.Name,
-                Texture = Load<Image2D>(resource, definition.Texture),
+                Texture = Load<Texture2D>(resource, definition.Texture),
                 Translucent = definition.Translucent
             };
 

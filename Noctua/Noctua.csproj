@@ -43,11 +43,19 @@
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
     <Compile Include="Asset\XmlObjectSerializer.cs" />
-    <Compile Include="Models\Image2D.cs" />
+    <Compile Include="Models\Block.cs" />
+    <Compile Include="Models\BlockCatalog.cs" />
+    <Compile Include="Models\BlockMesh.cs" />
+    <Compile Include="Models\BlockShape.cs" />
     <Compile Include="Asset\IObjectSerializer.cs" />
     <Compile Include="Asset\JsonObjectSerializer.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\MeshPart.cs" />
+    <Compile Include="Serialization\BlockCatalogDefinition.cs" />
+    <Compile Include="Serialization\BlockCatalogSerializer.cs" />
+    <Compile Include="Serialization\BlockDefinition.cs" />
+    <Compile Include="Serialization\BlockSerializer.cs" />
+    <Compile Include="Serialization\Texture2DSerializer.cs" />
     <Compile Include="Serialization\IndexedUriDefinition.cs" />
     <Compile Include="Serialization\MeshDefinition.cs" />
     <Compile Include="Serialization\MeshPartDefinition.cs" />

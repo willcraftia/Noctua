@@ -2,6 +2,7 @@
 
 using System;
 using Libra;
+using Libra.Graphics;
 
 #endregion
 
@@ -27,7 +28,7 @@ namespace Noctua.Models
 
         public string Name { get; set; }
 
-        public Image2D Texture { get; set; }
+        public Texture2D Texture { get; set; }
 
         public bool Translucent { get; set; }
 
