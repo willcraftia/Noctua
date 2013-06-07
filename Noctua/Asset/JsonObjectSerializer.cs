@@ -150,6 +150,7 @@ namespace Noctua.Asset
         {
             jsonSerializer = new JsonSerializer();
             jsonSerializer.TypeNameHandling = TypeNameHandling.Auto;
+            jsonSerializer.DefaultValueHandling = DefaultValueHandling.Ignore;
             //jsonSerializer.Converters.Add(Vector2Converter.Instance);
             //jsonSerializer.Converters.Add(Vector3Converter.Instance);
             //jsonSerializer.Converters.Add(Vector4Converter.Instance);

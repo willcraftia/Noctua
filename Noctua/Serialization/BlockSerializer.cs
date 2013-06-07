@@ -10,7 +10,7 @@ using Noctua.Models;
 
 namespace Noctua.Serialization
 {
-    public sealed class BlockSerializer : AssetSerializer<BlockDefinition>
+    public sealed class BlockSerializer : AssetSerializer<Block>
     {
         public override object ReadAsset(Stream stream, IResource resource)
         {

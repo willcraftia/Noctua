@@ -5,6 +5,8 @@ using System.IO;
 using Libra;
 using Libra.Graphics;
 using Libra.IO;
+using Musca;
+using Pyxis;
 using Noctua;
 using Noctua.Asset;
 using Noctua.Models;
@@ -16,6 +18,35 @@ namespace Samples.AssetSerialization
 {
     class Program
     {
+        #region MockBiome
+
+        class MockBiome : IBiome
+        {
+            public byte Index { get; set; }
+
+            public INoiseSource DensityNoise
+            {
+                get { throw new NotSupportedException(); }
+                set { throw new NotSupportedException(); }
+            }
+
+            public INoiseSource TerrainNoise
+            {
+                get { throw new NotSupportedException(); }
+                set { throw new NotSupportedException(); }
+            }
+
+            public IResource Resource { get; set; }
+
+            public float GetTemperature(int x, int z) { throw new NotSupportedException(); }
+
+            public float GetHumidity(int x, int z) { throw new NotSupportedException(); }
+
+            public BiomeElement GetBiomeElement(int x, int z) { throw new NotSupportedException(); }
+        }
+
+        #endregion
+
         const bool generateXml = true;
 
         static readonly string jsonExtension = ".json";
@@ -47,6 +78,9 @@ namespace Samples.AssetSerialization
 
             var blockCatalogsPath = directoryPath + "/BlockCatalogs";
             if (!Directory.Exists(blockCatalogsPath)) Directory.CreateDirectory(blockCatalogsPath);
+
+            var biomeManagersPath = directoryPath + "/BiomeManagers";
+            if (!Directory.Exists(biomeManagersPath)) Directory.CreateDirectory(biomeManagersPath);
 
             var meshesPath = directoryPath + "/Meshes";
             if (!Directory.Exists(meshesPath)) Directory.CreateDirectory(meshesPath);
@@ -339,6 +373,30 @@ namespace Samples.AssetSerialization
                     Stone = 6
                 };
                 SerializeAndDeserialize<BlockCatalogDefinition>("BlockCatalogs/Default", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region 単一バイオーム マネージャ コンポーネント
+
+            Console.WriteLine("単一バイオーム マネージャ コンポーネント");
+            {
+                var biomeManager = new SingleBiomeManager
+                {
+                    Biome = new MockBiome()
+                };
+
+                var moduleTypeRegistry = new ModuleTypeRegistory();
+                moduleTypeRegistry.SetTypeDefinitionName(typeof(SingleBiomeManager));
+                var moduleInfoManager = new ModuleInfoManager(moduleTypeRegistry);
+                var builder = new ModuleBundleBuilder(moduleInfoManager);
+                builder.AddExternalReference(biomeManager.Biome, "../Biomes/Default.json");
+                builder.Add("Target", biomeManager);
+
+                var bundle = builder.Build();
+
+                SerializeAndDeserialize<ModuleBundleDefinition>("BiomeManagers/Single", bundle);
             }
             Console.WriteLine();
 

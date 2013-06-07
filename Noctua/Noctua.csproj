@@ -31,6 +31,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Musca">
+      <HintPath>..\Libs\Musca\Musca.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json">
       <HintPath>..\Libs\Json.NET\Json50r6\Net40\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -43,14 +46,21 @@
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
     <Compile Include="Asset\XmlObjectSerializer.cs" />
+    <Compile Include="Models\BiomeElement.cs" />
     <Compile Include="Models\Block.cs" />
     <Compile Include="Models\BlockCatalog.cs" />
     <Compile Include="Models\BlockMesh.cs" />
     <Compile Include="Models\BlockShape.cs" />
     <Compile Include="Asset\IObjectSerializer.cs" />
     <Compile Include="Asset\JsonObjectSerializer.cs" />
+    <Compile Include="Models\Chunk.cs" />
+    <Compile Include="Models\IBiome.cs" />
+    <Compile Include="Models\IBiomeManager.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\MeshPart.cs" />
+    <Compile Include="Models\SingleBiomeManager.cs" />
+    <Compile Include="Serialization\AssetPropertyHandler.cs" />
+    <Compile Include="Serialization\BiomeManagerSerializer.cs" />
     <Compile Include="Serialization\BlockCatalogDefinition.cs" />
     <Compile Include="Serialization\BlockCatalogSerializer.cs" />
     <Compile Include="Serialization\BlockDefinition.cs" />
@@ -99,6 +109,10 @@
     <ProjectReference Include="..\..\Libra\Libra\Libra.csproj">
       <Project>{BDCF4398-A4F9-48B0-BB3F-1B98CD3131B2}</Project>
       <Name>Libra</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Pyxis\Pyxis\Pyxis.csproj">
+      <Project>{0E7AB122-34DF-4AC3-B567-224A2D1358F8}</Project>
+      <Name>Pyxis</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup />

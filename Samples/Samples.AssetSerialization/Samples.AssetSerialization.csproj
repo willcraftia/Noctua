@@ -34,6 +34,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Musca">
+      <HintPath>..\..\Libs\Musca\Musca.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=4.5.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\Libs\Json.NET\Json50r6\Net40\Newtonsoft.Json.dll</HintPath>
@@ -62,6 +65,10 @@
     <ProjectReference Include="..\..\..\Libra\Libra\Libra.csproj">
       <Project>{BDCF4398-A4F9-48B0-BB3F-1B98CD3131B2}</Project>
       <Name>Libra</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Pyxis\Pyxis\Pyxis.csproj">
+      <Project>{0E7AB122-34DF-4AC3-B567-224A2D1358F8}</Project>
+      <Name>Pyxis</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Noctua\Noctua.csproj">
       <Project>{134195B7-639C-41D0-A9BF-0D4C141BED66}</Project>
