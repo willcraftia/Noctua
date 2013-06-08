@@ -47,6 +47,18 @@ namespace Samples.AssetSerialization
 
         #endregion
 
+        #region MockNoise
+
+        class MockNoise : INoiseSource
+        {
+            public float Sample(float x, float y, float z)
+            {
+                throw new NotSupportedException();
+            }
+        }
+
+        #endregion
+
         const bool generateXml = true;
 
         static readonly string jsonExtension = ".json";
@@ -78,6 +90,9 @@ namespace Samples.AssetSerialization
 
             var blockCatalogsPath = directoryPath + "/BlockCatalogs";
             if (!Directory.Exists(blockCatalogsPath)) Directory.CreateDirectory(blockCatalogsPath);
+
+            var biomesPath = directoryPath + "/Biomes";
+            if (!Directory.Exists(biomesPath)) Directory.CreateDirectory(biomesPath);
 
             var biomeManagersPath = directoryPath + "/BiomeManagers";
             if (!Directory.Exists(biomeManagersPath)) Directory.CreateDirectory(biomeManagersPath);
@@ -378,6 +393,91 @@ namespace Samples.AssetSerialization
 
             #endregion
 
+            #region バイオーム コンポーネント
+
+            Console.WriteLine("バイオーム コンポーネント");
+            {
+                // デバッグのし易さのために、各ノイズ インスタンスのコンポーネント名を明示する。
+                var moduleTypeRegistry = new ModuleTypeRegistry();
+                NoiseTypes.SetTypeDefinitionNames(moduleTypeRegistry);
+                moduleTypeRegistry.SetTypeDefinitionName(typeof(DefaultBiome));
+                moduleTypeRegistry.SetTypeDefinitionName(typeof(DefaultBiome.Range));
+                var componentInfoManager = new ModuleInfoManager(moduleTypeRegistry);
+                var builder = new ModuleBundleBuilder(componentInfoManager);
+
+                // デフォルトでは Perlin.FadeCurve は静的フィールドで共有状態なので、
+                // ここで一つだけビルダへ登録しておく。
+                builder.Add("DefaultFadeCurve", Perlin.DefaultFadeCurve);
+
+                //------------------------------------------------------------
+                //
+                // 湿度
+                //
+
+                var humidityPerlin = new Perlin
+                {
+                    Seed = 100
+                };
+                var humidityFractal = new SumFractal
+                {
+                    Source = humidityPerlin
+                };
+                var humidity = new ScaleBias
+                {
+                    Scale = 0.5f,
+                    Bias = 0.5f,
+                    Source = humidityFractal
+                };
+                builder.Add("HumidityPerlin", humidityPerlin);
+                builder.Add("HumidityFractal", humidityFractal);
+                builder.Add("Humidity", humidity);
+
+                //------------------------------------------------------------
+                //
+                // 気温
+                //
+
+                var temperaturePerlin = new Perlin
+                {
+                    Seed = 200
+                };
+                var temperatureFractal = new SumFractal
+                {
+                    Source = temperaturePerlin
+                };
+                var temperature = new ScaleBias
+                {
+                    Scale = 0.5f,
+                    Bias = 0.5f,
+                    Source = temperatureFractal
+                };
+                builder.Add("TemperaturePerlin", temperaturePerlin);
+                builder.Add("TemperatureFractal", temperatureFractal);
+                builder.Add("Temperature", temperature);
+
+                //------------------------------------------------------------
+                //
+                // バイオーム
+                //
+
+                var biome = new DefaultBiome
+                {
+                    Name = "Default Biome",
+                    HumidityNoise = humidity,
+                    TemperatureNoise = temperature,
+                    TerrainNoise = new MockNoise()
+                };
+                builder.Add("Target", biome);
+                builder.AddExternalReference(biome.TerrainNoise, "title:Resources/Terrains/Default.json");
+
+                ModuleBundleDefinition bundle = builder.Build();
+
+                SerializeAndDeserialize<ModuleBundleDefinition>("Biomes/Default", bundle);
+            }
+            Console.WriteLine();
+
+            #endregion
+
             #region 単一バイオーム マネージャ コンポーネント
 
             Console.WriteLine("単一バイオーム マネージャ コンポーネント");
@@ -387,7 +487,7 @@ namespace Samples.AssetSerialization
                     Biome = new MockBiome()
                 };
 
-                var moduleTypeRegistry = new ModuleTypeRegistory();
+                var moduleTypeRegistry = new ModuleTypeRegistry();
                 moduleTypeRegistry.SetTypeDefinitionName(typeof(SingleBiomeManager));
                 var moduleInfoManager = new ModuleInfoManager(moduleTypeRegistry);
                 var builder = new ModuleBundleBuilder(moduleInfoManager);

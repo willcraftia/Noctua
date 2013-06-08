@@ -10,7 +10,7 @@ using Noctua.Asset;
 
 namespace Noctua.Serialization
 {
-    public sealed class AssetPropertyHandler : IPropertyHandler
+    public sealed class AssetPropertyHandler : IModulePropertyHandler
     {
         // 最後の IPropertyHandler として登録し、
         // それまでの IPropertyHandler で拾えなかったプロパティがアセット参照であると仮定して処理を進める。
