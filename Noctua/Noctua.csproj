@@ -46,6 +46,7 @@
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
     <Compile Include="Asset\XmlObjectSerializer.cs" />
+    <Compile Include="Models\BiomeCatalog.cs" />
     <Compile Include="Models\BiomeElement.cs" />
     <Compile Include="Models\Block.cs" />
     <Compile Include="Models\BlockCatalog.cs" />
@@ -54,20 +55,29 @@
     <Compile Include="Asset\IObjectSerializer.cs" />
     <Compile Include="Asset\JsonObjectSerializer.cs" />
     <Compile Include="Models\Chunk.cs" />
+    <Compile Include="Models\ChunkData.cs" />
+    <Compile Include="Models\DefaultTerrainProcedure.cs" />
+    <Compile Include="Models\FlatTerrainProcedure.cs" />
+    <Compile Include="Models\IChunkProcedure.cs" />
     <Compile Include="Models\DefaultBiome.cs" />
     <Compile Include="Models\IBiome.cs" />
     <Compile Include="Models\IBiomeManager.cs" />
+    <Compile Include="Models\IChunkStore.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\MeshPart.cs" />
+    <Compile Include="Models\Region.cs" />
     <Compile Include="Models\SingleBiomeManager.cs" />
     <Compile Include="Models\TerrainDensitySelect.cs" />
     <Compile Include="Serialization\AssetPropertyHandler.cs" />
+    <Compile Include="Serialization\BiomeCatalogDefinition.cs" />
+    <Compile Include="Serialization\BiomeCatalogSerializer.cs" />
     <Compile Include="Serialization\BiomeManagerSerializer.cs" />
     <Compile Include="Serialization\BiomeSerializer.cs" />
     <Compile Include="Serialization\BlockCatalogDefinition.cs" />
     <Compile Include="Serialization\BlockCatalogSerializer.cs" />
     <Compile Include="Serialization\BlockDefinition.cs" />
     <Compile Include="Serialization\BlockSerializer.cs" />
+    <Compile Include="Serialization\ChunkProcedureSerializer.cs" />
     <Compile Include="Serialization\DefaultBiomeHandler.cs" />
     <Compile Include="Serialization\ModuleSerializer.cs" />
     <Compile Include="Serialization\NoiseTypes.cs" />

@@ -57,7 +57,7 @@ namespace Noctua.Serialization
                 };
             }
 
-            ObjectSerializer.WriteObject(stream, definition);
+            WriteObject(stream, definition);
         }
     }
 }

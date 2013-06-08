@@ -7,8 +7,8 @@ using System.Xml.Serialization;
 
 namespace Noctua.Serialization
 {
-    [XmlRoot("TileCatalog")]
-    public struct TileCatalogDefinition
+    [XmlRoot("BiomeCatalog")]
+    public struct BiomeCatalogDefinition
     {
         public string Name;
 

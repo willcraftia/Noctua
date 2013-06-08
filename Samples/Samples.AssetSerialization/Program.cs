@@ -94,8 +94,14 @@ namespace Samples.AssetSerialization
             var biomesPath = directoryPath + "/Biomes";
             if (!Directory.Exists(biomesPath)) Directory.CreateDirectory(biomesPath);
 
+            var biomeCatalogsPath = directoryPath + "/BiomeCatalogs";
+            if (!Directory.Exists(biomeCatalogsPath)) Directory.CreateDirectory(biomeCatalogsPath);
+
             var biomeManagersPath = directoryPath + "/BiomeManagers";
             if (!Directory.Exists(biomeManagersPath)) Directory.CreateDirectory(biomeManagersPath);
+
+            var chunkProceduresPath = directoryPath + "/ChunkProcedures";
+            if (!Directory.Exists(chunkProceduresPath)) Directory.CreateDirectory(chunkProceduresPath);
 
             var meshesPath = directoryPath + "/Meshes";
             if (!Directory.Exists(meshesPath)) Directory.CreateDirectory(meshesPath);
@@ -480,6 +486,27 @@ namespace Samples.AssetSerialization
 
             #endregion
 
+            #region バイオーム カタログ定義
+
+            Console.WriteLine("バイオーム カタログ定義");
+            {
+                var definition = new BiomeCatalogDefinition
+                {
+                    Name = "Default",
+                    Entries = new IndexedUriDefinition[]
+                    {
+                        new IndexedUriDefinition
+                        {
+                            Index = 0, Uri = "../Biomes/Default.json"
+                        }
+                    }
+                };
+                SerializeAndDeserialize<BiomeCatalogDefinition>("BiomeCatalogs/Default", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
             #region 単一バイオーム マネージャ コンポーネント
 
             Console.WriteLine("単一バイオーム マネージャ コンポーネント");
@@ -499,6 +526,52 @@ namespace Samples.AssetSerialization
                 var bundle = builder.Build();
 
                 SerializeAndDeserialize<ModuleBundleDefinition>("BiomeManagers/Single", bundle);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region 平坦地形生成コンポーネント
+
+            Console.WriteLine("平坦地形生成コンポーネント");
+            {
+                var procedure = new FlatTerrainProcedure
+                {
+                    Height = 156
+                };
+
+                var moduleTypeRegistry = new ModuleTypeRegistry();
+                moduleTypeRegistry.SetTypeDefinitionName(typeof(FlatTerrainProcedure));
+
+                var moduleInfoManager = new ModuleInfoManager(moduleTypeRegistry);
+                var builder = new ModuleBundleBuilder(moduleInfoManager);
+                builder.Add("Target", procedure);
+
+                var bundle = builder.Build();
+
+                SerializeAndDeserialize<ModuleBundleDefinition>("ChunkProcedures/FlatTerrain", bundle);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region ノイズ地形生成コンポーネント
+
+            Console.WriteLine("ノイズ地形生成コンポーネント");
+            {
+                var procedure = new DefaultTerrainProcedure();
+
+                var moduleTypeRegistry = new ModuleTypeRegistry();
+                NoiseTypes.SetTypeDefinitionNames(moduleTypeRegistry);
+                moduleTypeRegistry.SetTypeDefinitionName(typeof(DefaultTerrainProcedure));
+
+                var moduleInfoManager = new ModuleInfoManager(moduleTypeRegistry);
+                var builder = new ModuleBundleBuilder(moduleInfoManager);
+                builder.Add("Target", procedure);
+
+                var bundle = builder.Build();
+
+                SerializeAndDeserialize<ModuleBundleDefinition>("ChunkProcedures/NoiseTerrain", bundle);
             }
             Console.WriteLine();
 
