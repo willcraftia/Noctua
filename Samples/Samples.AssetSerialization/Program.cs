@@ -420,7 +420,8 @@ namespace Samples.AssetSerialization
                 };
                 var humidityFractal = new SumFractal
                 {
-                    Source = humidityPerlin
+                    Source = humidityPerlin,
+                    OctaveCount = 3
                 };
                 var humidity = new ScaleBias
                 {
@@ -443,7 +444,8 @@ namespace Samples.AssetSerialization
                 };
                 var temperatureFractal = new SumFractal
                 {
-                    Source = temperaturePerlin
+                    Source = temperaturePerlin,
+                    OctaveCount = 3
                 };
                 var temperature = new ScaleBias
                 {
