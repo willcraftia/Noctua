@@ -46,6 +46,13 @@
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
     <Compile Include="Asset\XmlObjectSerializer.cs" />
+    <Compile Include="Landscape\ActivationCandidateFinder.cs" />
+    <Compile Include="Landscape\ActiveVolumeAction.cs" />
+    <Compile Include="Landscape\ClusterManager.cs" />
+    <Compile Include="Landscape\DefaultActiveVolume.cs" />
+    <Compile Include="Landscape\IActiveVolume.cs" />
+    <Compile Include="Landscape\Partition.cs" />
+    <Compile Include="Landscape\PartitionManager.cs" />
     <Compile Include="Models\BiomeCatalog.cs" />
     <Compile Include="Models\BiomeElement.cs" />
     <Compile Include="Models\Block.cs" />
@@ -55,7 +62,34 @@
     <Compile Include="Asset\IObjectSerializer.cs" />
     <Compile Include="Asset\JsonObjectSerializer.cs" />
     <Compile Include="Models\Chunk.cs" />
+    <Compile Include="Models\ChunkBlock.cs" />
     <Compile Include="Models\ChunkData.cs" />
+    <Compile Include="Models\ChunkEffect.cs" />
+    <Compile Include="Models\ChunkManager.cs" />
+    <Compile Include="Models\ChunkMesh.cs" />
+    <Compile Include="Models\ChunkMeshManager.cs" />
+    <Compile Include="Models\ChunkMeshUpdatePriority.cs" />
+    <Compile Include="Models\ChunkSettings.cs" />
+    <Compile Include="Models\ChunkStoreType.cs" />
+    <Compile Include="Models\ChunkVertexBuilder.cs" />
+    <Compile Include="Models\ChunkVertices.cs" />
+    <Compile Include="Models\RegionManager.cs" />
+    <Compile Include="Models\SceneSettings.cs" />
+    <Compile Include="Models\SkySphere.cs" />
+    <Compile Include="Models\SkySphereEffect.cs" />
+    <Compile Include="Models\TimeColor.cs" />
+    <Compile Include="Models\TimeColorCollection.cs" />
+    <Compile Include="Scene\SceneCamera.cs" />
+    <Compile Include="Scene\DirectionalLight.cs" />
+    <Compile Include="Scene\Octree.cs" />
+    <Compile Include="Scene\OctreeManager.cs" />
+    <Compile Include="Scene\SceneManager.cs" />
+    <Compile Include="Scene\SceneNode.cs" />
+    <Compile Include="Scene\SceneObject.cs" />
+    <Compile Include="Scene\ShadowCaster.cs" />
+    <Compile Include="Serialization\ChunkSettingsDefinition.cs" />
+    <Compile Include="Serialization\ChunkSettingsSerializer.cs" />
+    <Compile Include="Serialization\ChunkStoreTypes.cs" />
     <Compile Include="Models\DefaultTerrainProcedure.cs" />
     <Compile Include="Models\FlatTerrainProcedure.cs" />
     <Compile Include="Models\IChunkProcedure.cs" />
@@ -65,6 +99,7 @@
     <Compile Include="Models\IChunkStore.cs" />
     <Compile Include="Models\Mesh.cs" />
     <Compile Include="Models\MeshPart.cs" />
+    <Compile Include="Models\NullChunkStore.cs" />
     <Compile Include="Models\Region.cs" />
     <Compile Include="Models\SingleBiomeManager.cs" />
     <Compile Include="Models\TerrainDensitySelect.cs" />
@@ -81,6 +116,12 @@
     <Compile Include="Serialization\DefaultBiomeHandler.cs" />
     <Compile Include="Serialization\ModuleSerializer.cs" />
     <Compile Include="Serialization\NoiseTypes.cs" />
+    <Compile Include="Serialization\ParticleSystemDefinition.cs" />
+    <Compile Include="Serialization\ParticleSystemSerializer.cs" />
+    <Compile Include="Serialization\RegionDefinition.cs" />
+    <Compile Include="Serialization\RegionSerializer.cs" />
+    <Compile Include="Serialization\SkySphereDefinition.cs" />
+    <Compile Include="Serialization\SkySphereSerializer.cs" />
     <Compile Include="Serialization\Texture2DSerializer.cs" />
     <Compile Include="Serialization\IndexedUriDefinition.cs" />
     <Compile Include="Serialization\MeshDefinition.cs" />
@@ -102,9 +143,17 @@
     <Compile Include="Triangle.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Libra\Libra.Collections\Libra.Collections.csproj">
+      <Project>{79116E63-224F-4271-905E-B08BF2B6DD9C}</Project>
+      <Name>Libra.Collections</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Libra\Libra.Games\Libra.Games.csproj">
       <Project>{5FF1176C-7EA3-49A9-93D0-0868886FB9AF}</Project>
       <Name>Libra.Games</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\Libra\Libra.Graphics.Toolkit\Libra.Graphics.Toolkit.csproj">
+      <Project>{7E6353FF-27C2-48CB-B582-530450AF0553}</Project>
+      <Name>Libra.Graphics.Toolkit</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\Libra\Libra.Graphics\Libra.Graphics.csproj">
       <Project>{CDFAB2B9-00DB-4719-B424-C2A973A7BC4C}</Project>
@@ -131,7 +180,13 @@
       <Name>Pyxis</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="Shaders\ChunkEffect.hlsl" />
+    <None Include="Shaders\CompileShaders.cmd" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Shaders\Compiled\" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

@@ -10,13 +10,13 @@ namespace Noctua.Models
 {
     public interface IChunkStore
     {
-        bool GetChunk(IntVector3 position, ChunkData data);
+        bool GetChunk(string regionKey, IntVector3 position, ChunkData data);
 
-        void AddChunk(IntVector3 position, ChunkData data);
+        void AddChunk(string regionKey, IntVector3 position, ChunkData data);
 
-        void DeleteChunk(IntVector3 position);
+        void DeleteChunk(string regionKey, IntVector3 position);
 
-        void ClearChunks();
+        void ClearChunks(string regionKey);
 
         //
         // ChunkBundle の反映は、エディタとゲームで共通。

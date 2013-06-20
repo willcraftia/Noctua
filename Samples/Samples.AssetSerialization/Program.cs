@@ -103,8 +103,14 @@ namespace Samples.AssetSerialization
             var chunkProceduresPath = directoryPath + "/ChunkProcedures";
             if (!Directory.Exists(chunkProceduresPath)) Directory.CreateDirectory(chunkProceduresPath);
 
+            var regionsPath = directoryPath + "/Regions";
+            if (!Directory.Exists(regionsPath)) Directory.CreateDirectory(regionsPath);
+
             var meshesPath = directoryPath + "/Meshes";
             if (!Directory.Exists(meshesPath)) Directory.CreateDirectory(meshesPath);
+
+            var particlesPath = directoryPath + "/Particles";
+            if (!Directory.Exists(particlesPath)) Directory.CreateDirectory(particlesPath);
 
             #endregion
 
@@ -577,12 +583,104 @@ namespace Samples.AssetSerialization
 
             #endregion
 
+            #region リージョン定義
+
+            Console.WriteLine("リージョン定義");
+            {
+                var definition = new RegionDefinition
+                {
+                    Name = "Default",
+                    Box = new IntBoundingBox
+                    {
+                        Min = new IntVector3(-128, 0, -128),
+                        Max = new IntVector3( 128, 16, 128)
+                    },
+                    TileCatalog = "../TileCatalogs/Default.json",
+                    BlockCatalog = "../BlockCatalogs/Default.json",
+                    BiomeManager = "../BiomeManagers/Single.json",
+                    ChunkProcedures = new string[]
+                    {
+                        "../ChunkProcedures/NoiseTerrain.json"
+                    }
+                };
+                SerializeAndDeserialize<RegionDefinition>("Regions/Default", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
             #region 立方体メッシュ定義
 
             Console.WriteLine("立方体メッシュ定義");
             {
                 var mesh = CreateCubeMesh();
                 SerializeAndDeserialize<MeshDefinition>("Meshes/Cube", mesh);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region 降雪パーティクル定義
+
+            Console.WriteLine("降雪パーティクル");
+            {
+                var definition = new ParticleSystemDefinition
+                {
+                    Name = "Snow",
+                    MaxParticleCount = 4000,
+                    Duration = 5,
+                    DurationRandomness = 0,
+                    MinHorizontalVelocity = 0,
+                    MaxHorizontalVelocity = 0,
+                    MinVerticalVelocity = -10,
+                    MaxVerticalVelocity = -10,
+                    Gravity = new Vector3(-1, -1, 0),
+                    EndVelocity = 1,
+                    MinColor = Color.White.ToVector4(),
+                    MaxColor = Color.White.ToVector4(),
+                    MinRotateSpeed = 0,
+                    MaxRotateSpeed = 0,
+                    MinStartSize = 0.5f,
+                    MaxStartSize = 0.5f,
+                    MinEndSize = 0.2f,
+                    MaxEndSize = 0.2f,
+                    Texture = "title:Resources/Particles/Snow.png",
+                    BlendState = BlendState.AlphaBlend
+                };
+                SerializeAndDeserialize<ParticleSystemDefinition>("Particles/Snow", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region 降雨パーティクル定義
+
+            Console.WriteLine("降雨パーティクル定義");
+            {
+                var definition = new ParticleSystemDefinition
+                {
+                    Name = "Rain",
+                    MaxParticleCount = 8000,
+                    Duration = 2,
+                    DurationRandomness = 0,
+                    MinHorizontalVelocity = 0,
+                    MaxHorizontalVelocity = 0,
+                    MinVerticalVelocity = -50,
+                    MaxVerticalVelocity = -50,
+                    Gravity = new Vector3(-1, -1, 0),
+                    EndVelocity = 1,
+                    MinColor = Color.White.ToVector4(),
+                    MaxColor = Color.White.ToVector4(),
+                    MinRotateSpeed = 0,
+                    MaxRotateSpeed = 0,
+                    MinStartSize = 0.5f,
+                    MaxStartSize = 0.5f,
+                    MinEndSize = 0.5f,
+                    MaxEndSize = 0.5f,
+                    Texture = "title:Resources/Particles/Rain.png",
+                    BlendState = BlendState.AlphaBlend
+                };
+                SerializeAndDeserialize<ParticleSystemDefinition>("Particles/Rain", definition);
             }
             Console.WriteLine();
 

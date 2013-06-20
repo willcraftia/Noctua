@@ -19,7 +19,7 @@ namespace Noctua.Models
         /// チャンクは自身が属するリージョンのタイル カタログを参照する必要があります。
         /// このため、各リージョンは、自身に属するチャンクのための固有のチャンク エフェクトを管理します。
         /// </summary>
-        //public ChunkEffect ChunkEffect { get; private set; }
+        public ChunkEffect ChunkEffect { get; private set; }
 
         public string Name { get; set; }
 
@@ -33,7 +33,7 @@ namespace Noctua.Models
 
         public List<IChunkProcedure> ChunkProcesures { get; set; }
 
-        public IChunkStore ChunkStore { get; set; }
+        public string ChunkStoreKey { get; private set; }
 
         public void Initialize(AssetContainer assetContainer)
         {
