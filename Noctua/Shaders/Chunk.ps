@@ -1,0 +1,47 @@
+cbuffer PerScene : register(b0)
+{
+    float3 AmbientLightColor;
+};
+
+// テクスチャはアルファ値を用いない。
+// アルファ値はブロックの頂点色に埋め込んで使用する。
+Texture2D<float3> Texture : register(t0);
+SamplerState TextureSampler : register(s0);
+
+struct Input
+{
+    float4 Position : SV_Position;
+    float3 Normal   : NORMAL0;
+    float4 Color    : COLOR0;
+    float2 TexCoord : TEXCOORD0;
+};
+
+float4 PS(Input input) : SV_Target0
+{
+    float3 color = Texture.Sample(TextureSampler, input.TexCoord);
+
+    color *= input.Color.rgb;
+    color *= AmbientLightColor;
+
+    return float4(color, input.Color.a);
+}
+
+struct OcclusionInput
+{
+    float4 Position : SV_Position;
+};
+
+float4 OcclusionPS(OcclusionInput input) : SV_Target0
+{
+    return float4(0, 0, 0, 1);
+}
+
+struct WireframeInput
+{
+    float4 Position : SV_Position;
+};
+
+float4 WireframePS(WireframeInput input) : SV_Target0
+{
+    return float4(0, 0, 0, 1);
+}

@@ -65,6 +65,7 @@
     <Compile Include="Models\ChunkBlock.cs" />
     <Compile Include="Models\ChunkData.cs" />
     <Compile Include="Models\ChunkEffect.cs" />
+    <Compile Include="Models\ChunkEffectMode.cs" />
     <Compile Include="Models\ChunkManager.cs" />
     <Compile Include="Models\ChunkMesh.cs" />
     <Compile Include="Models\ChunkMeshManager.cs" />
@@ -79,6 +80,11 @@
     <Compile Include="Models\SkySphereEffect.cs" />
     <Compile Include="Models\TimeColor.cs" />
     <Compile Include="Models\TimeColorCollection.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
     <Compile Include="Scene\SceneCamera.cs" />
     <Compile Include="Scene\DirectionalLight.cs" />
     <Compile Include="Scene\Octree.cs" />
@@ -181,11 +187,22 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Shaders\ChunkEffect.hlsl" />
+    <None Include="Shaders\Chunk.vs" />
+    <None Include="Shaders\Compiled\ChunkOcclusionPS.bin" />
+    <None Include="Shaders\Compiled\ChunkOcclusionVS.bin" />
+    <None Include="Shaders\Compiled\ChunkPS.bin" />
+    <None Include="Shaders\Compiled\ChunkVS.bin" />
+    <None Include="Shaders\Compiled\ChunkWireframePS.bin" />
+    <None Include="Shaders\Compiled\ChunkWireframeVS.bin" />
     <None Include="Shaders\CompileShaders.cmd" />
+    <None Include="Shaders\Chunk.ps" />
   </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
-    <Folder Include="Shaders\Compiled\" />
+    <EmbeddedResource Include="Properties\Resources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>Resources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

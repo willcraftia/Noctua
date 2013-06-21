@@ -14,8 +14,6 @@ namespace Noctua.Models
     /// </summary>
     public sealed class Chunk : Partition
     {
-        public const byte MaxSkylightLevel = 15;
-
         /// <summary>
         /// ブロック インデックスに関するロック オブジェクト。
         /// </summary>
@@ -372,7 +370,7 @@ namespace Noctua.Models
         }
 
         /// <summary>
-        /// グラフィックス リソースを開放し、チャンクをチャンク ストアへ永続化します。
+        /// チャンクをチャンク ストアへ永続化します。
         /// </summary>
         protected internal override void Passivate()
         {

@@ -573,17 +573,19 @@ namespace Noctua.Scene
             //    }
             //}
 
-            var fog = effect as IEffectFog;
-            if (fog != null)
-            {
-                if (FogEnabled)
-                {
-                    fog.FogStart = FogStart;
-                    fog.FogEnd = FogEnd;
-                    fog.FogColor = fogColor;
-                }
-                fog.FogEnabled = FogEnabled;
-            }
+            // フォグはポストプロセスで対応する。
+
+            //var fog = effect as IEffectFog;
+            //if (fog != null)
+            //{
+            //    if (FogEnabled)
+            //    {
+            //        fog.FogStart = FogStart;
+            //        fog.FogEnd = FogEnd;
+            //        fog.FogColor = fogColor;
+            //    }
+            //    fog.FogEnabled = FogEnabled;
+            //}
         }
 
         void CollectObjects(Octree octree)

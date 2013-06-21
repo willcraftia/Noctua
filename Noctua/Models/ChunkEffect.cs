@@ -1,13 +1,19 @@
 ﻿#region Using
 
 using System;
+using System.Runtime.InteropServices;
 using Libra;
 using Libra.Graphics;
+using Noctua.Properties;
 
 #endregion
 
 namespace Noctua.Models
 {
+    // メモ
+    //
+    // フォン シェーディングは、ブロック地形では洞窟内で不自然な効果となるため用いない。
+
     public sealed class ChunkEffect : IEffect, IEffectMatrices, IDisposable
     {
         #region SharedDeviceResource
@@ -18,23 +24,56 @@ namespace Noctua.Models
 
             public PixelShader PixelShader { get; private set; }
 
+            public VertexShader OcclusionVertexShader { get; private set; }
+
+            public PixelShader OcclusionPixelShader { get; private set; }
+
+            public VertexShader WireframeVertexShader { get; private set; }
+
+            public PixelShader WireframePixelShader { get; private set; }
+
             public SharedDeviceResource(Device device)
             {
-                //VertexShader = device.CreateVertexShader();
-                //VertexShader.Initialize(Resources.DepthMapVS);
+                // TODO
+                // オンデマンドで生成。
 
-                //PixelShader = device.CreatePixelShader();
-                //PixelShader.Initialize(Resources.DepthMapPS);
+                VertexShader = device.CreateVertexShader();
+                VertexShader.Initialize(Resources.ChunkVS);
+
+                PixelShader = device.CreatePixelShader();
+                PixelShader.Initialize(Resources.ChunkPS);
+
+                OcclusionVertexShader = device.CreateVertexShader();
+                OcclusionVertexShader.Initialize(Resources.ChunkOcclusionVS);
+
+                OcclusionPixelShader = device.CreatePixelShader();
+                OcclusionPixelShader.Initialize(Resources.ChunkOcclusionPS);
+
+                WireframeVertexShader = device.CreateVertexShader();
+                WireframeVertexShader.Initialize(Resources.ChunkWireframeVS);
+
+                WireframePixelShader = device.CreatePixelShader();
+                WireframePixelShader.Initialize(Resources.ChunkWireframePS);
             }
         }
 
         #endregion
 
-        #region ParametersPerObject
+        #region ParametersPerObjectVS
 
-        public struct ParametersPerObject
+        public struct ParametersPerObjectVS
         {
             public Matrix WorldViewProjection;
+        }
+
+        #endregion
+
+        #region ParametersPerScenePS
+
+        [StructLayout(LayoutKind.Sequential, Size = 16)]
+        public struct ParametersPerScenePS
+        {
+            public Vector3 AmbientLightColor;
         }
 
         #endregion
@@ -44,9 +83,10 @@ namespace Noctua.Models
         [Flags]
         enum DirtyFlags
         {
-            ConstantBufferPerObject = (1 << 0),
-            ViewProjection          = (1 << 1),
-            WorldViewProjection     = (1 << 2)
+            ConstantBufferPerObjectVS   = (1 << 0),
+            ConstantBufferPerScenePS    = (1 << 1),
+            ViewProjection              = (1 << 2),
+            WorldViewProjection         = (1 << 3)
         }
 
         #endregion
@@ -55,9 +95,13 @@ namespace Noctua.Models
 
         SharedDeviceResource sharedDeviceResource;
 
-        ConstantBuffer constantBufferPerObject;
+        ConstantBuffer constantBufferPerObjectVS;
 
-        ParametersPerObject parametersPerObject;
+        ConstantBuffer constantBufferPerScenePS;
+
+        ParametersPerObjectVS parametersPerObjectVS;
+
+        ParametersPerScenePS parametersPerScenePS;
 
         Matrix world;
 
@@ -102,6 +146,23 @@ namespace Noctua.Models
             }
         }
 
+        public Vector3 AmbientLightColor
+        {
+            get { return parametersPerScenePS.AmbientLightColor; }
+            set
+            {
+                parametersPerScenePS.AmbientLightColor = value;
+
+                dirtyFlags |= DirtyFlags.ConstantBufferPerScenePS;
+            }
+        }
+
+        public ShaderResourceView Texture { get; set; }
+
+        public SamplerState TextureSampler { get; set; }
+
+        public ChunkEffectMode Mode { get; set; }
+
         public ChunkEffect(Device device)
         {
             if (device == null) throw new ArgumentNullException("device");
@@ -110,16 +171,21 @@ namespace Noctua.Models
 
             sharedDeviceResource = device.GetSharedResource<ChunkEffect, SharedDeviceResource>();
 
-            constantBufferPerObject = device.CreateConstantBuffer();
-            constantBufferPerObject.Initialize<ParametersPerObject>();
+            constantBufferPerObjectVS = device.CreateConstantBuffer();
+            constantBufferPerObjectVS.Initialize<ParametersPerObjectVS>();
+
+            constantBufferPerScenePS = device.CreateConstantBuffer();
+            constantBufferPerScenePS.Initialize<ParametersPerScenePS>();
 
             world = Matrix.Identity;
             view = Matrix.Identity;
             projection = Matrix.Identity;
             viewProjection = Matrix.Identity;
-            parametersPerObject.WorldViewProjection = Matrix.Identity;
+            parametersPerObjectVS.WorldViewProjection = Matrix.Identity;
 
-            dirtyFlags = DirtyFlags.ConstantBufferPerObject;
+            Mode = ChunkEffectMode.Default;
+
+            dirtyFlags = DirtyFlags.ConstantBufferPerObjectVS;
         }
 
         public void Apply(DeviceContext context)
@@ -137,22 +203,47 @@ namespace Noctua.Models
                 Matrix worldViewProjection;
                 Matrix.Multiply(ref world, ref viewProjection, out worldViewProjection);
 
-                Matrix.Transpose(ref worldViewProjection, out parametersPerObject.WorldViewProjection);
+                Matrix.Transpose(ref worldViewProjection, out parametersPerObjectVS.WorldViewProjection);
 
                 dirtyFlags &= ~DirtyFlags.WorldViewProjection;
-                dirtyFlags |= DirtyFlags.ConstantBufferPerObject;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectVS;
             }
 
-            if ((dirtyFlags & DirtyFlags.ConstantBufferPerObject) != 0)
+            if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectVS) != 0)
             {
-                constantBufferPerObject.SetData(context, parametersPerObject);
+                constantBufferPerObjectVS.SetData(context, parametersPerObjectVS);
 
-                dirtyFlags &= ~DirtyFlags.ConstantBufferPerObject;
+                dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectVS;
             }
 
-            context.VertexShaderConstantBuffers[0] = constantBufferPerObject;
-            context.VertexShader = sharedDeviceResource.VertexShader;
-            context.PixelShader = sharedDeviceResource.PixelShader;
+            context.VertexShaderConstantBuffers[0] = constantBufferPerObjectVS;
+
+            switch (Mode)
+            {
+                case ChunkEffectMode.Default:
+                    if ((dirtyFlags & DirtyFlags.ConstantBufferPerScenePS) != 0)
+                    {
+                        constantBufferPerScenePS.SetData(context, parametersPerScenePS);
+
+                        dirtyFlags &= ~DirtyFlags.ConstantBufferPerScenePS;
+                    }
+                    
+                    context.VertexShader = sharedDeviceResource.VertexShader;
+
+                    context.PixelShaderConstantBuffers[0] = constantBufferPerScenePS;
+                    context.PixelShaderResources[0] = Texture;
+                    context.PixelShaderSamplers[0] = TextureSampler;
+                    context.PixelShader = sharedDeviceResource.PixelShader;
+                    break;
+                case ChunkEffectMode.Occlusion:
+                    context.VertexShader = sharedDeviceResource.OcclusionVertexShader;
+                    context.PixelShader = sharedDeviceResource.OcclusionPixelShader;
+                    break;
+                case ChunkEffectMode.Wireframe:
+                    context.VertexShader = sharedDeviceResource.WireframeVertexShader;
+                    context.PixelShader = sharedDeviceResource.WireframePixelShader;
+                    break;
+            }
         }
 
         #region IDisposable
@@ -177,7 +268,7 @@ namespace Noctua.Models
             if (disposing)
             {
                 sharedDeviceResource = null;
-                constantBufferPerObject.Dispose();
+                constantBufferPerObjectVS.Dispose();
             }
 
             disposed = true;
