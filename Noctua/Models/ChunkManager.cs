@@ -38,12 +38,20 @@ namespace Noctua.Models
         /// </summary>
         int nodeIdSequence;
 
+        /// <summary>
+        /// メッシュ マネージャ。
+        /// </summary>
         ChunkMeshManager meshManager;
 
         /// <summary>
         /// シーン マネージャ。
         /// </summary>
-        public SceneManager SceneManager { get; private set; }
+        SceneManager sceneManager;
+
+        /// <summary>
+        /// デバイス コンテキストを取得します。
+        /// </summary>
+        public DeviceContext DeviceContext { get; private set; }
 
         /// <summary>
         /// チャンク ノードを関連付けるためのノード。
@@ -134,7 +142,8 @@ namespace Noctua.Models
 
             ChunkSize = settings.ChunkSize;
             this.regionManager = regionManager;
-            SceneManager = sceneManager;
+            this.sceneManager = sceneManager;
+            DeviceContext = sceneManager.DeviceContext;
 
             switch (settings.ChunkStoreType)
             {
@@ -215,7 +224,7 @@ namespace Noctua.Models
         /// ・メッシュ更新完了の監視。
         /// 
         /// </summary>
-        protected override void UpdateOverride()
+        protected override void UpdateOverride(Matrix view, Matrix projection)
         {
             // 更新が必要なチャンクを探索して更新要求を追加。
             // ただし、クローズが開始したら行わない。
@@ -223,12 +232,12 @@ namespace Noctua.Models
             //{
             //}
 
-            // 更新完了を監視。
-            // 更新中はチャンクの更新ロックを取得したままであるため、
-            // クローズ中も完了を監視して更新ロックの解放を試みなければならない。
-            meshManager.Update();
+            // メッシュ マネージャ更新。
+            // メッシュ構築に関する更新の他に、
+            // メッシュが使用するカメラ設定の更新も行われる。
+            meshManager.Update(view, projection);
 
-            base.UpdateOverride();
+            base.UpdateOverride(view, projection);
         }
 
         /// <summary>
@@ -252,16 +261,7 @@ namespace Noctua.Models
         internal SceneNode CreateNode()
         {
             nodeIdSequence++;
-            return new SceneNode(SceneManager, "Chunk" + nodeIdSequence);
-        }
-
-        /// <summary>
-        /// チャンク メッシュを破棄します。
-        /// </summary>
-        /// <param name="chunkMesh">チャンク メッシュ。</param>
-        internal void DisposeMesh(ChunkMesh chunkMesh)
-        {
-            meshManager.DisposeMesh(chunkMesh);
+            return new SceneNode(sceneManager, "Chunk" + nodeIdSequence);
         }
     }
 }

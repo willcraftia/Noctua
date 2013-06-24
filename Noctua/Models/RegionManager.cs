@@ -24,13 +24,13 @@ namespace Noctua.Models
 
         SkySphere skySphere;
 
-        IEffect chunkEffect;
-
         ParticleSystem snowParticleSystem;
 
         ParticleSystem rainParticleSystem;
 
         public static bool Wireframe { get; set; }
+
+        public WorldManager WorldManager { get; private set; }
 
         public SceneSettings SceneSettings { get; private set; }
 
@@ -38,29 +38,23 @@ namespace Noctua.Models
 
         public SceneManager SceneManager { get; private set; }
 
-        public RegionManager(SceneManager sceneManager)
+        public RegionManager(WorldManager worldManager)
         {
-            if (sceneManager == null) throw new ArgumentNullException("sceneManager");
+            if (worldManager == null) throw new ArgumentNullException("worldManager");
 
-            SceneManager = sceneManager;
-            DeviceContext = sceneManager.DeviceContext;
+            WorldManager = worldManager;
+            SceneManager = worldManager.SceneManager;
+            DeviceContext = SceneManager.DeviceContext;
 
-            // TODO
-            //
-            // タイトル ステージ対応くらいはしたい。
+            resourceManager.Register<TitleResourceLoader>();
             resourceManager.Register<FileResourceLoader>();
 
             assetContainer = new AssetContainer(DeviceContext, resourceManager, JsonObjectSerializer.Instance);
             assetContainer.RegisterAssetSerializer<Texture2DSerializer>();
             assetContainer.RegisterAssetSerializer<ParticleSystemSerializer>();
             assetContainer.RegisterAssetSerializer<SkySphereSerializer>();
-        }
 
-        public void Initialize(SceneSettings sceneSettings)
-        {
-            if (sceneSettings == null) throw new ArgumentNullException("sceneSettings");
-
-            SceneSettings = sceneSettings;
+            SceneSettings = WorldManager.SceneSettings;
 
             // スカイ スフィア
             skySphere = assetContainer.Load<SkySphere>("title:Resources/Models/SkySphere.json");
@@ -70,11 +64,6 @@ namespace Noctua.Models
             skySphereNode.Objects.Add(skySphere);
 
             SceneManager.SkySphere = skySphereNode;
-
-            //----------------------------------------------------------------
-            // チャンク エフェクト
-
-            //chunkEffect = assetContainer.Load<Effect>("content:Effects/Chunk");
 
             // TODO
             //
@@ -128,10 +117,9 @@ namespace Noctua.Models
             localAssetContainer.RegisterAssetSerializer<BlockCatalogSerializer>();
             localAssetContainer.RegisterAssetSerializer<BiomeSerializer>();
             localAssetContainer.RegisterAssetSerializer<BiomeCatalogSerializer>();
+            localAssetContainer.RegisterAssetSerializer<BiomeManagerSerializer>();
             localAssetContainer.RegisterAssetSerializer<ChunkProcedureSerializer>();
-
-            //assetManager.RegisterLoader(typeof(IBiomeManager), new BiomeManagerLoader(localResourceManager));
-            //assetManager.RegisterLoader(typeof(INoiseSource), new NoiseLoader(localResourceManager));
+            localAssetContainer.RegisterAssetSerializer<NoiseSerializer>();
 
             var region = localAssetContainer.Load<Region>(uri);
             region.Initialize(localAssetContainer);
@@ -215,17 +203,6 @@ namespace Noctua.Models
             skySphere.SunColor = SceneSettings.Sunlight.DiffuseColor;
             skySphere.SunDirection = SceneSettings.Sunlight.Direction;
         }
-
-        //public void PrepareChunkEffects()
-        //{
-        //    for (int i = 0; i < regions.Count; i++)
-        //    {
-        //        var region = regions[i];
-        //        SceneManager.UpdateEffect(region.ChunkEffect);
-
-        //        region.ChunkEffect.WireframeEnabled = Wireframe;
-        //    }
-        //}
 
         //internal void OnShadowMapUpdated(object sender, EventArgs e)
         //{

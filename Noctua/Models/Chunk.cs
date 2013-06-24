@@ -464,8 +464,8 @@ namespace Noctua.Models
             // ノードから削除。
             Node.Objects.Remove(mesh);
 
-            // マネージャへ削除要求。
-            chunkManager.DisposeMesh(mesh);
+            // メッシュ マネージャへ削除要求。
+            meshManager.RemoveMesh(mesh);
         }
     }
 }

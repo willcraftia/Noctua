@@ -296,7 +296,7 @@ namespace Noctua.Landscape
                 activationCandidateFinder.UpdateCamera(view, projection, eyePositionWorld, eyePositionPartition);
 
                 // サブクラスにおける追加の更新処理。
-                UpdateOverride();
+                UpdateOverride(view, projection);
             }
             else
             {
@@ -311,7 +311,7 @@ namespace Noctua.Landscape
 
                 // サブクラスにおける追加の更新処理。
                 // クローズ中に行うべきこともある。
-                UpdateOverride();
+                UpdateOverride(view, projection);
 
                 // 全ての非アクティブ化が完了していればクローズ完了。
                 if (activatingParitions.Count == 0 && passivatingPartitions.Count == 0 && partitions.Count == 0 &&
@@ -401,7 +401,7 @@ namespace Noctua.Landscape
         /// <summary>
         /// パーティション更新処理で呼び出されます。
         /// </summary>
-        protected virtual void UpdateOverride() { }
+        protected virtual void UpdateOverride(Matrix view, Matrix projection) { }
 
         protected virtual void OnActivated(Partition partition) { }
 

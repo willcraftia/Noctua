@@ -53,7 +53,7 @@ namespace Noctua.Serialization
             typeRegistory.SetTypeDefinitionName(typeof(Select));
 
             // Custom controllers.
-            typeRegistory.SetTypeDefinitionName(typeof(TerrainDensitySelect));
+            typeRegistory.SetTypeDefinitionName(typeof(SelectTerrainDensity));
         }
     }
 }

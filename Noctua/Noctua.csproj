@@ -45,6 +45,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Asset\AssetSerializer.cs" />
+    <Compile Include="Asset\TitleContainer.cs" />
+    <Compile Include="Asset\TitleResource.cs" />
+    <Compile Include="Asset\TitleResourceLoader.cs" />
     <Compile Include="Asset\XmlObjectSerializer.cs" />
     <Compile Include="Landscape\ActivationCandidateFinder.cs" />
     <Compile Include="Landscape\ActiveVolumeAction.cs" />
@@ -74,12 +77,17 @@
     <Compile Include="Models\ChunkStoreType.cs" />
     <Compile Include="Models\ChunkVertexBuilder.cs" />
     <Compile Include="Models\ChunkVertices.cs" />
+    <Compile Include="Models\GraphicsDofSettings.cs" />
+    <Compile Include="Models\GraphicsSettings.cs" />
+    <Compile Include="Models\GraphicsShadowSettings.cs" />
     <Compile Include="Models\RegionManager.cs" />
     <Compile Include="Models\SceneSettings.cs" />
     <Compile Include="Models\SkySphere.cs" />
     <Compile Include="Models\SkySphereEffect.cs" />
+    <Compile Include="Models\SelectTerrainDensity.cs" />
     <Compile Include="Models\TimeColor.cs" />
     <Compile Include="Models\TimeColorCollection.cs" />
+    <Compile Include="Models\WorldManager.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -108,7 +116,6 @@
     <Compile Include="Models\NullChunkStore.cs" />
     <Compile Include="Models\Region.cs" />
     <Compile Include="Models\SingleBiomeManager.cs" />
-    <Compile Include="Models\TerrainDensitySelect.cs" />
     <Compile Include="Serialization\AssetPropertyHandler.cs" />
     <Compile Include="Serialization\BiomeCatalogDefinition.cs" />
     <Compile Include="Serialization\BiomeCatalogSerializer.cs" />
@@ -120,12 +127,17 @@
     <Compile Include="Serialization\BlockSerializer.cs" />
     <Compile Include="Serialization\ChunkProcedureSerializer.cs" />
     <Compile Include="Serialization\DefaultBiomeHandler.cs" />
+    <Compile Include="Serialization\DirectionalLightDefinition.cs" />
+    <Compile Include="Serialization\GraphicsSettingsSerializer.cs" />
     <Compile Include="Serialization\ModuleSerializer.cs" />
+    <Compile Include="Serialization\NoiseSerializer.cs" />
     <Compile Include="Serialization\NoiseTypes.cs" />
     <Compile Include="Serialization\ParticleSystemDefinition.cs" />
     <Compile Include="Serialization\ParticleSystemSerializer.cs" />
     <Compile Include="Serialization\RegionDefinition.cs" />
     <Compile Include="Serialization\RegionSerializer.cs" />
+    <Compile Include="Serialization\SceneSettingsDefinition.cs" />
+    <Compile Include="Serialization\SceneSettingsSerializer.cs" />
     <Compile Include="Serialization\SkySphereDefinition.cs" />
     <Compile Include="Serialization\SkySphereSerializer.cs" />
     <Compile Include="Serialization\Texture2DSerializer.cs" />

@@ -17,9 +17,7 @@ namespace Noctua.Models
     /// </summary>
     public sealed class TimeColorCollection : IEnumerable<TimeColor>
     {
-        public const int InitialCapacity = 10;
-
-        List<TimeColor> entries = new List<TimeColor>(InitialCapacity);
+        List<TimeColor> entries = new List<TimeColor>(10);
 
         /// <summary>
         /// 登録されている時間色の数を取得します。
@@ -39,6 +37,11 @@ namespace Noctua.Models
             return entries.GetEnumerator();
         }
 
+        public TimeColor[] ToArray()
+        {
+            return entries.ToArray();
+        }
+
         /// <summary>
         /// 時間色を追加します。
         /// </summary>
@@ -50,43 +53,50 @@ namespace Noctua.Models
         }
 
         /// <summary>
-        /// 指定の時間に対する色を取得します。
+        /// 配列で時間色を追加します。
         /// </summary>
-        /// <param name="time">時間 ([0, 1])。</param>
-        /// <returns>色。</returns>
-        public Vector3 GetColor(float time)
+        /// <param name="timeColors"></param>
+        public void AddColors(TimeColor[] timeColors)
         {
-            Vector3 result;
-            GetColor(time, out result);
-            return result;
+            if (timeColors == null) throw new ArgumentNullException("timeColors");
+
+            foreach (var timeColor in timeColors)
+                AddColor(timeColor);
         }
 
         /// <summary>
         /// 指定の時間に対する色を取得します。
         /// </summary>
         /// <param name="time">時間 ([0, 1])。</param>
-        /// <param name="result">色。</param>
-        public void GetColor(float time, out Vector3 result)
+        /// <returns>色。</returns>
+        public Vector3 GetColor(float time)
         {
             int baseIndex = 0;
-            for (baseIndex = 0; baseIndex < entries.Count; baseIndex++)
+            for (; baseIndex < entries.Count; baseIndex++)
             {
                 if (time < entries[baseIndex].Time) break;
             }
 
+            // TODO
+            //
+            // 適切なインデックスが見つからない場合は、
+            // 0 時を 24 時として処理を進められるはず。
+
             if (entries.Count <= baseIndex)
             {
-                result = Color.CornflowerBlue.ToVector3();
-                return;
+                // TODO
+                //
+                // デフォルト値が空色なのはおかしいのでは？
+
+                return Color.CornflowerBlue.ToVector3();
             }
 
             var index0 = MathHelper.Clamp(baseIndex - 1, 0, entries.Count);
-            var index1 = MathHelper.Clamp(baseIndex,     0, entries.Count);
+            var index1 = MathHelper.Clamp(baseIndex, 0, entries.Count);
 
             if (index0 == index1)
             {
-                result = entries[index1].Color;
-                return;
+                return entries[index1].Color;
             }
 
             var color0 = entries[index0].Color;
@@ -94,7 +104,11 @@ namespace Noctua.Models
             var time0 = entries[index0].Time;
             var time1 = entries[index1].Time;
             var amount = (time - time0) / (time1 - time0);
+
+            Vector3 result;
             Vector3.Lerp(ref color0, ref color1, amount, out result);
+
+            return result;
         }
 
         int FindInsertionIndex(float time)
@@ -102,7 +116,7 @@ namespace Noctua.Models
             for (int i = 0; i < entries.Count; i++)
             {
                 if (time < entries[i].Time) return i;
-                if (entries[i].Time == time) throw new ArgumentException("Time duplicated.");
+                if (entries[i].Time == time) throw new ArgumentException("Time is duplicated.", "time");
             }
             return entries.Count;
         }

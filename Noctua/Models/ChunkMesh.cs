@@ -13,6 +13,10 @@ namespace Noctua.Models
     {
         public Matrix World = Matrix.Identity;
 
+        ChunkMeshManager meshManager;
+
+        Chunk chunk;
+
         DeviceContext deviceContext;
 
         ChunkEffect chunkEffect;
@@ -33,16 +37,17 @@ namespace Noctua.Models
 
         public int IndexCount { get; private set; }
 
-        public int PrimitiveCount { get; private set; }
-
-        public ChunkMesh(DeviceContext deviceContext, string name, ChunkEffect chunkEffect)
+        public ChunkMesh(string name, ChunkMeshManager meshManager, Chunk chunk)
             : base(name)
         {
-            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
-            if (chunkEffect == null) throw new ArgumentNullException("chunkEffect");
+            if (meshManager == null) throw new ArgumentNullException("meshManager");
+            if (chunk == null) throw new ArgumentNullException("chunk");
 
-            this.deviceContext = deviceContext;
-            this.chunkEffect = chunkEffect;
+            this.meshManager = meshManager;
+            this.chunk = chunk;
+
+            deviceContext = meshManager.DeviceContext;
+            chunkEffect = meshManager.ChunkEffect;
 
             occlusionQuery = deviceContext.Device.CreateOcclusionQuery();
         }
@@ -60,17 +65,10 @@ namespace Noctua.Models
 
             occlusionQuery.Begin(deviceContext);
 
-            //----------------------------------------------------------------
-            // エフェクト
-
-            //chunkEffect.EnableOcclusionQueryTechnique();
-
-            //chunkEffect.World = World;
-            //chunkEffect.CurrentTechnique.Passes[0].Apply();
-
-            //----------------------------------------------------------------
-            // 描画
-
+            // オクルージョン モードで描画。
+            chunkEffect.Mode = ChunkEffectMode.Occlusion;
+            chunkEffect.World = World;
+            chunkEffect.Apply(deviceContext);
             DrawCore();
 
             occlusionQuery.End();
@@ -81,17 +79,11 @@ namespace Noctua.Models
         {
             if (Occluded) return;
 
-            //----------------------------------------------------------------
-            // エフェクト
-
-            //chunkEffect.ResolveCurrentTechnique();
-
-            //chunkEffect.World = World;
-            //chunkEffect.CurrentTechnique.Passes[0].Apply();
-
-            //----------------------------------------------------------------
-            // 描画
-
+            // デフォルト モードで描画。
+            chunkEffect.Mode = ChunkEffectMode.Default;
+            chunkEffect.World = World;
+            chunkEffect.Texture = chunk.Region.TileCatalog.TileMap;
+            chunkEffect.Apply(deviceContext);
             DrawCore();
         }
 
@@ -100,14 +92,12 @@ namespace Noctua.Models
             if (Occluded) return;
 
             var effectMatrices = effect as IEffectMatrices;
-            if (effectMatrices != null) effectMatrices.World = World;
+            if (effectMatrices != null)
+                effectMatrices.World = World;
 
-            //for (int i = 0; i < effect.CurrentTechnique.Passes.Count; i++)
-            //{
-            //    effect.CurrentTechnique.Passes[i].Apply();
-
-            //    DrawCore();
-            //}
+            // 指定のエフェクトで描画。
+            effect.Apply(deviceContext);
+            DrawCore();
         }
 
         public void SetVertices(VertexPositionNormalColorTexture[] vertices, int vertexCount)
@@ -150,7 +140,6 @@ namespace Noctua.Models
             if (indexCount < 0 || indices.Length < indexCount) throw new ArgumentOutOfRangeException("vertexCount");
 
             IndexCount = indexCount;
-            PrimitiveCount = indexCount / 3;
 
             if (indexCount != 0)
             {
@@ -167,9 +156,7 @@ namespace Noctua.Models
                     indexBuffer.Initialize(indexCount);
                 }
 
-                // TODO
-                // オプション指定のメソッドは？
-                //indexBuffer.SetData(deviceContext, indices, 0, indexCount, SetDataOptions.Discard);
+                indexBuffer.SetData(deviceContext, indices, 0, indexCount, SetDataOptions.Discard);
             }
             else
             {

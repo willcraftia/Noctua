@@ -8,19 +8,19 @@ using Libra;
 namespace Noctua.Models
 {
     /// <summary>
-    /// 時間と色の組を管理するクラスです。
+    /// 時間と色の組を管理する構造体です。
     /// </summary>
-    public sealed class TimeColor
+    public struct TimeColor
     {
         /// <summary>
-        /// 時間を取得または設定します。
+        /// 時間。
         /// </summary>
-        public float Time { get; set; }
+        public float Time;
 
         /// <summary>
-        /// 色を取得または設定します。
+        /// 色。
         /// </summary>
-        public Vector3 Color { get; set; }
+        public Vector3 Color;
 
         /// <summary>
         /// 指定の時間と色でインスタンスを生成します。

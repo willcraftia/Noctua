@@ -10,35 +10,13 @@ namespace Noctua.Models
 {
     public sealed class SceneSettings
     {
-        public const float DefaultSecondsPerDay = 10f;
+        public const float DefaultFogStart = 0.9f;
 
-        Vector3 midnightSunDirection = DefaultMidnightSunDirection;
+        public const float DefaultFogEnd = 1.0f;
 
-        Vector3 midnightMoonDirection = DefaultMidnightMoonDirection;
+        public const float DefaultSecondsPerDay = 10.0f;
 
-        Vector3 shadowColor = Vector3.Zero;
-
-        Vector3 sunRotationAxis;
-
-        Vector3 moonRotationAxis;
-
-        float initialFogStartScale = 0.9f;
-
-        float initialFogEndScale = 0.99f;
-
-        float secondsPerDay = DefaultSecondsPerDay;
-
-        float fixedSecondsPerDay;
-
-        float halfDaySeconds;
-
-        float inverseHalfDaySeconds;
-
-        bool initialized;
-
-        Vector3 sunDirection;
-
-        Vector3 moonDirection;
+        public const float DefaultFixedSecondsPerDay = 0.0f;
 
         public static Vector3 DefaultMidnightSunDirection
         {
@@ -50,6 +28,16 @@ namespace Noctua.Models
             }
         }
 
+        public static Vector3 DefaultSunlightDiffuseColor
+        {
+            get { return Vector3.One; }
+        }
+
+        public static Vector3 DefaultSunlightSpecularColor
+        {
+            get { return Vector3.Zero; }
+        }
+
         public static Vector3 DefaultMidnightMoonDirection
         {
             get
@@ -59,6 +47,49 @@ namespace Noctua.Models
                 return direction;
             }
         }
+
+        public static Vector3 DefaultMoonlightDiffuseColor
+        {
+            get { return Vector3.One; }
+        }
+
+        public static Vector3 DefaultMoonlightSpecularColor
+        {
+            get { return Vector3.Zero; }
+        }
+
+        public static Vector3 DefaultShadowColor
+        {
+            get { return Vector3.Zero; }
+        }
+
+        Vector3 midnightSunDirection = DefaultMidnightSunDirection;
+
+        Vector3 midnightMoonDirection = DefaultMidnightMoonDirection;
+
+        Vector3 shadowColor = DefaultShadowColor;
+
+        float fogStart = DefaultFogStart;
+
+        float fogEnd = DefaultFogEnd;
+
+        float secondsPerDay = DefaultSecondsPerDay;
+
+        float fixedSecondsPerDay = DefaultFixedSecondsPerDay;
+
+        Vector3 sunRotationAxis;
+
+        Vector3 moonRotationAxis;
+
+        float halfDaySeconds;
+
+        float inverseHalfDaySeconds;
+
+        bool initialized;
+
+        Vector3 sunDirection;
+
+        Vector3 moonDirection;
 
         public Vector3 MidnightSunDirection
         {
@@ -90,6 +121,32 @@ namespace Noctua.Models
             set { shadowColor = value; }
         }
 
+        public bool FogEnabled { get; set; }
+
+        // 遠クリップ面距離に対する割合
+        public float FogStart
+        {
+            get { return fogStart; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException("value");
+
+                fogStart = value;
+            }
+        }
+
+        // 遠クリップ面距離に対する割合
+        public float FogEnd
+        {
+            get { return fogEnd; }
+            set
+            {
+                if (value < 0) throw new ArgumentOutOfRangeException("value");
+
+                fogEnd = value;
+            }
+        }
+
         public Vector3 SunRotationAxis
         {
             get { return sunRotationAxis; }
@@ -107,32 +164,6 @@ namespace Noctua.Models
         public TimeColorCollection SkyColors { get; private set; }
 
         public TimeColorCollection AmbientLightColors { get; private set; }
-
-        public bool InitialFogEnabled { get; set; }
-
-        // FarPlaneDistance に対する割合
-        public float InitialFogStartScale
-        {
-            get { return initialFogStartScale; }
-            set
-            {
-                if (value < 0) throw new ArgumentOutOfRangeException("value");
-
-                initialFogStartScale = value;
-            }
-        }
-
-        // FarPlaneDistance に対する割合
-        public float InitialFogEndScale
-        {
-            get { return initialFogEndScale; }
-            set
-            {
-                if (value < 0) throw new ArgumentOutOfRangeException("value");
-
-                initialFogEndScale = value;
-            }
-        }
 
         public float SecondsPerDay
         {
@@ -184,43 +215,27 @@ namespace Noctua.Models
 
         public Vector3 CurrentAmbientLightColor { get; private set; }
 
-        public bool FogEnabled { get; set; }
-
-        public float FogStartScale { get; set; }
-
-        public float FogEndScale { get; set; }
-
         public SceneSettings()
         {
             Sunlight = new DirectionalLight("Sun");
             Sunlight.Direction = -DefaultMidnightSunDirection;
+            Sunlight.DiffuseColor = DefaultSunlightDiffuseColor;
+            Sunlight.SpecularColor = DefaultSunlightSpecularColor;
 
             Moonlight = new DirectionalLight("Moon");
             Moonlight.Direction = -DefaultMidnightMoonDirection;
+            Moonlight.DiffuseColor = DefaultMoonlightDiffuseColor;
+            Moonlight.SpecularColor = DefaultMoonlightSpecularColor;
 
             SkyColors = new TimeColorCollection();
             AmbientLightColors = new TimeColorCollection();
         }
 
-        public void Initialize()
-        {
-            if (initialized) return;
-
-            InitializeSunRotationAxis();
-            InitializeMoonRotationAxis();
-
-            FogEnabled = InitialFogEnabled;
-            FogStartScale = initialFogStartScale;
-            FogEndScale = initialFogEndScale;
-
-            halfDaySeconds = secondsPerDay * 0.5f;
-            inverseHalfDaySeconds = 1 / halfDaySeconds;
-
-            initialized = true;
-        }
-
         public void Update(GameTime gameTime)
         {
+            if (!initialized)
+                Initialize();
+
             //----------------------------------------------------------------
             // 0 時からの経過時間 (ゲーム内での一日の経過時間)
 
@@ -248,6 +263,17 @@ namespace Noctua.Models
             // 空の色
 
             UpdateSkyColor();
+        }
+
+        void Initialize()
+        {
+            InitializeSunRotationAxis();
+            InitializeMoonRotationAxis();
+
+            halfDaySeconds = secondsPerDay * 0.5f;
+            inverseHalfDaySeconds = 1 / halfDaySeconds;
+
+            initialized = true;
         }
 
         void UpdateSun()
@@ -297,15 +323,15 @@ namespace Noctua.Models
         void InitializeSunRotationAxis()
         {
             // 0 時での太陽の位置から回転軸を算出。
-            var right = Vector3.Cross(midnightSunDirection, Vector3.Up);
-            sunRotationAxis = Vector3.Cross(right, midnightSunDirection);
+            var left = Vector3.Cross(midnightSunDirection, Vector3.Up);
+            sunRotationAxis = Vector3.Cross(left, midnightSunDirection);
         }
 
         void InitializeMoonRotationAxis()
         {
             // 0 時での月の位置から回転軸を算出。
-            var right = Vector3.Cross(midnightMoonDirection, Vector3.Up);
-            moonRotationAxis = Vector3.Cross(right, midnightMoonDirection);
+            var left = Vector3.Cross(midnightMoonDirection, Vector3.Up);
+            moonRotationAxis = Vector3.Cross(left, midnightMoonDirection);
         }
     }
 }

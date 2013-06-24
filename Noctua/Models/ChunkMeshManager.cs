@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading;
 using Libra;
 using Libra.Collections;
+using Libra.Graphics;
 
 #endregion
 
@@ -201,6 +202,16 @@ namespace Noctua.Models
         int updateBufferCountPerFrame = 16;
 
         /// <summary>
+        /// チャンク エフェクトを取得します。
+        /// </summary>
+        public ChunkEffect ChunkEffect { get; private set; }
+
+        /// <summary>
+        /// デバイス コンテキストを取得します。
+        /// </summary>
+        public DeviceContext DeviceContext { get; private set; }
+
+        /// <summary>
         /// 頂点の総数を取得します。
         /// </summary>
         public int TotalVertexCount { get; private set; }
@@ -248,6 +259,9 @@ namespace Noctua.Models
             this.chunkManager = chunkManager;
             this.concurrencyLevel = concurrencyLevel;
             this.updateBufferCountPerFrame = updateBufferCountPerFrame;
+
+            DeviceContext = chunkManager.DeviceContext;
+            ChunkEffect = new ChunkEffect(DeviceContext.Device);
 
             buildVertexRequestPool = new ConcurrentPool<BuildVertexRequest>(() => { return new BuildVertexRequest(); });
             buildVertexRequests = new ConcurrentPriorityQueue<BuildVertexRequest>(new BuildVertexRequestComparer());
@@ -349,10 +363,14 @@ namespace Noctua.Models
             buildVertexRequestPool.Return(request);
         }
 
-        public void Update()
+        public void Update(Matrix view, Matrix projection)
         {
             ProcessBuildVertexRequests();
             ProcessUpdateBufferRequests();
+
+            // エフェクトのカメラ設定を更新。
+            ChunkEffect.View = view;
+            ChunkEffect.Projection = projection;
         }
 
         void ProcessUpdateBufferRequests()
@@ -415,9 +433,6 @@ namespace Noctua.Models
             Matrix world;
             Matrix.CreateTranslation(ref position, out world);
 
-            // メッシュに設定するエフェクト。
-            var effect = chunk.Region.ChunkEffect;
-
             var vertices = verticesBuilder.GetVertices(segmentX, segmentY, segmentZ, translucence);
 
             var mesh = chunk.GetMesh(segmentX, segmentY, segmentZ, translucence);
@@ -445,7 +460,7 @@ namespace Noctua.Models
             {
                 if (mesh == null)
                 {
-                    mesh = CreateMesh(effect, false, segmentX, segmentY, segmentZ);
+                    mesh = CreateMesh(chunk, false, segmentX, segmentY, segmentZ);
                     chunk.SetMesh(segmentX, segmentY, segmentZ, translucence, mesh);
                 }
 
@@ -467,13 +482,14 @@ namespace Noctua.Models
         /// <summary>
         /// チャンク メッシュを生成します。
         /// </summary>
-        /// <param name="effect">チャンクのエフェクト。</param>
+        /// <param name="chunk">チャンク。</param>
         /// <param name="translucent">
         /// true (半透明の場合)、false (それ以外の場合)。
         /// </param>
         /// <returns>チャンク メッシュ。</returns>
-        ChunkMesh CreateMesh(ChunkEffect effect, bool translucent, int segmentX, int segmentY, int segmentZ)
+        ChunkMesh CreateMesh(Chunk chunk, bool translucent, int segmentX, int segmentY, int segmentZ)
         {
+            // メッシュのオブジェクト名。
             meshNameBuilder.Length = 0;
             meshNameBuilder.Append((translucent) ? "TranslucentMesh" : "OpaqueMesh");
             meshNameBuilder.Append('_').AppendNumber(segmentX);
@@ -482,8 +498,8 @@ namespace Noctua.Models
 
             var name = meshNameBuilder.ToString();
 
-            // シーン マネージャと同じコンテキストで生成。
-            var mesh = new ChunkMesh(chunkManager.SceneManager.DeviceContext, name, effect);
+            // メッシュ。
+            var mesh = new ChunkMesh(name, this, chunk);
             mesh.Translucent = translucent;
 
             MeshCount++;
@@ -491,12 +507,12 @@ namespace Noctua.Models
             return mesh;
         }
 
-        internal void DisposeMesh(ChunkMesh chunkMesh)
+        internal void RemoveMesh(ChunkMesh mesh)
         {
-            TotalVertexCount -= chunkMesh.VertexCount;
-            TotalIndexCount -= chunkMesh.IndexCount;
+            TotalVertexCount -= mesh.VertexCount;
+            TotalIndexCount -= mesh.IndexCount;
 
-            chunkMesh.Dispose();
+            mesh.Dispose();
 
             MeshCount--;
         }

@@ -1,16 +1,18 @@
 ﻿#region Using
 
 using System;
+using System.ComponentModel;
 using Musca;
 
 #endregion
 
 namespace Noctua.Models
 {
-    public sealed class TerrainDensitySelect : INoiseSource
+    public sealed class SelectTerrainDensity : NamedObject, INoiseSource
     {
         INoiseSource source;
 
+        [DefaultValue(null)]
         public INoiseSource Source
         {
             get { return source; }
