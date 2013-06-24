@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.ComponentModel;
 using Libra.Graphics.Toolkit;
 
 #endregion
@@ -20,35 +19,20 @@ namespace Noctua.Models
             0.25f, 0.5f, 1.0f
         };
 
-        public const int DefaultSplitCount = 3;
+        int splitCount = 3;
 
-        public const float DefaultSplitLambda = 0.5f;
+        float splitLambda = 0.5f;
 
-        public const int DefaultShadowMapResolution = 1;
+        int shadowMapResolution = 1;
 
-        public const int DefaultOcclusionMapResolution = 2;
+        int occlusionMapResolution = 2;
 
-        public const int DefaultOcclusionMapBlurRadius = 3;
+        int occlusionMapBlurRadius = 3;
 
-        public const float DefaultOcclusionMapBlurSigma = 1.0f;
+        float occlusionMapBlurSigma = 1.0f;
 
-        public const float DefaultDepthBias = 0.0001f;
+        float depthBias = 0.0001f;
 
-        int splitCount = DefaultSplitCount;
-
-        float splitLambda = DefaultSplitLambda;
-
-        int shadowMapResolution = DefaultShadowMapResolution;
-
-        int occlusionMapResolution = DefaultOcclusionMapResolution;
-
-        int occlusionMapBlurRadius = DefaultOcclusionMapBlurRadius;
-
-        float occlusionMapBlurSigma = DefaultOcclusionMapBlurSigma;
-
-        float depthBias = DefaultDepthBias;
-
-        [DefaultValue(DefaultSplitCount)]
         public int SplitCount
         {
             get { return splitCount; }
@@ -61,7 +45,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultSplitLambda)]
         public float SplitLambda
         {
             get { return splitLambda; }
@@ -73,7 +56,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultShadowMapResolution)]
         public int ShadowMapResolution
         {
             get { return shadowMapResolution; }
@@ -86,7 +68,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultOcclusionMapResolution)]
         public int OcclusionMapResolution
         {
             get { return occlusionMapResolution; }
@@ -99,7 +80,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultOcclusionMapBlurRadius)]
         public int OcclusionMapBlurRadius
         {
             get { return occlusionMapBlurRadius; }
@@ -112,7 +92,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultOcclusionMapBlurSigma)]
         public float OcclusionMapBlurSigma
         {
             get { return occlusionMapBlurSigma; }
@@ -124,7 +103,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultDepthBias)]
         public float DepthBias
         {
             get { return depthBias; }

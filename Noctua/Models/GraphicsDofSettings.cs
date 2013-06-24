@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.ComponentModel;
 using Libra.Graphics.Toolkit;
 
 #endregion
@@ -15,19 +14,12 @@ namespace Noctua.Models
             0.25f, 0.5f, 1.0f
         };
 
-        public const int DefaultBlurResolution = 2;
+        int blurResolution = 2;
 
-        public const int DefaultBlurRadius = GaussianFilter.DefaultRadius;
+        int blurRadius = GaussianFilter.DefaultRadius;
 
-        public const float DefaultBlurSigma = GaussianFilter.DefaultSigma;
+        float blurSigma = GaussianFilter.DefaultSigma;
 
-        int blurResolution = DefaultBlurResolution;
-
-        int blurRadius = DefaultBlurRadius;
-
-        float blurSigma = DefaultBlurSigma;
-
-        [DefaultValue(DefaultBlurResolution)]
         public int BlurResolution
         {
             get { return blurResolution; }
@@ -39,7 +31,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultBlurRadius)]
         public int BlurRadius
         {
             get { return blurRadius; }
@@ -52,7 +43,6 @@ namespace Noctua.Models
             }
         }
 
-        [DefaultValue(DefaultBlurSigma)]
         public float BlurSigma
         {
             get { return blurSigma; }

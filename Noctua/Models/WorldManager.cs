@@ -87,7 +87,7 @@ namespace Noctua.Models
 
             var minChunkSize = Math.Min(chunkSettings.ChunkSize.X, chunkSettings.ChunkSize.Y);
             minChunkSize = Math.Min(minChunkSize, chunkSettings.ChunkSize.Z);
-            defaultCamera.FarClipDistance = (chunkSettings.MaxActiveVolume - 1) * minChunkSize;
+            defaultCamera.FarClipDistance = (chunkSettings.MaxActiveRange - 1) * minChunkSize;
 
             // 念のためここで一度更新。
             defaultCamera.Update();

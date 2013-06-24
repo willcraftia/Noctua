@@ -22,20 +22,18 @@ namespace Noctua.Serialization
                 ChunkSize = definition.ChunkSize,
                 VertexBuildConcurrencyLevel = definition.VertexBuildConcurrencyLevel,
                 UpdateBufferCountPerFrame = definition.UpdateBufferCountPerFrame,
-                MinActiveVolume = definition.MinActiveRange,
-                MaxActiveVolume = definition.MaxActiveRange,
-                ChunkStoreType = definition.ChunkStoreType
+                MinActiveRange = definition.MinActiveRange,
+                MaxActiveRange = definition.MaxActiveRange,
             };
 
-            settings.PartitionManager.ClusterSize = definition.ClusterSize;
+            settings.PartitionManager.PartitionSize = definition.ChunkSize.ToVector3();
             settings.PartitionManager.ActivationCapacity = definition.ActivationCapacity;
             settings.PartitionManager.PassivationCapacity = definition.PassivationCapacity;
             settings.PartitionManager.PassivationSearchCapacity = definition.PassivationSearchCapacity;
             settings.PartitionManager.PriorActiveDistance = definition.PriorActiveDistance;
-
-            settings.PartitionManager.PartitionSize = definition.ChunkSize.ToVector3();
-            settings.PartitionManager.MinActiveVolume = new DefaultActiveVolume(settings.MinActiveVolume);
-            settings.PartitionManager.MaxActiveVolume = new DefaultActiveVolume(settings.MaxActiveVolume);
+            settings.PartitionManager.ClusterSize = definition.ClusterSize;
+            settings.PartitionManager.MinActiveVolume = new DefaultActiveVolume { Radius = definition.MinActiveRange };
+            settings.PartitionManager.MaxActiveVolume = new DefaultActiveVolume { Radius = definition.MaxActiveRange };
 
             return settings;
         }
@@ -49,14 +47,15 @@ namespace Noctua.Serialization
                 ChunkSize = settings.ChunkSize,
                 VertexBuildConcurrencyLevel = settings.VertexBuildConcurrencyLevel,
                 UpdateBufferCountPerFrame = settings.UpdateBufferCountPerFrame,
-                MinActiveRange = settings.MinActiveVolume,
-                MaxActiveRange = settings.MaxActiveVolume,
-                ClusterSize = settings.PartitionManager.ClusterSize,
+                MinActiveRange = settings.MinActiveRange,
+                MaxActiveRange = settings.MaxActiveRange,
+                ChunkStoreType = settings.ChunkStoreType,
+
                 ActivationCapacity = settings.PartitionManager.ActivationCapacity,
                 PassivationCapacity = settings.PartitionManager.PassivationCapacity,
                 PassivationSearchCapacity = settings.PartitionManager.PassivationSearchCapacity,
                 PriorActiveDistance = settings.PartitionManager.PriorActiveDistance,
-                ChunkStoreType = settings.ChunkStoreType
+                ClusterSize = settings.PartitionManager.ClusterSize
             };
 
             WriteObject(stream, definition);

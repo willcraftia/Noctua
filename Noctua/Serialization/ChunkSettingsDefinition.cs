@@ -8,7 +8,7 @@ using Noctua.Models;
 
 namespace Noctua.Serialization
 {
-    public struct ChunkSettingsDefinition
+    public sealed class ChunkSettingsDefinition
     {
         public IntVector3 ChunkSize;
 
@@ -20,7 +20,7 @@ namespace Noctua.Serialization
 
         public int MaxActiveRange;
 
-        public IntVector3 ClusterSize;
+        public ChunkStoreType ChunkStoreType;
 
         public int ActivationCapacity;
 
@@ -30,6 +30,6 @@ namespace Noctua.Serialization
 
         public float PriorActiveDistance;
 
-        public ChunkStoreType ChunkStoreType;
+        public IntVector3 ClusterSize;
     }
 }

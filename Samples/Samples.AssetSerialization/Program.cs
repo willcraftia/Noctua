@@ -1087,20 +1087,27 @@ namespace Samples.AssetSerialization
 
             Console.WriteLine("チャンク定義");
             {
+                var settings = new ChunkSettings
+                {
+                    MinActiveRange = 8,
+                    MaxActiveRange = 9
+                };
                 var definition = new ChunkSettingsDefinition
                 {
-                    ChunkSize = new IntVector3(16),
-                    VertexBuildConcurrencyLevel = 10,
-                    UpdateBufferCountPerFrame = 16,
-                    MinActiveRange = 16,
-                    MaxActiveRange = 17,
-                    ClusterSize = new IntVector3(8),
-                    ActivationCapacity = 10,
-                    PassivationCapacity = 10,
-                    PassivationSearchCapacity = 200,
-                    PriorActiveDistance = 6 * 16,
-                    ChunkStoreType = ChunkStoreType.None
+                    ChunkSize = settings.ChunkSize,
+                    VertexBuildConcurrencyLevel = settings.VertexBuildConcurrencyLevel,
+                    UpdateBufferCountPerFrame = settings.UpdateBufferCountPerFrame,
+                    MinActiveRange = settings.MinActiveRange,
+                    MaxActiveRange = settings.MaxActiveRange,
+                    ChunkStoreType = settings.ChunkStoreType,
+
+                    ActivationCapacity = settings.PartitionManager.ActivationCapacity,
+                    PassivationCapacity = settings.PartitionManager.PassivationCapacity,
+                    PassivationSearchCapacity = settings.PartitionManager.PassivationSearchCapacity,
+                    PriorActiveDistance = settings.PartitionManager.PriorActiveDistance,
+                    ClusterSize = settings.PartitionManager.ClusterSize
                 };
+                
                 SerializeAndDeserialize<ChunkSettingsDefinition>("ChunkSettings", definition);
             }
             Console.WriteLine();
@@ -1112,9 +1119,7 @@ namespace Samples.AssetSerialization
             Console.WriteLine("シーン設定定義");
             {
                 var settings = new SceneSettings();
-                var definition = SceneSettingsDefinition.FromSceneSettings(settings);
-
-                definition.SkyColors = new TimeColor[]
+                settings.SkyColors.AddColors(new TimeColor[]
                 {
                     new TimeColor(0,        Color.Black.ToVector3()),
                     new TimeColor(0.15f,    Color.Black.ToVector3()),
@@ -1123,15 +1128,46 @@ namespace Samples.AssetSerialization
                     new TimeColor(0.75f,    Color.CornflowerBlue.ToVector3()),
                     new TimeColor(0.84f,    Color.Black.ToVector3()),
                     new TimeColor(1,        Color.Black.ToVector3())
-                };
-                definition.AmbientLightColors = new TimeColor[]
+                });
+                settings.AmbientLightColors.AddColors(new TimeColor[]
                 {
                     new TimeColor(0,        new Vector3(0.1f)),
                     new TimeColor(0.15f,    new Vector3(0.1f)),
                     new TimeColor(0.5f,     new Vector3(1)),
                     new TimeColor(0.84f,    new Vector3(0.1f)),
                     new TimeColor(1,        new Vector3(0.1f))
+                });
+
+                var definition = new SceneSettingsDefinition
+                {
+                    MidnightSunDirection = settings.MidnightSunDirection,
+                    MidnightMoonDirection = settings.MidnightMoonDirection,
+                    ShadowColor = settings.ShadowColor,
+                    Sunlight = new DirectionalLightDefinition
+                    {
+                        Enabled = settings.Sunlight.Enabled,
+                        DiffuseColor = settings.Sunlight.DiffuseColor,
+                        SpecularColor = settings.Sunlight.SpecularColor
+                    },
+                    Moonlight = new DirectionalLightDefinition
+                    {
+                        Enabled = settings.Moonlight.Enabled,
+                        DiffuseColor = settings.Moonlight.DiffuseColor,
+                        SpecularColor = settings.Moonlight.SpecularColor
+                    },
+                    FogEnabled = settings.FogEnabled,
+                    FogStart = settings.FogStart,
+                    FogEnd = settings.FogEnd,
+                    SecondsPerDay = settings.SecondsPerDay,
+                    TimeStopped = settings.TimeStopped,
+                    FixedSecondsPerDay = settings.FixedSecondsPerDay
                 };
+
+                if (settings.SkyColors.Count != 0)
+                    definition.SkyColors = settings.SkyColors.ToArray();
+
+                if (settings.AmbientLightColors.Count != 0)
+                    definition.AmbientLightColors = settings.AmbientLightColors.ToArray();
 
                 SerializeAndDeserialize<SceneSettingsDefinition>("SceneSettings", definition);
             }

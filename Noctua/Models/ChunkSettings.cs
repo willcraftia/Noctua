@@ -10,11 +10,11 @@ namespace Noctua.Models
 {
     public sealed class ChunkSettings
     {
-        IntVector3 chunkSize;
+        IntVector3 chunkSize = new IntVector3(16);
 
-        int vertexBuildConcurrencyLevel;
+        int vertexBuildConcurrencyLevel = 2;
 
-        int verticesBuilderCount;
+        int updateBufferCountPerFrame = 32;
 
         int minActiveRange = 10;
 
@@ -54,16 +54,18 @@ namespace Noctua.Models
 
         public int UpdateBufferCountPerFrame
         {
-            get { return verticesBuilderCount; }
+            get { return updateBufferCountPerFrame; }
             set
             {
                 if (value < 1) throw new ArgumentOutOfRangeException("value");
 
-                verticesBuilderCount = value;
+                updateBufferCountPerFrame = value;
             }
         }
 
-        public int MinActiveVolume
+        public ChunkStoreType ChunkStoreType { get; set; }
+
+        public int MinActiveRange
         {
             get { return minActiveRange; }
             set
@@ -74,7 +76,7 @@ namespace Noctua.Models
             }
         }
 
-        public int MaxActiveVolume
+        public int MaxActiveRange
         {
             get { return maxActiveRange; }
             set
@@ -84,8 +86,6 @@ namespace Noctua.Models
                 maxActiveRange = value;
             }
         }
-
-        public ChunkStoreType ChunkStoreType { get; set; }
 
         public PartitionManager.Settings PartitionManager { get; private set; }
 

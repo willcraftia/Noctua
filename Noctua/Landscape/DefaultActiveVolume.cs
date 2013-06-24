@@ -24,24 +24,18 @@ namespace Noctua.Landscape
         int radiusSquared;
 
         /// <summary>
-        /// 領域の半径を取得します。
+        /// 領域の半径を取得または設定します。
         /// </summary>
         public int Radius
         {
             get { return radius; }
-        }
+            set
+            {
+                if (value < 1) throw new ArgumentOutOfRangeException("value");
 
-        /// <summary>
-        /// インスタンスを生成します。
-        /// </summary>
-        /// <param name="radius">領域の半径。</param>
-        public DefaultActiveVolume(int radius)
-        {
-            if (radius < 0) throw new ArgumentOutOfRangeException("radius");
-
-            this.radius = radius;
-
-            radiusSquared = radius * radius;
+                radius = value;
+                radiusSquared = radius * radius;
+            }
         }
 
         public bool Contains(IntVector3 eyePosition, IntVector3 point)

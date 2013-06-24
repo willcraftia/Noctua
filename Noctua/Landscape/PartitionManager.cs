@@ -25,9 +25,9 @@ namespace Noctua.Landscape
 
             IntVector3 clusterSize = new IntVector3(8);
 
-            int activationCapacity = 3;
+            int activationCapacity = 2;
 
-            int passivationCapacity = 10;
+            int passivationCapacity = 20;
 
             int passivationSearchCapacity = 200;
 
@@ -165,6 +165,11 @@ namespace Noctua.Landscape
         IActiveVolume maxActiveVolume;
 
         /// <summary>
+        /// 最小アクティブ領域。
+        /// </summary>
+        IActiveVolume minActiveVolume;
+
+        /// <summary>
         /// 視点位置 (パーティション空間)。
         /// </summary>
         IntVector3 eyePositionPartition;
@@ -234,6 +239,10 @@ namespace Noctua.Landscape
             get { return passivatingPartitions.Count; }
         }
 
+        static readonly DefaultActiveVolume DefaultMaxActiveVolume = new DefaultActiveVolume { Radius = 8 };
+
+        static readonly DefaultActiveVolume DefaultMinActiveVolume = new DefaultActiveVolume { Radius = 4 };
+
         /// <summary>
         /// インスタンスを生成します。
         /// 指定する設定は、パーティション マネージャのインスタンス化後に外部から変更しても反映されません。
@@ -255,9 +264,9 @@ namespace Noctua.Landscape
             activatingParitions = new ConcurrentDictionary<IntVector3, Partition>(activationCapacity, activationCapacity);
             passivatingPartitions = new ConcurrentDictionary<IntVector3, Partition>(passivationCapacity, passivationCapacity);
 
-            maxActiveVolume = settings.MaxActiveVolume ?? new DefaultActiveVolume(8);
-
-            var minActiveVolume = settings.MinActiveVolume ?? new DefaultActiveVolume(4);
+            maxActiveVolume = settings.MaxActiveVolume ?? DefaultMaxActiveVolume;
+            minActiveVolume = settings.MinActiveVolume ?? DefaultMinActiveVolume;
+            
             activationCandidateFinder = new ActivationCandidateFinder(this, minActiveVolume, settings.PriorActiveDistance);
 
             activatePartitionAction = new WaitCallback(ActivatePartition);
