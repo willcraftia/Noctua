@@ -145,6 +145,6 @@
 	<FogStart>0.9</FogStart>
 	<FogEnd>1</FogEnd>
 	<SecondsPerDay>10</SecondsPerDay>
-	<TimeStopped>false</TimeStopped>
-	<FixedSecondsPerDay>0</FixedSecondsPerDay>
+	<TimeStopped>true</TimeStopped>
+	<FixedSecondsPerDay>5</FixedSecondsPerDay>
 </SceneSettingsDefinition>
