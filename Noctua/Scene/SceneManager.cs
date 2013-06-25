@@ -414,7 +414,7 @@ namespace Noctua.Scene
             sceneMapRenderTarget.MipLevels = backBuffer.MipLevels;
             sceneMapRenderTarget.MultisampleCount = backBuffer.MultisampleCount;
             sceneMapRenderTarget.DepthFormat = backBuffer.DepthFormat;
-            sceneMapRenderTarget.RenderTargetUsage = RenderTargetUsage.Preserve;
+            //sceneMapRenderTarget.RenderTargetUsage = RenderTargetUsage.Preserve;
             sceneMapRenderTarget.Initialize();
 
             // エフェクト
@@ -513,8 +513,10 @@ namespace Noctua.Scene
             // パーティクル
             //
 
-            if (0 < ParticleSystems.Count)
-                DrawParticles(gameTime);
+            // TODO
+
+            //if (0 < ParticleSystems.Count)
+            //    DrawParticles(gameTime);
 
             //
             // ポスト プロセス
@@ -538,57 +540,6 @@ namespace Noctua.Scene
             opaqueObjects.Clear();
             translucentObjects.Clear();
             shadowCasters.Clear();
-        }
-
-        public void UpdateEffect(IEffect effect)
-        {
-            var matrices = effect as IEffectMatrices;
-            if (matrices != null)
-            {
-                matrices.View = activeCamera.View;
-                matrices.Projection = activeCamera.Projection;
-            }
-
-            // TODO
-            //
-            // 当面は不要だが、汎用性を考える場合には考慮が必要。
-            // なお、汎用性を考える場合、単純にインタフェースへキャストして値を設定するのではなく、
-            // ストラテジ パターンを用いて振る舞いをクラス外部から変更できるようにすべき。
-
-            //var lights = effect as IEffectLights;
-            //if (lights != null)
-            //{
-            //    lights.AmbientLightColor = ambientLightColor;
-
-            //    if (activeDirectionalLight != null && activeDirectionalLight.Enabled)
-            //    {
-            //        lights.DirectionalLight0.Enabled = true;
-            //        lights.DirectionalLight0.Direction = activeDirectionalLight.Direction;
-            //        lights.DirectionalLight0.DiffuseColor = activeDirectionalLight.DiffuseColor;
-            //        lights.DirectionalLight0.SpecularColor = activeDirectionalLight.SpecularColor;
-            //    }
-            //    else
-            //    {
-            //        lights.DirectionalLight0.Enabled = false;
-            //        lights.DirectionalLight0.Direction = Vector3.Down;
-            //        lights.DirectionalLight0.DiffuseColor = Vector3.Zero;
-            //        lights.DirectionalLight0.SpecularColor = Vector3.Zero;
-            //    }
-            //}
-
-            // フォグはポストプロセスで対応する。
-
-            //var fog = effect as IEffectFog;
-            //if (fog != null)
-            //{
-            //    if (FogEnabled)
-            //    {
-            //        fog.FogStart = FogStart;
-            //        fog.FogEnd = FogEnd;
-            //        fog.FogColor = fogColor;
-            //    }
-            //    fog.FogEnabled = FogEnabled;
-            //}
         }
 
         void CollectObjects(Octree octree)
@@ -771,8 +722,6 @@ namespace Noctua.Scene
 
         void DrawScene()
         {
-            DeviceContext.DepthStencilState = DepthStencilState.Default;
-
             DeviceContext.SetRenderTarget(sceneMapRenderTarget);
             DeviceContext.Clear(new Vector4(BackgroundColor, 1));
 
@@ -785,6 +734,8 @@ namespace Noctua.Scene
             // どこでも良い気はするけど。
             // なお、MRT ならば深度と法線も同時に描画するため、ここで良い気もする。
 
+            // オクルージョン クエリでは深度ステンシルへ書き込まない。
+            DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
             DeviceContext.BlendState = ColorWriteDisable;
 
             for (int i = 0; i < opaqueObjects.Count; i++)
@@ -797,6 +748,7 @@ namespace Noctua.Scene
             // 不透明オブジェクトの描画
             //
 
+            DeviceContext.DepthStencilState = DepthStencilState.Default;
             DeviceContext.BlendState = BlendState.Opaque;
 
             for (int i = 0; i < opaqueObjects.Count; i++)
@@ -839,6 +791,11 @@ namespace Noctua.Scene
             //
             // スカイ スフィア
             //
+
+            //foreach (var obj in skySphereNode.Objects)
+            //{
+            //    if (obj.Visible) obj.Draw();
+            //}
 
             DeviceContext.SetRenderTarget(null);
         }
