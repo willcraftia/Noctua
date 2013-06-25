@@ -106,7 +106,7 @@ namespace Samples.BlockWorldGame
             const float scale = 0.2f;
             textureDisplay.TextureWidth = (int) (WindowWidth * scale);
             textureDisplay.TextureHeight = (int) (WindowHeight * scale);
-            //textureDisplay.Visible = false;
+            textureDisplay.Visible = false;
             //textureDisplay.Visible = true;
             Components.Add(textureDisplay);
 
