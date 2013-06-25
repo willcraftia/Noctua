@@ -185,7 +185,8 @@ namespace Noctua.Models
 
             Mode = ChunkEffectMode.Default;
 
-            dirtyFlags = DirtyFlags.ConstantBufferPerObjectVS;
+            dirtyFlags = DirtyFlags.ConstantBufferPerObjectVS |
+                DirtyFlags.ConstantBufferPerScenePS;
         }
 
         public void Apply(DeviceContext context)
