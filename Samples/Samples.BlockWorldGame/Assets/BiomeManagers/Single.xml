@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Bundle>
+	<Modules>
+		<Module Name="Target" Type="SingleBiomeManager">
+			<Properties>
+				<Property Name="Biome" Value="../Biomes/Default.json" />
+			</Properties>
+		</Module>
+	</Modules>
+</Bundle>

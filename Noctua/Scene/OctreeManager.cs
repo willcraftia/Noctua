@@ -36,7 +36,7 @@ namespace Noctua.Scene
         public void Add(SceneNode node)
         {
             Vector3 center;
-            node.BoxWorld.GetCenter(out center);
+            node.Box.GetCenter(out center);
 
             var rootPositionGrid = new IntVector3
             {
@@ -84,7 +84,7 @@ namespace Noctua.Scene
             ContainmentType containmentType;
 
             Vector3 center;
-            node.BoxWorld.GetCenter(out center);
+            node.Box.GetCenter(out center);
 
             // ノードの中心がルート八分木に含まれているか否か。
             node.Octree.Root.Box.Contains(ref center, out containmentType);
@@ -97,7 +97,7 @@ namespace Noctua.Scene
             }
 
             // ノードの境界ボックスが現在の八分木に含まれているか否か。
-            node.Octree.Box.Contains(ref node.BoxWorld, out containmentType);
+            node.Octree.Box.Contains(ref node.Box, out containmentType);
             if (containmentType != ContainmentType.Contains)
             {
                 // 削除してから追加。
@@ -183,7 +183,7 @@ namespace Noctua.Scene
         void Add(SceneNode node, Octree root)
         {
             ContainmentType containmentType;
-            root.Box.Contains(ref node.BoxWorld, out containmentType);
+            root.Box.Contains(ref node.Box, out containmentType);
             if (containmentType != ContainmentType.Contains)
             {
                 // ルートにすら含まれない場合は、ルートへ強制登録。
@@ -198,7 +198,7 @@ namespace Noctua.Scene
 
         void Add(SceneNode node, Octree octree, int depth)
         {
-            if (depth < MaxDepth && octree.IsTwiceSize(ref node.BoxWorld))
+            if (depth < MaxDepth && octree.IsTwiceSize(ref node.Box))
             {
                 // 指定された八分木のサイズがノードの二倍以上ならば、
                 // 子に対してノードを追加。
@@ -206,7 +206,7 @@ namespace Noctua.Scene
                 int x;
                 int y;
                 int z;
-                octree.GetChildIndex(ref node.BoxWorld, out x, out y, out z);
+                octree.GetChildIndex(ref node.Box, out x, out y, out z);
 
                 if (octree[x, y, z] == null)
                 {

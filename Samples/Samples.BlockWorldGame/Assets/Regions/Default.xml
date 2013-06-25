@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Region>
+	<Name>Default</Name>
+	<Box>
+		<Min>
+			<X>-128</X>
+			<Y>0</Y>
+			<Z>-128</Z>
+		</Min>
+		<Max>
+			<X>128</X>
+			<Y>16</Y>
+			<Z>128</Z>
+		</Max>
+	</Box>
+	<TileCatalog>../TileCatalogs/Default.json</TileCatalog>
+	<BlockCatalog>../BlockCatalogs/Default.json</BlockCatalog>
+	<BiomeManager>../BiomeManagers/Single.json</BiomeManager>
+	<ChunkProcedures>
+		<Procedure>../ChunkProcedures/NoiseTerrain.json</Procedure>
+	</ChunkProcedures>
+</Region>

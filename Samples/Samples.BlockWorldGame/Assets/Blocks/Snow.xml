@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Block>
+	<Name>Snow</Name>
+	<Mesh>../Meshes/Cube.json</Mesh>
+	<TopTile>../Tiles/Snow.json</TopTile>
+	<BottomTile>../Tiles/Snow.json</BottomTile>
+	<FrontTile>../Tiles/Snow.json</FrontTile>
+	<BackTile>../Tiles/Snow.json</BackTile>
+	<LeftTile>../Tiles/Snow.json</LeftTile>
+	<RightTile>../Tiles/Snow.json</RightTile>
+	<Fluid>false</Fluid>
+	<ShadowCasting>true</ShadowCasting>
+	<Shape>Cube</Shape>
+	<Mass>1</Mass>
+	<StaticFriction>0.5</StaticFriction>
+	<DynamicFriction>0.5</DynamicFriction>
+	<Restitution>0.5</Restitution>
+</Block>

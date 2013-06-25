@@ -38,8 +38,8 @@ namespace Noctua.Scene
             {
                 float d1;
                 float d2;
-                Vector3.DistanceSquared(ref EyePosition, ref o1.PositionWorld, out d1);
-                Vector3.DistanceSquared(ref EyePosition, ref o2.PositionWorld, out d2);
+                Vector3.DistanceSquared(ref EyePosition, ref o1.Position, out d1);
+                Vector3.DistanceSquared(ref EyePosition, ref o2.Position, out d2);
 
                 if (d1 == d2) return 0;
                 return (d1 < d2) ? -1 : 1;
@@ -624,7 +624,7 @@ namespace Noctua.Scene
                     }
 
                     // シーン領域へ描画オブジェクト領域を追加。
-                    sceneBox.Merge(ref obj.BoxWorld);
+                    sceneBox.Merge(ref obj.Box);
                 }
             }
         }

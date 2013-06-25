@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Tile>
+	<Name>Grass Bottom</Name>
+	<Texture>GrassBottom.png</Texture>
+	<Translucent>false</Translucent>
+</Tile>

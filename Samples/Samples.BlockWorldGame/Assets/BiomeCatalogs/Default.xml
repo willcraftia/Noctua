@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BiomeCatalog>
+	<Name>Default</Name>
+	<Entries>
+		<Entry>
+			<Index>0</Index>
+			<Uri>../Biomes/Default.json</Uri>
+		</Entry>
+	</Entries>
+</BiomeCatalog>

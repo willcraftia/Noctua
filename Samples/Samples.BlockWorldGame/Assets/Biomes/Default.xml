@@ -1,0 +1,95 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Bundle>
+	<Modules>
+		<Module Name="DefaultFadeCurve" Type="SCurve3" />
+		<Module Name="HumidityPerlin" Type="Perlin">
+			<Properties>
+				<Property Name="Seed" Value="100" />
+				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
+			</Properties>
+		</Module>
+		<Module Name="HumidityFractal" Type="SumFractal">
+			<Properties>
+				<Property Name="Source" Value="HumidityPerlin" />
+				<Property Name="OctaveCount" Value="3" />
+			</Properties>
+		</Module>
+		<Module Name="Humidity" Type="ScaleBias">
+			<Properties>
+				<Property Name="Source" Value="HumidityFractal" />
+				<Property Name="Bias" Value="0.5" />
+				<Property Name="Scale" Value="0.5" />
+			</Properties>
+		</Module>
+		<Module Name="TemperaturePerlin" Type="Perlin">
+			<Properties>
+				<Property Name="Seed" Value="200" />
+				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
+			</Properties>
+		</Module>
+		<Module Name="TemperatureFractal" Type="SumFractal">
+			<Properties>
+				<Property Name="Source" Value="TemperaturePerlin" />
+				<Property Name="OctaveCount" Value="3" />
+			</Properties>
+		</Module>
+		<Module Name="Temperature" Type="ScaleBias">
+			<Properties>
+				<Property Name="Source" Value="TemperatureFractal" />
+				<Property Name="Bias" Value="0.5" />
+				<Property Name="Scale" Value="0.5" />
+			</Properties>
+		</Module>
+		<Module Name="Target" Type="DefaultBiome">
+			<Properties>
+				<Property Name="Name" Value="Default Biome" />
+				<Property Name="TerrainNoise" Value="title:Resources/Terrains/Default.json" />
+				<Property Name="TemperatureNoise" Value="Temperature" />
+				<Property Name="HumidityNoise" Value="Humidity" />
+				<Property Name="BaseElement" Value="Forest" />
+				<Property Name="DesertRange" Value="Target_DesertRange" />
+				<Property Name="PlainsRange" Value="Target_PlainsRange" />
+				<Property Name="SnowRange" Value="Target_SnowRange" />
+				<Property Name="MountainsRange" Value="Target_MountainsRange" />
+				<Property Name="ForestRange" Value="Target_ForestRange" />
+				<Property Name="Index" Value="0" />
+			</Properties>
+		</Module>
+		<Module Name="Target_DesertRange" Type="Range">
+			<Properties>
+				<Property Name="MinTemperature" Value="0.5" />
+				<Property Name="MaxTemperature" Value="1" />
+				<Property Name="MaxHumidity" Value="0.3" />
+			</Properties>
+		</Module>
+		<Module Name="Target_PlainsRange" Type="Range">
+			<Properties>
+				<Property Name="MinTemperature" Value="0.5" />
+				<Property Name="MaxTemperature" Value="1" />
+				<Property Name="MinHumidity" Value="0.3" />
+				<Property Name="MaxHumidity" Value="0.6" />
+			</Properties>
+		</Module>
+		<Module Name="Target_SnowRange" Type="Range">
+			<Properties>
+				<Property Name="MaxTemperature" Value="0.3" />
+				<Property Name="MinHumidity" Value="0.6" />
+				<Property Name="MaxHumidity" Value="1" />
+			</Properties>
+		</Module>
+		<Module Name="Target_MountainsRange" Type="Range">
+			<Properties>
+				<Property Name="MaxTemperature" Value="0.5" />
+				<Property Name="MaxHumidity" Value="0.6" />
+			</Properties>
+		</Module>
+		<Module Name="Target_ForestRange" Type="Range">
+			<Properties>
+				<Property Name="MinTemperature" Value="0.3" />
+				<Property Name="MaxTemperature" Value="1" />
+				<Property Name="MinHumidity" Value="0.6" />
+				<Property Name="MaxHumidity" Value="1" />
+			</Properties>
+		</Module>
+	</Modules>
+</Bundle>

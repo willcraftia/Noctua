@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Block>
+	<Name>Grass</Name>
+	<Mesh>../Meshes/Cube.json</Mesh>
+	<TopTile>../Tiles/GrassTop.json</TopTile>
+	<BottomTile>../Tiles/GrassBottom.json</BottomTile>
+	<FrontTile>../Tiles/GrassSide.json</FrontTile>
+	<BackTile>../Tiles/GrassSide.json</BackTile>
+	<LeftTile>../Tiles/GrassSide.json</LeftTile>
+	<RightTile>../Tiles/GrassSide.json</RightTile>
+	<Fluid>false</Fluid>
+	<ShadowCasting>true</ShadowCasting>
+	<Shape>Cube</Shape>
+	<Mass>1</Mass>
+	<StaticFriction>0.5</StaticFriction>
+	<DynamicFriction>0.5</DynamicFriction>
+	<Restitution>0.5</Restitution>
+</Block>

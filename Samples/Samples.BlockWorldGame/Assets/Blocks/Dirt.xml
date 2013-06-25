@@ -1,0 +1,18 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Block>
+	<Name>Dirt</Name>
+	<Mesh>../Meshes/Cube.json</Mesh>
+	<TopTile>../Tiles/Dirt.json</TopTile>
+	<BottomTile>../Tiles/Dirt.json</BottomTile>
+	<FrontTile>../Tiles/Dirt.json</FrontTile>
+	<BackTile>../Tiles/Dirt.json</BackTile>
+	<LeftTile>../Tiles/Dirt.json</LeftTile>
+	<RightTile>../Tiles/Dirt.json</RightTile>
+	<Fluid>false</Fluid>
+	<ShadowCasting>true</ShadowCasting>
+	<Shape>Cube</Shape>
+	<Mass>1</Mass>
+	<StaticFriction>0.5</StaticFriction>
+	<DynamicFriction>0.5</DynamicFriction>
+	<Restitution>0.5</Restitution>
+</Block>

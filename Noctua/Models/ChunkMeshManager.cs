@@ -464,7 +464,7 @@ namespace Noctua.Models
                     chunk.SetMesh(segmentX, segmentY, segmentZ, translucence, mesh);
                 }
 
-                mesh.PositionWorld = position;
+                mesh.Position = position;
                 mesh.World = world;
                 vertices.Populate(mesh);
 

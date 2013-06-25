@@ -97,11 +97,9 @@ namespace Noctua.Models
             SceneManager.ActiveCameraName = defaultCamera.Name;
         }
 
-        // TODO: 戻り値を Region にしない。
-        public Region Load(string worldUri)
+        public void Load(string worldUri)
         {
-            // TODO
-            return RegionManager.LoadRegion("title:Resources/Regions/Default.json");
+            RegionManager.LoadRegion(worldUri);
         }
 
         public void Unload()
@@ -111,6 +109,13 @@ namespace Noctua.Models
 
         public void Update(GameTime gameTime)
         {
+            if (ChunkManager.Closed)
+            {
+                Closing = false;
+                Closed = true;
+                return;
+            }
+
             //----------------------------------------------------------------
             // カメラ更新
 
@@ -168,6 +173,20 @@ namespace Noctua.Models
             spriteBatch.Begin(SpriteSortMode.Deferred, BlendState.Opaque);
             spriteBatch.Draw(SceneManager.FinalSceneMap, Vector2.Zero, Color.White);
             spriteBatch.End();
+        }
+
+        public bool Closing { get; private set; }
+
+        public bool Closed { get; private set; }
+
+        public void Close()
+        {
+            if (!ChunkManager.Closing && !ChunkManager.Closed)
+            {
+                ChunkManager.Close();
+
+                Closing = true;
+            }
         }
     }
 }

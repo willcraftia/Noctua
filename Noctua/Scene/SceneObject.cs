@@ -11,19 +11,19 @@ namespace Noctua.Scene
     public abstract class SceneObject
     {
         /// <summary>
-        /// 位置。
+        /// 位置 (ワールド空間)。
         /// </summary>
-        public Vector3 PositionWorld;
+        public Vector3 Position;
 
         /// <summary>
-        /// オブジェクトのメッシュ全体を含む BoundingBox。
+        /// オブジェクトのメッシュ全体を含む境界ボックス (ワールド空間)。
         /// </summary>
-        public BoundingBox BoxWorld;
+        public BoundingBox Box;
 
         /// <summary>
-        /// オブジェクトのメッシュ全体を含む BoundingSphere。
+        /// オブジェクトのメッシュ全体を含む境界球 (ワールド空間)。
         /// </summary>
-        public BoundingSphere SphereWorld;
+        public BoundingSphere Sphere;
 
         /// <summary>
         /// オブジェクト名を取得します。

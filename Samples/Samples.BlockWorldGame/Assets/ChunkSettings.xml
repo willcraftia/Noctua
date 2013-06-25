@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ChunkSettingsDefinition>
+	<ChunkSize>
+		<X>16</X>
+		<Y>16</Y>
+		<Z>16</Z>
+	</ChunkSize>
+	<VertexBuildConcurrencyLevel>2</VertexBuildConcurrencyLevel>
+	<UpdateBufferCountPerFrame>32</UpdateBufferCountPerFrame>
+	<MinActiveRange>8</MinActiveRange>
+	<MaxActiveRange>9</MaxActiveRange>
+	<ChunkStoreType>None</ChunkStoreType>
+	<ActivationCapacity>2</ActivationCapacity>
+	<PassivationCapacity>20</PassivationCapacity>
+	<PassivationSearchCapacity>200</PassivationSearchCapacity>
+	<PriorActiveDistance>96</PriorActiveDistance>
+	<ClusterSize>
+		<X>8</X>
+		<Y>8</Y>
+		<Z>8</Z>
+	</ClusterSize>
+</ChunkSettingsDefinition>

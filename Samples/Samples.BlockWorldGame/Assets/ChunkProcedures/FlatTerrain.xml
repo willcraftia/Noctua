@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Bundle>
+	<Modules>
+		<Module Name="Target" Type="FlatTerrainProcedure">
+			<Properties>
+				<Property Name="Height" Value="156" />
+			</Properties>
+		</Module>
+	</Modules>
+</Bundle>

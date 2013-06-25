@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<GraphicsSettings>
+	<Shadow>
+		<SplitCount>3</SplitCount>
+		<SplitLambda>0.5</SplitLambda>
+		<ShadowMapResolution>1</ShadowMapResolution>
+		<OcclusionMapResolution>2</OcclusionMapResolution>
+		<OcclusionMapBlurRadius>3</OcclusionMapBlurRadius>
+		<OcclusionMapBlurSigma>1</OcclusionMapBlurSigma>
+		<DepthBias>0.0001</DepthBias>
+	</Shadow>
+	<Dof>
+		<BlurResolution>2</BlurResolution>
+		<BlurRadius>7</BlurRadius>
+		<BlurSigma>4</BlurSigma>
+	</Dof>
+</GraphicsSettings>

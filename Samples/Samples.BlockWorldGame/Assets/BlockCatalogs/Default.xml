@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<BlockCatalog>
+	<Name>Default</Name>
+	<Entries>
+		<Entry>
+			<Index>1</Index>
+			<Uri>../Blocks/Dirt.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>2</Index>
+			<Uri>../Blocks/Grass.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>3</Index>
+			<Uri>../Blocks/Mantle.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>4</Index>
+			<Uri>../Blocks/Sand.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>5</Index>
+			<Uri>../Blocks/Snow.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>6</Index>
+			<Uri>../Blocks/Stone.json</Uri>
+		</Entry>
+	</Entries>
+	<Dirt>1</Dirt>
+	<Grass>2</Grass>
+	<Mantle>3</Mantle>
+	<Sand>4</Sand>
+	<Snow>5</Snow>
+	<Stone>6</Stone>
+</BlockCatalog>

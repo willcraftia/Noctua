@@ -229,7 +229,7 @@ namespace Noctua.Scene
 
         #endregion
 
-        public BoundingBox BoxWorld;
+        public BoundingBox Box;
 
         public ChildCollection Children { get; private set; }
 
@@ -281,22 +281,22 @@ namespace Noctua.Scene
                     child.Update(true);
             }
 
-            UpdateBoxWorld();
+            UpdateBox();
         }
 
-        void UpdateBoxWorld()
+        void UpdateBox()
         {
-            BoxWorld = BoundingBox.Empty;
+            Box = BoundingBox.Empty;
 
             foreach (var obj in Objects)
             {
-                BoxWorld.Min.X = MathHelper.Min(BoxWorld.Min.X, obj.BoxWorld.Min.X);
-                BoxWorld.Min.Y = MathHelper.Min(BoxWorld.Min.Y, obj.BoxWorld.Min.Y);
-                BoxWorld.Min.Z = MathHelper.Min(BoxWorld.Min.Z, obj.BoxWorld.Min.Z);
+                Box.Min.X = MathHelper.Min(Box.Min.X, obj.Box.Min.X);
+                Box.Min.Y = MathHelper.Min(Box.Min.Y, obj.Box.Min.Y);
+                Box.Min.Z = MathHelper.Min(Box.Min.Z, obj.Box.Min.Z);
 
-                BoxWorld.Max.X = MathHelper.Max(BoxWorld.Max.X, obj.BoxWorld.Max.X);
-                BoxWorld.Max.Y = MathHelper.Max(BoxWorld.Max.Y, obj.BoxWorld.Max.Y);
-                BoxWorld.Max.Z = MathHelper.Max(BoxWorld.Max.Z, obj.BoxWorld.Max.Z);
+                Box.Max.X = MathHelper.Max(Box.Max.X, obj.Box.Max.X);
+                Box.Max.Y = MathHelper.Max(Box.Max.Y, obj.Box.Max.Y);
+                Box.Max.Z = MathHelper.Max(Box.Max.Z, obj.Box.Max.Z);
             }
 
             Manager.UpdateOctreeSceneNode(this);

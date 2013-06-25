@@ -87,12 +87,12 @@ namespace Noctua.Models
 
             // メッシュの BoundingBox。
             var transform = mesh.World;
-            Vector3.Transform(ref box.Min, ref transform, out mesh.BoxWorld.Min);
-            Vector3.Transform(ref box.Max, ref transform, out mesh.BoxWorld.Max);
+            Vector3.Transform(ref box.Min, ref transform, out mesh.Box.Min);
+            Vector3.Transform(ref box.Max, ref transform, out mesh.Box.Max);
 
             // メッシュの BoundingSphere。
-            mesh.BoxWorld.GetCorners(corners);
-            mesh.SphereWorld = BoundingSphere.CreateFromPoints(corners);
+            mesh.Box.GetCorners(corners);
+            mesh.Sphere = BoundingSphere.CreateFromPoints(corners);
 
             mesh.SetVertices(vertices, VertexCount);
             mesh.SetIndices(indices, IndexCount);

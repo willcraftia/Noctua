@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TileCatalog>
+	<Name>Default</Name>
+	<Entries>
+		<Entry>
+			<Index>1</Index>
+			<Uri>../Tiles/Dirt.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>2</Index>
+			<Uri>../Tiles/GrassBottom.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>3</Index>
+			<Uri>../Tiles/GrassSide.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>4</Index>
+			<Uri>../Tiles/GrassTop.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>5</Index>
+			<Uri>../Tiles/Mantle.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>6</Index>
+			<Uri>../Tiles/Sand.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>7</Index>
+			<Uri>../Tiles/Snow.json</Uri>
+		</Entry>
+		<Entry>
+			<Index>8</Index>
+			<Uri>../Tiles/Stone.json</Uri>
+		</Entry>
+	</Entries>
+</TileCatalog>
