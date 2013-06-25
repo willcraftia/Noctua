@@ -1,6 +1,7 @@
 ﻿#region Using
 
 using System;
+using System.Text;
 using Libra;
 using Libra.Games;
 using Libra.Graphics;
@@ -76,6 +77,10 @@ namespace Samples.BlockWorldGame
         float cameraMoveVelocity = 30.0f;
 
         float cameraDashFactor = 2;
+
+        StringBuilder hudText = new StringBuilder();
+
+        bool hudVisible = true;
 
         public MainGame()
         {
@@ -174,9 +179,9 @@ namespace Samples.BlockWorldGame
             {
                 // Z 軸移動。
                 if (currentKeyboardState.IsKeyDown(Keys.W))
-                    camera.MoveRelative(camera.Position * distance);
+                    camera.MoveRelative(camera.Direction * distance);
                 if (currentKeyboardState.IsKeyDown(Keys.S))
-                    camera.MoveRelative(camera.Position * (-distance));
+                    camera.MoveRelative(camera.Direction * (-distance));
 
                 // X 軸移動。
                 if (currentKeyboardState.IsKeyDown(Keys.D))
@@ -196,6 +201,88 @@ namespace Samples.BlockWorldGame
 
         void DrawHud()
         {
+            if (!hudVisible) return;
+
+            spriteBatch.Begin();
+
+            CreateInformationText();
+            spriteBatch.DrawString(spriteFont, hudText, new Vector2(9, 9), Color.Black);
+            spriteBatch.DrawString(spriteFont, hudText, new Vector2(8, 8), Color.Yellow);
+
+            spriteBatch.End();
+        }
+
+        void CreateInformationText()
+        {
+            hudText.Length = 0;
+
+            hudText.Append("Screen: ");
+            hudText.AppendNumber(graphicsManager.PreferredBackBufferWidth).Append('x');
+            hudText.AppendNumber(graphicsManager.PreferredBackBufferHeight).AppendLine();
+
+            var chunkManager = worldManager.ChunkManager;
+            hudText.Append("Chunk: ");
+            hudText.Append("A(").AppendNumber(chunkManager.ClusterCount).Append(":");
+            hudText.AppendNumber(chunkManager.Count).Append(") ");
+            hudText.Append("W(").AppendNumber(chunkManager.ActivationCount).Append(") ");
+            hudText.Append("P(").AppendNumber(chunkManager.PassivationCount).Append(")").AppendLine();
+
+            hudText.Append("Mesh: ").AppendNumber(chunkManager.MeshCount).Append(" ");
+            hudText.Append("Inter: ").AppendNumber(chunkManager.ActiveVertexBuilderCount).Append("/");
+            hudText.AppendNumber(chunkManager.TotalVertexBuilderCount).AppendLine();
+
+            hudText.Append("ChunkVertex: ");
+            hudText.Append("Max(").AppendNumber(chunkManager.MaxVertexCount).Append(") ");
+            hudText.Append("Total(").AppendNumber(chunkManager.TotalVertexCount).Append(")").AppendLine();
+
+            hudText.Append("ChunkIndex: ");
+            hudText.Append("Max(").AppendNumber(chunkManager.MaxIndexCount).Append(") ");
+            hudText.Append("Total(").AppendNumber(chunkManager.TotalIndexCount).Append(")").AppendLine();
+
+            var sceneManager = worldManager.SceneManager;
+            hudText.Append("SceneObejcts: ").AppendNumber(sceneManager.RenderedSceneObjectCount).Append("/");
+            hudText.AppendNumber(sceneManager.SceneObjectCount).AppendLine();
+
+            //if (worldManager.ShadowMap != null)
+            //{
+            //    var shadowMapMonitor = worldManager.ShadowMap.Monitor;
+            //    hudText.Append("ShadowCaster: ");
+            //    for (int i = 0; i < shadowMapMonitor.SplitCount; i++)
+            //    {
+            //        if (0 < i) hudText.Append(":");
+            //        hudText.AppendNumber(shadowMapMonitor[i].ShadowCasterCount);
+            //    }
+            //    hudText.Append("/").AppendNumber(shadowMapMonitor.TotalShadowCasterCount).AppendLine();
+            //}
+
+            hudText.Append("MoveVelocity: ");
+            hudText.AppendNumber(cameraMoveVelocity).AppendLine();
+
+            var camera = worldManager.SceneManager.ActiveCamera;
+            hudText.Append("Eye: ");
+            hudText.Append("P(");
+            hudText.AppendNumber(camera.Position.X).Append(", ");
+            hudText.AppendNumber(camera.Position.Y).Append(", ");
+            hudText.AppendNumber(camera.Position.Z).Append(") ");
+            hudText.Append("D(");
+            hudText.AppendNumber(camera.Direction.X).Append(", ");
+            hudText.AppendNumber(camera.Direction.Y).Append(", ");
+            hudText.AppendNumber(camera.Direction.Z).Append(")").AppendLine();
+
+            var mouseState = Mouse.GetState();
+            hudText.Append("Mouse (").AppendNumber(mouseState.X).Append(", ").AppendNumber(mouseState.Y).Append(")").AppendLine();
+
+            //hudText.Append("Brush: (");
+            //if (brushManager.ActiveBrush is StickyBrush)
+            //{
+            //    var stickyBrush = brushManager.ActiveBrush as StickyBrush;
+            //    hudText.Append(stickyBrush.PaintSide).Append(": ");
+            //}
+            //hudText.AppendNumber(brushManager.ActiveBrush.Position.X).Append(", ");
+            //hudText.AppendNumber(brushManager.ActiveBrush.Position.Y).Append(", ");
+            //hudText.AppendNumber(brushManager.ActiveBrush.Position.Z).Append(")").AppendLine();
+
+            hudText.Append("Near/Far: ").AppendNumber(camera.NearClipDistance).Append("/").AppendNumber(camera.FarClipDistance);
         }
     }
 
