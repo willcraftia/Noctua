@@ -36,6 +36,8 @@ namespace Noctua.Models
 
         public SceneSettings SceneSettings { get; private set; }
 
+        internal IObjectSerializer ObjectSerializer { get; private set; }
+
         public WorldManager(DeviceContext deviceContext)
         {
             if (deviceContext == null) throw new ArgumentNullException("deviceContext");
@@ -44,15 +46,17 @@ namespace Noctua.Models
 
             spriteBatch = new SpriteBatch(deviceContext);
 
+            ObjectSerializer = XmlObjectSerializer.Instance;
+
             resourceManager.Register<TitleResourceLoader>();
 
-            assetContainer = new AssetContainer(deviceContext, resourceManager, JsonObjectSerializer.Instance);
+            assetContainer = new AssetContainer(deviceContext, resourceManager, ObjectSerializer);
             assetContainer.RegisterAssetSerializer<GraphicsSettingsSerializer>();
             assetContainer.RegisterAssetSerializer<SceneSettingsSerializer>();
             assetContainer.RegisterAssetSerializer<ChunkSettingsSerializer>();
 
-            GraphicsSettings = assetContainer.Load<GraphicsSettings>("title:Resources/GraphicsSettings.json");
-            SceneSettings = assetContainer.Load<SceneSettings>("title:Resources/SceneSettings.json");
+            GraphicsSettings = assetContainer.Load<GraphicsSettings>("title:Assets/GraphicsSettings.xml");
+            SceneSettings = assetContainer.Load<SceneSettings>("title:Assets/SceneSettings.xml");
             // TODO: リソースから取得する。
             SceneManagerSettings = new SceneManager.Settings();
 
@@ -73,7 +77,7 @@ namespace Noctua.Models
             //----------------------------------------------------------------
             // チャンク マネージャ
 
-            var chunkSettings = assetContainer.Load<ChunkSettings>("title:Resources/ChunkSettings.json");
+            var chunkSettings = assetContainer.Load<ChunkSettings>("title:Assets/ChunkSettings.xml");
             ChunkManager = new ChunkManager(chunkSettings, RegionManager, SceneManager);
 
             //----------------------------------------------------------------

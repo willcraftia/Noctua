@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Block>
 	<Name>Stone</Name>
-	<Mesh>../Meshes/Cube.json</Mesh>
-	<TopTile>../Tiles/Stone.json</TopTile>
-	<BottomTile>../Tiles/Stone.json</BottomTile>
-	<FrontTile>../Tiles/Stone.json</FrontTile>
-	<BackTile>../Tiles/Stone.json</BackTile>
-	<LeftTile>../Tiles/Stone.json</LeftTile>
-	<RightTile>../Tiles/Stone.json</RightTile>
+	<Mesh>../Meshes/Cube.xml</Mesh>
+	<TopTile>../Tiles/Stone.xml</TopTile>
+	<BottomTile>../Tiles/Stone.xml</BottomTile>
+	<FrontTile>../Tiles/Stone.xml</FrontTile>
+	<BackTile>../Tiles/Stone.xml</BackTile>
+	<LeftTile>../Tiles/Stone.xml</LeftTile>
+	<RightTile>../Tiles/Stone.xml</RightTile>
 	<Fluid>false</Fluid>
 	<ShadowCasting>true</ShadowCasting>
 	<Shape>Cube</Shape>

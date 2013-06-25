@@ -114,11 +114,6 @@ namespace Noctua.Scene
         /// </summary>
         static readonly BasicLightCameraBuilder DefaultLightCameraBuilder = new BasicLightCameraBuilder();
 
-        /// <summary>
-        /// シャドウ マップの更新完了で発生するイベント。
-        /// </summary>
-        public event EventHandler ShadowMapUpdated = delegate { };
-
         OctreeManager octreeManager;
 
         SceneNode skySphereNode;
@@ -487,8 +482,6 @@ namespace Noctua.Scene
             {
                 DrawShadowMap();
                 shadowMapAvailable = true;
-
-                ShadowMapUpdated(this, EventArgs.Empty);
             }
 
             // 深度

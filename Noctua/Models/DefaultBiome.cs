@@ -10,7 +10,7 @@ using Pyxis;
 
 namespace Noctua.Models
 {
-    public sealed class DefaultBiome
+    public sealed class DefaultBiome : IBiome
     {
         #region Range
 

@@ -50,6 +50,7 @@ namespace Noctua.Models
             chunkEffect = meshManager.ChunkEffect;
 
             occlusionQuery = deviceContext.Device.CreateOcclusionQuery();
+            occlusionQuery.Initialize();
         }
 
         public override void UpdateOcclusion()

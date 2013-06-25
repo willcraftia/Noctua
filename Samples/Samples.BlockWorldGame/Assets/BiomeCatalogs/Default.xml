@@ -4,7 +4,7 @@
 	<Entries>
 		<Entry>
 			<Index>0</Index>
-			<Uri>../Biomes/Default.json</Uri>
+			<Uri>../Biomes/Default.xml</Uri>
 		</Entry>
 	</Entries>
 </BiomeCatalog>

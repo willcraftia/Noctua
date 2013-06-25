@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Block>
 	<Name>Grass</Name>
-	<Mesh>../Meshes/Cube.json</Mesh>
-	<TopTile>../Tiles/GrassTop.json</TopTile>
-	<BottomTile>../Tiles/GrassBottom.json</BottomTile>
-	<FrontTile>../Tiles/GrassSide.json</FrontTile>
-	<BackTile>../Tiles/GrassSide.json</BackTile>
-	<LeftTile>../Tiles/GrassSide.json</LeftTile>
-	<RightTile>../Tiles/GrassSide.json</RightTile>
+	<Mesh>../Meshes/Cube.xml</Mesh>
+	<TopTile>../Tiles/GrassTop.xml</TopTile>
+	<BottomTile>../Tiles/GrassBottom.xml</BottomTile>
+	<FrontTile>../Tiles/GrassSide.xml</FrontTile>
+	<BackTile>../Tiles/GrassSide.xml</BackTile>
+	<LeftTile>../Tiles/GrassSide.xml</LeftTile>
+	<RightTile>../Tiles/GrassSide.xml</RightTile>
 	<Fluid>false</Fluid>
 	<ShadowCasting>true</ShadowCasting>
 	<Shape>Cube</Shape>

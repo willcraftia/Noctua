@@ -13,10 +13,10 @@
 			<Z>128</Z>
 		</Max>
 	</Box>
-	<TileCatalog>../TileCatalogs/Default.json</TileCatalog>
-	<BlockCatalog>../BlockCatalogs/Default.json</BlockCatalog>
-	<BiomeManager>../BiomeManagers/Single.json</BiomeManager>
+	<TileCatalog>../TileCatalogs/Default.xml</TileCatalog>
+	<BlockCatalog>../BlockCatalogs/Default.xml</BlockCatalog>
+	<BiomeManager>../BiomeManagers/Single.xml</BiomeManager>
 	<ChunkProcedures>
-		<Procedure>../ChunkProcedures/NoiseTerrain.json</Procedure>
+		<Procedure>../ChunkProcedures/NoiseTerrain.xml</Procedure>
 	</ChunkProcedures>
 </Region>

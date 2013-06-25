@@ -219,14 +219,14 @@ namespace Samples.AssetSerialization
                     Name = "Default",
                     Entries = new IndexedUriDefinition[]
                 {
-                    new IndexedUriDefinition { Index = 1, Uri = "../Tiles/Dirt.json" },
-                    new IndexedUriDefinition { Index = 2, Uri = "../Tiles/GrassBottom.json" },
-                    new IndexedUriDefinition { Index = 3, Uri = "../Tiles/GrassSide.json" },
-                    new IndexedUriDefinition { Index = 4, Uri = "../Tiles/GrassTop.json" },
-                    new IndexedUriDefinition { Index = 5, Uri = "../Tiles/Mantle.json" },
-                    new IndexedUriDefinition { Index = 6, Uri = "../Tiles/Sand.json" },
-                    new IndexedUriDefinition { Index = 7, Uri = "../Tiles/Snow.json" },
-                    new IndexedUriDefinition { Index = 8, Uri = "../Tiles/Stone.json" }
+                    new IndexedUriDefinition { Index = 1, Uri = "../Tiles/Dirt.xml" },
+                    new IndexedUriDefinition { Index = 2, Uri = "../Tiles/GrassBottom.xml" },
+                    new IndexedUriDefinition { Index = 3, Uri = "../Tiles/GrassSide.xml" },
+                    new IndexedUriDefinition { Index = 4, Uri = "../Tiles/GrassTop.xml" },
+                    new IndexedUriDefinition { Index = 5, Uri = "../Tiles/Mantle.xml" },
+                    new IndexedUriDefinition { Index = 6, Uri = "../Tiles/Sand.xml" },
+                    new IndexedUriDefinition { Index = 7, Uri = "../Tiles/Snow.xml" },
+                    new IndexedUriDefinition { Index = 8, Uri = "../Tiles/Stone.xml" }
                 }
                 };
                 SerializeAndDeserialize<TileCatalogDefinition>("TileCatalogs/Default", definition);
@@ -239,10 +239,10 @@ namespace Samples.AssetSerialization
 
             Console.WriteLine("ブロック定義");
             {
-                var cube = "../Meshes/Cube.json";
+                var cube = "../Meshes/Cube.xml";
 
                 {
-                    var tile = "../Tiles/Dirt.json";
+                    var tile = "../Tiles/Dirt.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Dirt",
@@ -266,13 +266,13 @@ namespace Samples.AssetSerialization
 
                 {
                     var tileBase = "../Tiles/Grass";
-                    var tileSide = tileBase + "Side.json";
+                    var tileSide = tileBase + "Side.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Grass",
                         Mesh = cube,
-                        TopTile = tileBase + "Top.json",
-                        BottomTile = tileBase + "Bottom.json",
+                        TopTile = tileBase + "Top.xml",
+                        BottomTile = tileBase + "Bottom.xml",
                         FrontTile = tileSide,
                         BackTile = tileSide,
                         LeftTile = tileSide,
@@ -289,7 +289,7 @@ namespace Samples.AssetSerialization
                 }
 
                 {
-                    var tile = "../Tiles/Mantle.json";
+                    var tile = "../Tiles/Mantle.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Mantle",
@@ -312,7 +312,7 @@ namespace Samples.AssetSerialization
                 }
 
                 {
-                    var tile = "../Tiles/Sand.json";
+                    var tile = "../Tiles/Sand.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Sand",
@@ -335,7 +335,7 @@ namespace Samples.AssetSerialization
                 }
 
                 {
-                    var tile = "../Tiles/Snow.json";
+                    var tile = "../Tiles/Snow.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Snow",
@@ -358,7 +358,7 @@ namespace Samples.AssetSerialization
                 }
 
                 {
-                    var tile = "../Tiles/Stone.json";
+                    var tile = "../Tiles/Stone.xml";
                     var definition = new BlockDefinition
                     {
                         Name = "Stone",
@@ -393,12 +393,12 @@ namespace Samples.AssetSerialization
                     Name = "Default",
                     Entries = new IndexedUriDefinition[]
                     {
-                        new IndexedUriDefinition { Index = 1, Uri = "../Blocks/Dirt.json" },
-                        new IndexedUriDefinition { Index = 2, Uri = "../Blocks/Grass.json" },
-                        new IndexedUriDefinition { Index = 3, Uri = "../Blocks/Mantle.json" },
-                        new IndexedUriDefinition { Index = 4, Uri = "../Blocks/Sand.json" },
-                        new IndexedUriDefinition { Index = 5, Uri = "../Blocks/Snow.json" },
-                        new IndexedUriDefinition { Index = 6, Uri = "../Blocks/Stone.json" }
+                        new IndexedUriDefinition { Index = 1, Uri = "../Blocks/Dirt.xml" },
+                        new IndexedUriDefinition { Index = 2, Uri = "../Blocks/Grass.xml" },
+                        new IndexedUriDefinition { Index = 3, Uri = "../Blocks/Mantle.xml" },
+                        new IndexedUriDefinition { Index = 4, Uri = "../Blocks/Sand.xml" },
+                        new IndexedUriDefinition { Index = 5, Uri = "../Blocks/Snow.xml" },
+                        new IndexedUriDefinition { Index = 6, Uri = "../Blocks/Stone.xml" }
                     },
                     Dirt = 1,
                     Grass = 2,
@@ -926,7 +926,7 @@ namespace Samples.AssetSerialization
                     TerrainNoise = new MockNoise()
                 };
                 builder.Add("Target", biome);
-                builder.AddExternalReference(biome.TerrainNoise, "title:Resources/Terrains/Default.json");
+                builder.AddExternalReference(biome.TerrainNoise, "title:Assets/Terrains/Default.xml");
 
                 ModuleBundleDefinition bundle = builder.Build();
 
@@ -947,7 +947,7 @@ namespace Samples.AssetSerialization
                     {
                         new IndexedUriDefinition
                         {
-                            Index = 0, Uri = "../Biomes/Default.json"
+                            Index = 0, Uri = "../Biomes/Default.xml"
                         }
                     }
                 };
@@ -970,7 +970,7 @@ namespace Samples.AssetSerialization
                 moduleTypeRegistry.SetTypeDefinitionName(typeof(SingleBiomeManager));
                 var moduleInfoManager = new ModuleInfoManager(moduleTypeRegistry);
                 var builder = new ModuleBundleBuilder(moduleInfoManager);
-                builder.AddExternalReference(biomeManager.Biome, "../Biomes/Default.json");
+                builder.AddExternalReference(biomeManager.Biome, "../Biomes/Default.xml");
                 builder.Add("Target", biomeManager);
 
                 var bundle = builder.Build();
@@ -1039,12 +1039,12 @@ namespace Samples.AssetSerialization
                         Min = new IntVector3(-128, 0, -128),
                         Max = new IntVector3( 128, 16, 128)
                     },
-                    TileCatalog = "../TileCatalogs/Default.json",
-                    BlockCatalog = "../BlockCatalogs/Default.json",
-                    BiomeManager = "../BiomeManagers/Single.json",
+                    TileCatalog = "../TileCatalogs/Default.xml",
+                    BlockCatalog = "../BlockCatalogs/Default.xml",
+                    BiomeManager = "../BiomeManagers/Single.xml",
                     ChunkProcedures = new string[]
                     {
-                        "../ChunkProcedures/NoiseTerrain.json"
+                        "../ChunkProcedures/NoiseTerrain.xml"
                     }
                 };
                 SerializeAndDeserialize<RegionDefinition>("Regions/Default", definition);
@@ -1059,6 +1059,7 @@ namespace Samples.AssetSerialization
             {
                 var definition = new SkySphereDefinition
                 {
+                    Name = "DefaultSkySphere",
                     SunVisible = true,
                     SunThreshold = 0.999f
                 };
@@ -1210,7 +1211,7 @@ namespace Samples.AssetSerialization
                     MaxStartSize = 0.5f,
                     MinEndSize = 0.2f,
                     MaxEndSize = 0.2f,
-                    Texture = "title:Resources/Particles/Snow.png",
+                    Texture = "title:Assets/Particles/Snow.png",
                     BlendState = BlendState.AlphaBlend
                 };
                 SerializeAndDeserialize<ParticleSystemDefinition>("Particles/Snow", definition);
@@ -1243,7 +1244,7 @@ namespace Samples.AssetSerialization
                     MaxStartSize = 0.5f,
                     MinEndSize = 0.5f,
                     MaxEndSize = 0.5f,
-                    Texture = "title:Resources/Particles/Rain.png",
+                    Texture = "title:Assets/Particles/Rain.png",
                     BlendState = BlendState.AlphaBlend
                 };
                 SerializeAndDeserialize<ParticleSystemDefinition>("Particles/Rain", definition);

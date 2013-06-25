@@ -3,7 +3,7 @@
 	<Modules>
 		<Module Name="Target" Type="SingleBiomeManager">
 			<Properties>
-				<Property Name="Biome" Value="../Biomes/Default.json" />
+				<Property Name="Biome" Value="../Biomes/Default.xml" />
 			</Properties>
 		</Module>
 	</Modules>

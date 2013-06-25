@@ -4,27 +4,27 @@
 	<Entries>
 		<Entry>
 			<Index>1</Index>
-			<Uri>../Blocks/Dirt.json</Uri>
+			<Uri>../Blocks/Dirt.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>2</Index>
-			<Uri>../Blocks/Grass.json</Uri>
+			<Uri>../Blocks/Grass.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>3</Index>
-			<Uri>../Blocks/Mantle.json</Uri>
+			<Uri>../Blocks/Mantle.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>4</Index>
-			<Uri>../Blocks/Sand.json</Uri>
+			<Uri>../Blocks/Sand.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>5</Index>
-			<Uri>../Blocks/Snow.json</Uri>
+			<Uri>../Blocks/Snow.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>6</Index>
-			<Uri>../Blocks/Stone.json</Uri>
+			<Uri>../Blocks/Stone.xml</Uri>
 		</Entry>
 	</Entries>
 	<Dirt>1</Dirt>

@@ -114,6 +114,7 @@ namespace Noctua.Models
             var texture = device.CreateTexture2D();
             texture.Width = TextureSize;
             texture.Height = TextureSize;
+            texture.Initialize();
             return texture;
         }
 
@@ -137,21 +138,15 @@ namespace Noctua.Models
 
         void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds)
         {
-            //texture.SetData(context, 0, bounds, colorBuffer, 0, colorBuffer.Length);
-            
-            // TODO
-            // Texture2D.SetData の未実装コードの実装と共にテストする。
-            throw new NotImplementedException();
+            texture.SetData(context, 0, bounds, colorBuffer, 0, colorBuffer.Length);
         }
 
-        void SetColorBuffer(Texture2D texture, ref Rectangle bounds, ref Color color)
+        void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds, ref Color color)
         {
-            //for (int i = 0; i < colorBuffer.Length; i++) colorBuffer[i] = color;
-            //SetColorBuffer(texture, ref bounds);
-
-            // TODO
-            // Texture2D.SetData の未実装コードの実装と共にテストする。
-            throw new NotImplementedException();
+            for (int i = 0; i < colorBuffer.Length; i++)
+                colorBuffer[i] = color;
+            
+            SetColorBuffer(context, texture, ref bounds);
         }
 
         void EnsureColorBuffer()

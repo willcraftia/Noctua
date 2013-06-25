@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Block>
 	<Name>Dirt</Name>
-	<Mesh>../Meshes/Cube.json</Mesh>
-	<TopTile>../Tiles/Dirt.json</TopTile>
-	<BottomTile>../Tiles/Dirt.json</BottomTile>
-	<FrontTile>../Tiles/Dirt.json</FrontTile>
-	<BackTile>../Tiles/Dirt.json</BackTile>
-	<LeftTile>../Tiles/Dirt.json</LeftTile>
-	<RightTile>../Tiles/Dirt.json</RightTile>
+	<Mesh>../Meshes/Cube.xml</Mesh>
+	<TopTile>../Tiles/Dirt.xml</TopTile>
+	<BottomTile>../Tiles/Dirt.xml</BottomTile>
+	<FrontTile>../Tiles/Dirt.xml</FrontTile>
+	<BackTile>../Tiles/Dirt.xml</BackTile>
+	<LeftTile>../Tiles/Dirt.xml</LeftTile>
+	<RightTile>../Tiles/Dirt.xml</RightTile>
 	<Fluid>false</Fluid>
 	<ShadowCasting>true</ShadowCasting>
 	<Shape>Cube</Shape>

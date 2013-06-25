@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Block>
 	<Name>Mantle</Name>
-	<Mesh>../Meshes/Cube.json</Mesh>
-	<TopTile>../Tiles/Mantle.json</TopTile>
-	<BottomTile>../Tiles/Mantle.json</BottomTile>
-	<FrontTile>../Tiles/Mantle.json</FrontTile>
-	<BackTile>../Tiles/Mantle.json</BackTile>
-	<LeftTile>../Tiles/Mantle.json</LeftTile>
-	<RightTile>../Tiles/Mantle.json</RightTile>
+	<Mesh>../Meshes/Cube.xml</Mesh>
+	<TopTile>../Tiles/Mantle.xml</TopTile>
+	<BottomTile>../Tiles/Mantle.xml</BottomTile>
+	<FrontTile>../Tiles/Mantle.xml</FrontTile>
+	<BackTile>../Tiles/Mantle.xml</BackTile>
+	<LeftTile>../Tiles/Mantle.xml</LeftTile>
+	<RightTile>../Tiles/Mantle.xml</RightTile>
 	<Fluid>false</Fluid>
 	<ShadowCasting>true</ShadowCasting>
 	<Shape>Cube</Shape>

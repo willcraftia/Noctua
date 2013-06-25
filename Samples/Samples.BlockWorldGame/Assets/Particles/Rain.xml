@@ -33,7 +33,7 @@
 	<MaxStartSize>0.5</MaxStartSize>
 	<MinEndSize>0.5</MinEndSize>
 	<MaxEndSize>0.5</MaxEndSize>
-	<Texture>title:Resources/Particles/Rain.png</Texture>
+	<Texture>title:Assets/Particles/Rain.png</Texture>
 	<BlendState>
 		<Name>AlphaBlend</Name>
 		<BlendFactor>

@@ -49,7 +49,7 @@ namespace Noctua.Models
             resourceManager.Register<TitleResourceLoader>();
             resourceManager.Register<FileResourceLoader>();
 
-            assetContainer = new AssetContainer(DeviceContext, resourceManager, JsonObjectSerializer.Instance);
+            assetContainer = new AssetContainer(DeviceContext, resourceManager, worldManager.ObjectSerializer);
             assetContainer.RegisterAssetSerializer<Texture2DSerializer>();
             assetContainer.RegisterAssetSerializer<ParticleSystemSerializer>();
             assetContainer.RegisterAssetSerializer<SkySphereSerializer>();
@@ -57,7 +57,7 @@ namespace Noctua.Models
             SceneSettings = WorldManager.SceneSettings;
 
             // スカイ スフィア
-            skySphere = assetContainer.Load<SkySphere>("title:Resources/Models/SkySphere.json");
+            skySphere = assetContainer.Load<SkySphere>("title:Assets/Models/SkySphere.xml");
 
             // シーン マネージャへ登録
             var skySphereNode = new SceneNode(SceneManager, "SkySphere");
@@ -72,12 +72,12 @@ namespace Noctua.Models
 
 
             // 降雪パーティクル
-            snowParticleSystem = assetContainer.Load<ParticleSystem>("title:Resources/Particles/Snow.json");
+            snowParticleSystem = assetContainer.Load<ParticleSystem>("title:Assets/Particles/Snow.xml");
             SceneManager.ParticleSystems.Add(snowParticleSystem);
             snowParticleSystem.Enabled = false;
 
             // 降雨パーティクル
-            rainParticleSystem = assetContainer.Load<ParticleSystem>("title:Resources/Particles/Rain.json");
+            rainParticleSystem = assetContainer.Load<ParticleSystem>("title:Assets/Particles/Rain.xml");
             SceneManager.ParticleSystems.Add(rainParticleSystem);
             rainParticleSystem.Enabled = false;
         }
@@ -104,10 +104,11 @@ namespace Noctua.Models
         public Region LoadRegion(string uri)
         {
             var localResourceManager = new ResourceManager();
+            localResourceManager.Register<TitleResourceLoader>();
 
             var resource = localResourceManager.Load(uri);
 
-            var localAssetContainer = new AssetContainer(DeviceContext, localResourceManager, JsonObjectSerializer.Instance);
+            var localAssetContainer = new AssetContainer(DeviceContext, localResourceManager, WorldManager.ObjectSerializer);
             localAssetContainer.RegisterAssetSerializer<RegionSerializer>();
             localAssetContainer.RegisterAssetSerializer<Texture2DSerializer>();
             localAssetContainer.RegisterAssetSerializer<MeshSerializer>();

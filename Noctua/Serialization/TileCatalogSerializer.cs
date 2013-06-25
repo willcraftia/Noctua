@@ -31,8 +31,7 @@ namespace Noctua.Serialization
                 }
             }
 
-            // TODO
-            //tileCatalog.DrawMaps(DeviceContext);
+            tileCatalog.DrawMaps(DeviceContext);
 
             return tileCatalog;
         }

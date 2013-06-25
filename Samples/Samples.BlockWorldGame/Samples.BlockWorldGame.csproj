@@ -52,13 +52,25 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Libra\Libra.Games.Forms.SharpDX\Libra.Games.Forms.SharpDX.csproj">
+      <Project>{18B2993B-626D-4337-91A2-ED0239B8D843}</Project>
+      <Name>Libra.Games.Forms.SharpDX</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libra\Libra.Games\Libra.Games.csproj">
       <Project>{5FF1176C-7EA3-49A9-93D0-0868886FB9AF}</Project>
       <Name>Libra.Games</Name>
     </ProjectReference>
+    <ProjectReference Include="..\..\..\Libra\Libra.Graphics.SharpDX\Libra.Graphics.SharpDX.csproj">
+      <Project>{FAEE2668-AB77-477D-9405-26D59951501D}</Project>
+      <Name>Libra.Graphics.SharpDX</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Libra\Libra.Graphics\Libra.Graphics.csproj">
       <Project>{CDFAB2B9-00DB-4719-B424-C2A973A7BC4C}</Project>
       <Name>Libra.Graphics</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Libra\Libra.Input.Forms\Libra.Input.Forms.csproj">
+      <Project>{F9E7007E-C9BD-4C95-B9D8-8E50EDF6EAE5}</Project>
+      <Name>Libra.Input.Forms</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\Libra\Libra.Input\Libra.Input.csproj">
       <Project>{EBCC5AFA-0E37-4863-B71E-2AC201CB2864}</Project>
@@ -171,6 +183,40 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
     <None Include="Assets\Tiles\Stone.xml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Particles\Rain.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Particles\Snow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Tiles\Dirt.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\GrassBottom.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\GrassSide.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\GrassTop.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\Mantle.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\Sand.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\Snow.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="Assets\Tiles\Stone.png">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>

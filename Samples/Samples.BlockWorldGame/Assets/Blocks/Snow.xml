@@ -1,13 +1,13 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Block>
 	<Name>Snow</Name>
-	<Mesh>../Meshes/Cube.json</Mesh>
-	<TopTile>../Tiles/Snow.json</TopTile>
-	<BottomTile>../Tiles/Snow.json</BottomTile>
-	<FrontTile>../Tiles/Snow.json</FrontTile>
-	<BackTile>../Tiles/Snow.json</BackTile>
-	<LeftTile>../Tiles/Snow.json</LeftTile>
-	<RightTile>../Tiles/Snow.json</RightTile>
+	<Mesh>../Meshes/Cube.xml</Mesh>
+	<TopTile>../Tiles/Snow.xml</TopTile>
+	<BottomTile>../Tiles/Snow.xml</BottomTile>
+	<FrontTile>../Tiles/Snow.xml</FrontTile>
+	<BackTile>../Tiles/Snow.xml</BackTile>
+	<LeftTile>../Tiles/Snow.xml</LeftTile>
+	<RightTile>../Tiles/Snow.xml</RightTile>
 	<Fluid>false</Fluid>
 	<ShadowCasting>true</ShadowCasting>
 	<Shape>Cube</Shape>

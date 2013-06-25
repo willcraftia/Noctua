@@ -4,35 +4,35 @@
 	<Entries>
 		<Entry>
 			<Index>1</Index>
-			<Uri>../Tiles/Dirt.json</Uri>
+			<Uri>../Tiles/Dirt.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>2</Index>
-			<Uri>../Tiles/GrassBottom.json</Uri>
+			<Uri>../Tiles/GrassBottom.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>3</Index>
-			<Uri>../Tiles/GrassSide.json</Uri>
+			<Uri>../Tiles/GrassSide.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>4</Index>
-			<Uri>../Tiles/GrassTop.json</Uri>
+			<Uri>../Tiles/GrassTop.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>5</Index>
-			<Uri>../Tiles/Mantle.json</Uri>
+			<Uri>../Tiles/Mantle.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>6</Index>
-			<Uri>../Tiles/Sand.json</Uri>
+			<Uri>../Tiles/Sand.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>7</Index>
-			<Uri>../Tiles/Snow.json</Uri>
+			<Uri>../Tiles/Snow.xml</Uri>
 		</Entry>
 		<Entry>
 			<Index>8</Index>
-			<Uri>../Tiles/Stone.json</Uri>
+			<Uri>../Tiles/Stone.xml</Uri>
 		</Entry>
 	</Entries>
 </TileCatalog>

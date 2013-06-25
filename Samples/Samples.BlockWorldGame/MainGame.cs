@@ -64,7 +64,18 @@ namespace Samples.BlockWorldGame
         /// </summary>
         MouseState currentMouseState;
 
+        /// <summary>
+        /// マウスの初期位置。
+        /// </summary>
+        Point initialMousePosition = new Point(WindowWidth / 2, WindowHeight / 2);
+
         WorldManager worldManager;
+
+        float cameraRotationVelocity = 0.3f;
+
+        float cameraMoveVelocity = 30.0f;
+
+        float cameraDashFactor = 2;
 
         public MainGame()
         {
@@ -82,7 +93,7 @@ namespace Samples.BlockWorldGame
             spriteFont = content.Load<SpriteFont>("hudFont");
 
             worldManager = new WorldManager(DeviceContext);
-            worldManager.Load("title:Assets/Regions/Default.json");
+            worldManager.Load("title:Assets/Regions/Default.xml");
 
         }
 
@@ -114,10 +125,6 @@ namespace Samples.BlockWorldGame
             base.Draw(gameTime);
         }
 
-        void UpdateCamera(GameTime gameTime)
-        {
-        }
-
         void HandleInput(GameTime gameTime)
         {
             lastKeyboardState = currentKeyboardState;
@@ -131,6 +138,60 @@ namespace Samples.BlockWorldGame
 
             if (worldManager.Closed)
                 Exit();
+        }
+
+        void UpdateCamera(GameTime gameTime)
+        {
+            var camera = worldManager.SceneManager.ActiveCamera;
+            var deltaTime = (float) gameTime.ElapsedGameTime.TotalSeconds;
+
+            // マウス移動でカメラの姿勢を制御。
+            if (initialMousePosition.X != currentMouseState.X ||
+                initialMousePosition.Y != currentMouseState.Y)
+            {
+                var yawAmount = -(currentMouseState.X - initialMousePosition.X);
+                camera.Yaw(yawAmount * cameraRotationVelocity * deltaTime);
+
+                var pitchAmount = -(currentMouseState.Y - initialMousePosition.Y);
+                camera.Pitch(pitchAmount * cameraRotationVelocity * deltaTime);
+
+                Mouse.SetPosition(initialMousePosition.X, initialMousePosition.Y);
+            }
+
+            // 移動距離 = 速度 * 時間。
+            var distance = cameraMoveVelocity * deltaTime;
+
+            // [Shift] 押下中は移動速度が二倍。
+            if (currentKeyboardState.IsKeyDown(Keys.LeftShift) ||
+                currentKeyboardState.IsKeyDown(Keys.RightShift))
+            {
+                distance *= cameraDashFactor;
+            }
+
+            // [w/s/a/d/q/z] でカメラ移動。
+            // ただし、[Control] 押下中は他コマンドの実行が発生するため移動無効。
+            if (currentKeyboardState.IsKeyUp(Keys.LeftControl))
+            {
+                // Z 軸移動。
+                if (currentKeyboardState.IsKeyDown(Keys.W))
+                    camera.MoveRelative(camera.Position * distance);
+                if (currentKeyboardState.IsKeyDown(Keys.S))
+                    camera.MoveRelative(camera.Position * (-distance));
+
+                // X 軸移動。
+                if (currentKeyboardState.IsKeyDown(Keys.D))
+                    camera.MoveRelative(camera.Right * distance);
+                if (currentKeyboardState.IsKeyDown(Keys.A))
+                    camera.MoveRelative(camera.Right * (-distance));
+
+                // Y 軸移動。
+                if (currentKeyboardState.IsKeyDown(Keys.Q))
+                    camera.MoveRelative(camera.Up * distance);
+                if (currentKeyboardState.IsKeyDown(Keys.Z))
+                    camera.MoveRelative(camera.Up * (-distance));
+            }
+
+            camera.Update();
         }
 
         void DrawHud()

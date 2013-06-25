@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SkySphereDefinition>
+	<Name>DefaultSkySphere</Name>
 	<SunVisible>true</SunVisible>
 	<SunThreshold>0.999</SunThreshold>
 </SkySphereDefinition>
