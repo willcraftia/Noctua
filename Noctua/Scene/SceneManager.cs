@@ -282,6 +282,16 @@ namespace Noctua.Scene
             get { return postprocess.Filters; }
         }
 
+        public ShaderResourceView DepthMap
+        {
+            get { return depthMapRenderTarget.GetShaderResourceView(); }
+        }
+
+        public ShaderResourceView NormalMap
+        {
+            get { return normalMapRenderTarget.GetShaderResourceView(); }
+        }
+
         public ShaderResourceView FinalSceneMap { get; private set; }
 
         public string ActiveCameraName
@@ -705,6 +715,9 @@ namespace Noctua.Scene
             DeviceContext.Clear(new Vector4(float.MaxValue));
             DeviceContext.BlendState = BlendState.Opaque;
 
+            depthMapEffect.View = activeCamera.View;
+            depthMapEffect.Projection = activeCamera.Projection;
+
             // 不透明オブジェクト
             for (int i = 0; i < opaqueObjects.Count; i++)
             {
@@ -731,6 +744,9 @@ namespace Noctua.Scene
             DeviceContext.SetRenderTarget(normalMapRenderTarget);
             DeviceContext.Clear(Vector4.One);
             DeviceContext.BlendState = BlendState.Opaque;
+
+            normalMapEffect.View = activeCamera.View;
+            normalMapEffect.Projection = activeCamera.Projection;
 
             // 不透明オブジェクト
             for (int i = 0; i < opaqueObjects.Count; i++)
