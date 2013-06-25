@@ -183,6 +183,8 @@ namespace Noctua.Models
             viewProjection = Matrix.Identity;
             parametersPerObjectVS.WorldViewProjection = Matrix.Identity;
 
+            TextureSampler = SamplerState.PointClamp;
+
             Mode = ChunkEffectMode.Default;
 
             dirtyFlags = DirtyFlags.ConstantBufferPerObjectVS |
