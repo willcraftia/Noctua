@@ -4,6 +4,7 @@ using System;
 using System.Text;
 using Libra;
 using Libra.Games;
+using Libra.Games.Debugging;
 using Libra.Graphics;
 using Libra.Input;
 using Libra.Xnb;
@@ -44,6 +45,16 @@ namespace Samples.BlockWorldGame
         /// フォント。
         /// </summary>
         SpriteFont spriteFont;
+
+        /// <summary>
+        /// 中間マップ表示。
+        /// </summary>
+        TextureDisplay textureDisplay;
+
+        /// <summary>
+        /// フレーム レート計測器。
+        /// </summary>
+        FrameRateMeasure frameRateMeasure;
 
         /// <summary>
         /// 前回の更新処理におけるキーボード状態。
@@ -90,6 +101,17 @@ namespace Samples.BlockWorldGame
 
             graphicsManager.PreferredBackBufferWidth = WindowWidth;
             graphicsManager.PreferredBackBufferHeight = WindowHeight;
+
+            textureDisplay = new TextureDisplay(this);
+            const float scale = 0.2f;
+            textureDisplay.TextureWidth = (int) (WindowWidth * scale);
+            textureDisplay.TextureHeight = (int) (WindowHeight * scale);
+            //textureDisplay.Visible = false;
+            //textureDisplay.Visible = true;
+            Components.Add(textureDisplay);
+
+            frameRateMeasure = new FrameRateMeasure(this);
+            Components.Add(frameRateMeasure);
         }
 
         protected override void LoadContent()
@@ -126,6 +148,9 @@ namespace Samples.BlockWorldGame
 
             // HUD 描画。
             DrawHud();
+
+            textureDisplay.Textures.Add(worldManager.SceneManager.DepthMap);
+            textureDisplay.Textures.Add(worldManager.SceneManager.NormalMap);
 
             base.Draw(gameTime);
         }
@@ -179,21 +204,21 @@ namespace Samples.BlockWorldGame
             {
                 // Z 軸移動。
                 if (currentKeyboardState.IsKeyDown(Keys.W))
-                    camera.MoveRelative(camera.Direction * distance);
+                    camera.Move(camera.Direction * distance);
                 if (currentKeyboardState.IsKeyDown(Keys.S))
-                    camera.MoveRelative(camera.Direction * (-distance));
+                    camera.Move(camera.Direction * (-distance));
 
                 // X 軸移動。
                 if (currentKeyboardState.IsKeyDown(Keys.D))
-                    camera.MoveRelative(camera.Right * distance);
+                    camera.Move(camera.Right * distance);
                 if (currentKeyboardState.IsKeyDown(Keys.A))
-                    camera.MoveRelative(camera.Right * (-distance));
+                    camera.Move(camera.Right * (-distance));
 
                 // Y 軸移動。
                 if (currentKeyboardState.IsKeyDown(Keys.Q))
-                    camera.MoveRelative(camera.Up * distance);
+                    camera.Move(camera.Up * distance);
                 if (currentKeyboardState.IsKeyDown(Keys.Z))
-                    camera.MoveRelative(camera.Up * (-distance));
+                    camera.Move(camera.Up * (-distance));
             }
 
             camera.Update();
@@ -215,6 +240,8 @@ namespace Samples.BlockWorldGame
         void CreateInformationText()
         {
             hudText.Length = 0;
+
+            hudText.Append("FPS: ").AppendNumber(frameRateMeasure.FrameRate).AppendLine();
 
             hudText.Append("Screen: ");
             hudText.AppendNumber(graphicsManager.PreferredBackBufferWidth).Append('x');

@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libra.Input.Forms", "..\Lib
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libra.Games.Forms.SharpDX", "..\Libra\Libra.Games.Forms.SharpDX\Libra.Games.Forms.SharpDX.csproj", "{18B2993B-626D-4337-91A2-ED0239B8D843}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Libra.Games.Debugging", "..\Libra\Libra.Games.Debugging\Libra.Games.Debugging.csproj", "{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -235,6 +237,16 @@ Global
 		{18B2993B-626D-4337-91A2-ED0239B8D843}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{18B2993B-626D-4337-91A2-ED0239B8D843}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{18B2993B-626D-4337-91A2-ED0239B8D843}.Release|x86.ActiveCfg = Release|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Release|Any CPU.Build.0 = Release|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Release|Mixed Platforms.Build.0 = Release|Any CPU
+		{49B9E5C6-208A-4EEF-BD7E-D4C109B21362}.Release|x86.ActiveCfg = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
