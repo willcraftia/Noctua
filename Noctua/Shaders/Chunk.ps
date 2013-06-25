@@ -20,8 +20,9 @@ float4 PS(Input input) : SV_Target0
 {
     float3 color = Texture.Sample(TextureSampler, input.TexCoord);
 
+    color += AmbientLightColor;
+
     color *= input.Color.rgb;
-    color *= AmbientLightColor;
 
     return float4(color, input.Color.a);
 }
