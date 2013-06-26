@@ -93,16 +93,16 @@ namespace Noctua.Models
             skySphereEffect.Projection = localProjection;
 
             // 読み取り専用深度かつ深度比較 LessEqual。
-            context.DepthStencilState = DepthReadWithLessEqual;
             // 内側 (背面) を描画。
+            context.DepthStencilState = DepthReadWithLessEqual;
             context.RasterizerState = RasterizerState.CullFront;
 
             skySphereEffect.Apply(context);
             sphereMesh.Draw();
 
             // デフォルトへ戻す。
-            context.DepthStencilState = DepthStencilState.Default;
-            context.RasterizerState = RasterizerState.CullBack;
+            context.DepthStencilState = null;
+            context.RasterizerState = null;
         }
     }
 }
