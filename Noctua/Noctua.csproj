@@ -80,6 +80,7 @@
     <Compile Include="Models\GraphicsDofSettings.cs" />
     <Compile Include="Models\GraphicsSettings.cs" />
     <Compile Include="Models\GraphicsShadowSettings.cs" />
+    <Compile Include="Models\LensFlareMesh.cs" />
     <Compile Include="Models\RegionManager.cs" />
     <Compile Include="Models\SceneSettings.cs" />
     <Compile Include="Models\SkySphere.cs" />
@@ -129,6 +130,9 @@
     <Compile Include="Serialization\DefaultBiomeHandler.cs" />
     <Compile Include="Serialization\DirectionalLightDefinition.cs" />
     <Compile Include="Serialization\GraphicsSettingsSerializer.cs" />
+    <Compile Include="Serialization\LensFlareMeshDefinition.cs" />
+    <Compile Include="Serialization\LensFlareMeshSerializer.cs" />
+    <Compile Include="Serialization\LensFlareElementDefinition.cs" />
     <Compile Include="Serialization\ModuleSerializer.cs" />
     <Compile Include="Serialization\NoiseSerializer.cs" />
     <Compile Include="Serialization\NoiseTypes.cs" />

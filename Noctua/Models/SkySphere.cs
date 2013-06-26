@@ -104,10 +104,5 @@ namespace Noctua.Models
             context.DepthStencilState = DepthStencilState.Default;
             context.RasterizerState = RasterizerState.CullBack;
         }
-
-        public override void Draw(IEffect effect)
-        {
-            // スカイ スフィアを特殊なエフェクトで描画することはない。
-        }
     }
 }

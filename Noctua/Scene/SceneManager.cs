@@ -111,8 +111,6 @@ namespace Noctua.Scene
 
         OctreeManager octreeManager;
 
-        SceneNode skySphereNode;
-
         string activeCameraName;
 
         SceneCamera activeCamera;
@@ -258,6 +256,10 @@ namespace Noctua.Scene
 
         public SceneNode RootNode { get; private set; }
 
+        public SceneNode SkySphereNode { get; set; }
+
+        public SceneNode LensFlareNode { get; set; }
+
         public SceneCameraCollection Cameras { get; private set; }
 
         public DirectionalLightCollection DirectionalLights { get; private set; }
@@ -338,12 +340,6 @@ namespace Noctua.Scene
         }
 
         public Vector3 BackgroundColor { get; set; }
-
-        public SceneNode SkySphere
-        {
-            get { return skySphereNode; }
-            set { skySphereNode = value; }
-        }
 
         public int SceneObjectCount { get; internal set; }
 
@@ -433,6 +429,9 @@ namespace Noctua.Scene
 
             // TODO
             RootNode = new SceneNode(this, "Root");
+
+            SkySphereNode = new SceneNode(this, "SkySphere");
+            LensFlareNode = new SceneNode(this, "LensFlare");
         }
 
         public SceneNode CreateSceneNode(string name)
@@ -769,16 +768,20 @@ namespace Noctua.Scene
                 translucent.Draw();
             }
 
-            // TODO
-            //
-            // スカイ スフィアに限らず、全ての通常オブジェクトの描画を終えた後に
-            // 描画するノードとして汎用的な定義を行い、これに従うようにする。
-
             //
             // スカイ スフィア
             //
 
-            foreach (var obj in skySphereNode.Objects)
+            foreach (var obj in SkySphereNode.Objects)
+            {
+                if (obj.Visible) obj.Draw();
+            }
+
+            //
+            // レンズ フレア
+            //
+
+            foreach (var obj in LensFlareNode.Objects)
             {
                 if (obj.Visible) obj.Draw();
             }

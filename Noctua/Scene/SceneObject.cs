@@ -90,7 +90,7 @@ namespace Noctua.Scene
         /// <summary>
         /// シーン マネージャが指定するエフェクトを用いて描画します。
         /// </summary>
-        /// <param name="effect"></param>
-        public abstract void Draw(IEffect effect);
+        /// <param name="effect">エフェクト。</param>
+        public virtual void Draw(IEffect effect) { }
     }
 }

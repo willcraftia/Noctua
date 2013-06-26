@@ -24,6 +24,8 @@ namespace Noctua.Models
 
         SkySphere skySphere;
 
+        LensFlareMesh lensFlareMesh;
+
         ParticleSystem snowParticleSystem;
 
         ParticleSystem rainParticleSystem;
@@ -53,17 +55,17 @@ namespace Noctua.Models
             assetContainer.RegisterAssetSerializer<Texture2DSerializer>();
             assetContainer.RegisterAssetSerializer<ParticleSystemSerializer>();
             assetContainer.RegisterAssetSerializer<SkySphereSerializer>();
+            assetContainer.RegisterAssetSerializer<LensFlareMeshSerializer>();
 
             SceneSettings = WorldManager.SceneSettings;
 
             // スカイ スフィア
             skySphere = assetContainer.Load<SkySphere>("title:Assets/Models/SkySphere.xml");
+            SceneManager.SkySphereNode.Objects.Add(skySphere);
 
-            // シーン マネージャへ登録
-            var skySphereNode = new SceneNode(SceneManager, "SkySphere");
-            skySphereNode.Objects.Add(skySphere);
-
-            SceneManager.SkySphere = skySphereNode;
+            // レンズ フレア メッシュ
+            lensFlareMesh = assetContainer.Load<LensFlareMesh>("title:Assets/Models/LensFlareMesh.xml");
+            SceneManager.LensFlareNode.Objects.Add(lensFlareMesh);
 
             // TODO
             //

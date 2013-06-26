@@ -1037,7 +1037,7 @@ namespace Samples.AssetSerialization
                     Box = new IntBoundingBox
                     {
                         Min = new IntVector3(-128, 0, -128),
-                        Max = new IntVector3( 128, 16, 128)
+                        Max = new IntVector3(128, 16, 128)
                     },
                     TileCatalog = "../TileCatalogs/Default.xml",
                     BlockCatalog = "../BlockCatalogs/Default.xml",
@@ -1064,6 +1064,39 @@ namespace Samples.AssetSerialization
                     SunThreshold = 0.999f
                 };
                 SerializeAndDeserialize<SkySphereDefinition>("Models/SkySphere", definition);
+            }
+            Console.WriteLine();
+
+            #endregion
+
+            #region レンズ フレア メッシュ定義
+
+            Console.WriteLine("レンズ フレア メッシュ定義");
+            {
+                var definition = new LensFlareMeshDefinition
+                {
+                    Name = "LensFlare",
+                    QuerySize = 100,
+                    Flares = new LensFlareElementDefinition []
+                    {
+                        new LensFlareElementDefinition(-0.5f, 0.7f, new Color( 50,  25,  50).ToVector3(), "LensFlare1.png"),
+                        new LensFlareElementDefinition( 0.3f, 0.4f, new Color(100, 255, 200).ToVector3(), "LensFlare1.png"),
+                        new LensFlareElementDefinition( 1.2f, 1.0f, new Color(100,  50,  50).ToVector3(), "LensFlare1.png"),
+                        new LensFlareElementDefinition( 1.5f, 1.5f, new Color( 50, 100,  50).ToVector3(), "LensFlare1.png"),
+
+                        new LensFlareElementDefinition(-0.3f, 0.7f, new Color(200,  50,  50).ToVector3(), "LensFlare2.png"),
+                        new LensFlareElementDefinition( 0.6f, 0.9f, new Color( 50, 100,  50).ToVector3(), "LensFlare2.png"),
+                        new LensFlareElementDefinition( 0.7f, 0.4f, new Color( 50, 200, 200).ToVector3(), "LensFlare2.png"),
+
+                        new LensFlareElementDefinition(-0.7f, 0.7f, new Color( 50, 100,  25).ToVector3(), "LensFlare3.png"),
+                        new LensFlareElementDefinition( 0.0f, 0.6f, new Color( 25,  25,  25).ToVector3(), "LensFlare3.png"),
+                        new LensFlareElementDefinition( 2.0f, 1.4f, new Color( 25,  50, 100).ToVector3(), "LensFlare3.png"),
+                    },
+                    GlowTexture = "LensFlareGlow.png",
+                    GlowSize = 400,
+                    LightName = "Sun",
+                };
+                SerializeAndDeserialize<LensFlareMeshDefinition>("Models/LensFlareMesh", definition);
             }
             Console.WriteLine();
 
@@ -1108,7 +1141,7 @@ namespace Samples.AssetSerialization
                     PriorActiveDistance = settings.PartitionManager.PriorActiveDistance,
                     ClusterSize = settings.PartitionManager.ClusterSize
                 };
-                
+
                 SerializeAndDeserialize<ChunkSettingsDefinition>("ChunkSettings", definition);
             }
             Console.WriteLine();
