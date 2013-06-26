@@ -152,17 +152,24 @@ namespace Samples.BlockWorldGame
             var sceneManager = worldManager.SceneManager;
 
             textureDisplay.Textures.Add(sceneManager.DepthMap);
+            
             textureDisplay.Textures.Add(sceneManager.NormalMap);
+            
             for (int i = 0; i < sceneManager.ShadowMapSplitCount; i++)
             {
                 var shadowMap = sceneManager.GetShadowMap(i);
                 if (shadowMap != null)
                     textureDisplay.Textures.Add(shadowMap);
             }
-            if (sceneManager.FinalOcclusionMap != null)
-                textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
+            
+            if (sceneManager.ShadowOcclusionMap != null)
+                textureDisplay.Textures.Add(sceneManager.ShadowOcclusionMap);
+            
             if (sceneManager.FinalAmbientOcclusionMap != null)
                 textureDisplay.Textures.Add(sceneManager.FinalAmbientOcclusionMap);
+
+            if (sceneManager.FinalOcclusionMap != null)
+                textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
 
             base.Draw(gameTime);
         }

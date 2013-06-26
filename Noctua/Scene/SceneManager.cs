@@ -264,6 +264,8 @@ namespace Noctua.Scene
         /// </summary>
         DownFilter occlusionMapDownFilter;
 
+        OcclusionMergeFilter occlusionMergeFilter;
+
         /// <summary>
         /// シャドウ閉塞マップ機能。
         /// </summary>
@@ -308,6 +310,8 @@ namespace Noctua.Scene
         /// 環境光閉塞ブラー フィルタ 垂直パス。
         /// </summary>
         GaussianFilterPass ssaoBlurV;
+
+        int ssaoBlurIteration = 1;
 
         ShaderResourceView finalAmbientOcclusionMap;
 
@@ -400,6 +404,11 @@ namespace Noctua.Scene
         public ShaderResourceView NormalMap
         {
             get { return normalMapRenderTarget; }
+        }
+
+        public ShaderResourceView ShadowOcclusionMap
+        {
+            get { return occlusionMapRenderTarget; }
         }
 
         /// <summary>
@@ -579,10 +588,13 @@ namespace Noctua.Scene
             occlusionMapUpFilter = new UpFilter(DeviceContext.Device);
             occlusionMapDownFilter = new DownFilter(DeviceContext.Device);
 
+            occlusionMergeFilter = new OcclusionMergeFilter(DeviceContext.Device);
+
             occlusionMapPostprocess.Filters.Add(occlusionMapDownFilter);
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassH);
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassV);
             occlusionMapPostprocess.Filters.Add(occlusionMapUpFilter);
+            occlusionMapPostprocess.Filters.Add(occlusionMergeFilter);
             occlusionMapPostprocess.Enabled = true;
 
             // 深度バイアスは、主に PCF の際に重要となる。
@@ -605,15 +617,6 @@ namespace Noctua.Scene
             ssaoMapNormalDepthBilateralFilter = new NormalDepthBilateralFilter(DeviceContext.Device);
             ssaoBlurH = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Horizon);
             ssaoBlurV = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Vertical);
-
-            ssaoMapPostprocess.Filters.Add(ssaoMapDownFilter);
-            // TODO: ブラー回数。
-            for (int i = 0; i < 3; i++)
-            {
-                ssaoMapPostprocess.Filters.Add(ssaoBlurH);
-                ssaoMapPostprocess.Filters.Add(ssaoBlurV);
-            }
-            ssaoMapPostprocess.Filters.Add(ssaoMapUpFilter);
 
             // シーン用ポストプロセス。
             scenePostprocess = new Postprocess(DeviceContext);
@@ -721,8 +724,8 @@ namespace Noctua.Scene
             DrawScene();
 
             // シャドウ パス
-            DrawShadowOcclusion();
             DrawAmbientOcclusion();
+            DrawShadowOcclusion();
 
             //
             // パーティクル
@@ -1047,6 +1050,7 @@ namespace Noctua.Scene
 
             DeviceContext.SetRenderTarget(null);
 
+            occlusionMergeFilter.OtherOcclusionMap = finalAmbientOcclusionMap;
             finalOcclusionMap = occlusionMapPostprocess.Draw(occlusionMapRenderTarget);
         }
 
@@ -1065,12 +1069,14 @@ namespace Noctua.Scene
             ssaoMapPostprocess.Filters.Clear();
             ssaoMapNormalDepthBilateralFilter.LinearDepthMap = depthMapRenderTarget;
             ssaoMapNormalDepthBilateralFilter.NormalMap = normalMapRenderTarget;
-            // TODO: 回数。回数固定でも良いか？
-            for (int i = 0; i < 3; i++)
+
+            ssaoMapPostprocess.Filters.Add(ssaoMapDownFilter);
+            for (int i = 0; i < ssaoBlurIteration; i++)
             {
                 ssaoMapPostprocess.Filters.Add(ssaoBlurH);
                 ssaoMapPostprocess.Filters.Add(ssaoBlurV);
             }
+            ssaoMapPostprocess.Filters.Add(ssaoMapUpFilter);
 
             finalAmbientOcclusionMap = ssaoMapPostprocess.Draw(ssaoMapRenderTarget);
         }
@@ -1096,8 +1102,8 @@ namespace Noctua.Scene
 
         void ApplyPostprocess()
         {
-            //occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
-            occlusionCombineFilter.OcclusionMap = finalAmbientOcclusionMap;
+            occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
+            //occlusionCombineFilter.OcclusionMap = finalAmbientOcclusionMap;
 
             FinalSceneMap = scenePostprocess.Draw(sceneMapRenderTarget);
         }
