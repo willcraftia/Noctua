@@ -202,17 +202,8 @@ namespace Noctua.Models
             // スカイスフィア。
             skySphere.SkyColor = SceneSettings.CurrentSkyColor;
             skySphere.SunColor = SceneSettings.Sunlight.DiffuseColor;
-            skySphere.SunDirection = SceneSettings.Sunlight.Direction;
+            skySphere.SunDirection = SceneSettings.SunDirection;
         }
-
-        //internal void OnShadowMapUpdated(object sender, EventArgs e)
-        //{
-        //    for (int i = 0; i < regions.Count; i++)
-        //    {
-        //        var region = regions[i];
-        //        SceneManager.UpdateEffectShadowMap(region.ChunkEffect);
-        //    }
-        //}
 
         #region IDisposable
 

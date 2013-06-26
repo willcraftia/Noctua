@@ -101,5 +101,19 @@ namespace Noctua.Properties {
                 return ((byte[])(obj));
             }
         }
+        
+        internal static byte[] SkySpherePS {
+            get {
+                object obj = ResourceManager.GetObject("SkySpherePS", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        internal static byte[] SkySphereVS {
+            get {
+                object obj = ResourceManager.GetObject("SkySphereVS", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
     }
 }

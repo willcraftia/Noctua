@@ -12,17 +12,6 @@ namespace Noctua.Models
 {
     public sealed class SkySphere : SceneObject
     {
-        #region DirtyFlags
-
-        [Flags]
-        enum DirtyFlags
-        {
-            LocalView = (1 << 0),
-            LocalProjection = (1 << 1)
-        }
-
-        #endregion
-
         /// <summary>
         /// DepthFunction に LessEqual を用いる読み取り専用深度ステンシル ステート。
         /// Libra の DepthRead は Less (D3D11 デフォルト) を深度比較に用いるため、
@@ -43,34 +32,6 @@ namespace Noctua.Models
         SkySphereEffect skySphereEffect;
 
         SphereMesh sphereMesh;
-
-        Matrix view;
-
-        Matrix projection;
-
-        DirtyFlags dirtyFlags;
-
-        public Matrix View
-        {
-            get { return view; }
-            set
-            {
-                view = value;
-
-                dirtyFlags |= DirtyFlags.LocalView;
-            }
-        }
-
-        public Matrix Projection
-        {
-            get { return projection; }
-            set
-            {
-                projection = value;
-
-                dirtyFlags |= DirtyFlags.LocalProjection;
-            }
-        }
 
         public Vector3 SkyColor
         {
@@ -110,37 +71,26 @@ namespace Noctua.Models
             this.context = context;
 
             skySphereEffect = new SkySphereEffect(context.Device);
-            skySphereEffect.World = Matrix.Identity;
             sphereMesh = new SphereMesh(context, 1, 32);
-
-            dirtyFlags |= DirtyFlags.LocalView | DirtyFlags.LocalProjection;
         }
 
         public override void Draw()
         {
-            if ((dirtyFlags & DirtyFlags.LocalView) != 0)
-            {
-                var localView = view;
-                localView.Translation = Vector3.Zero;
+            var camera = Parent.Manager.ActiveCamera;
 
-                skySphereEffect.View = localView;
+            var localView = camera.View;
+            localView.Translation = Vector3.Zero;
 
-                dirtyFlags &= ~DirtyFlags.LocalView;
-            }
+            skySphereEffect.View = localView;
 
-            if ((dirtyFlags & DirtyFlags.LocalProjection) != 0)
-            {
-                // z = w を強制して遠クリップ面に描画。
-                var localProjection = projection;
-                localProjection.M13 = localProjection.M14;
-                localProjection.M23 = localProjection.M24;
-                localProjection.M33 = localProjection.M34;
-                localProjection.M43 = localProjection.M44;
+            // z = w を強制して遠クリップ面に描画。
+            var localProjection = camera.Projection;
+            localProjection.M13 = localProjection.M14;
+            localProjection.M23 = localProjection.M24;
+            localProjection.M33 = localProjection.M34;
+            localProjection.M43 = localProjection.M44;
 
-                skySphereEffect.Projection = localProjection;
-
-                dirtyFlags &= ~DirtyFlags.LocalProjection;
-            }
+            skySphereEffect.Projection = localProjection;
 
             // 読み取り専用深度かつ深度比較 LessEqual。
             context.DepthStencilState = DepthReadWithLessEqual;

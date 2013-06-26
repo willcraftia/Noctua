@@ -146,5 +146,5 @@
 	<FogEnd>1</FogEnd>
 	<SecondsPerDay>10</SecondsPerDay>
 	<TimeStopped>true</TimeStopped>
-	<FixedSecondsPerDay>5</FixedSecondsPerDay>
+	<FixedSecondsPerDay>4</FixedSecondsPerDay>
 </SceneSettingsDefinition>

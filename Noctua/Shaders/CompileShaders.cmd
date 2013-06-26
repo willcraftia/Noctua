@@ -18,6 +18,8 @@ call :CompileVS Chunk OcclusionVS %vs_profile%
 call :CompilePS Chunk OcclusionPS %ps_profile%
 call :CompileVS Chunk WireframeVS %vs_profile%
 call :CompilePS Chunk WireframePS %ps_profile%
+call :CompileVS SkySphere VS %vs_profile%
+call :CompilePS SkySphere PS %ps_profile%
 
 :: TODO
 

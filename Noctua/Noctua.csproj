@@ -206,8 +206,12 @@
     <None Include="Shaders\Compiled\ChunkVS.bin" />
     <None Include="Shaders\Compiled\ChunkWireframePS.bin" />
     <None Include="Shaders\Compiled\ChunkWireframeVS.bin" />
+    <None Include="Shaders\Compiled\SkySpherePS.bin" />
+    <None Include="Shaders\Compiled\SkySphereVS.bin" />
     <None Include="Shaders\CompileShaders.cmd" />
     <None Include="Shaders\Chunk.ps" />
+    <None Include="Shaders\SkySphere.ps" />
+    <None Include="Shaders\SkySphere.vs" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

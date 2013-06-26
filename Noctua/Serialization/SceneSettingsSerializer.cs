@@ -18,8 +18,8 @@ namespace Noctua.Serialization
 
             var settings = new SceneSettings
             {
-                MidnightMoonDirection = definition.MidnightMoonDirection,
                 MidnightSunDirection = definition.MidnightSunDirection,
+                MidnightMoonDirection = definition.MidnightMoonDirection,
                 ShadowColor = definition.ShadowColor,
                 FogEnabled = definition.FogEnabled,
                 FogStart = definition.FogStart,

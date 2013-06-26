@@ -13,18 +13,21 @@ namespace Noctua.Models
     {
         static readonly BlendState ColorWriteDisable = new BlendState
         {
-            ColorWriteChannels = ColorWriteChannels.None
+            ColorWriteChannels = ColorWriteChannels.None,
+            Name = "ChunkMesh.ColorWriteDisable"
         };
 
         static readonly DepthStencilState DepthWriteWithLessEqual = new DepthStencilState
         {
-            DepthFunction = ComparisonFunction.LessEqual
+            DepthFunction = ComparisonFunction.LessEqual,
+            Name = "ChunkMesh.DepthWriteWithLessEqual"
         };
 
         static readonly DepthStencilState DepthReadWithLessEquals = new DepthStencilState
         {
             DepthWriteEnable = false,
-            DepthFunction = ComparisonFunction.LessEqual
+            DepthFunction = ComparisonFunction.LessEqual,
+            Name = "ChunkMesh.DepthReadWithLessEquals"
         };
 
         public Matrix World = Matrix.Identity;
@@ -110,6 +113,10 @@ namespace Noctua.Models
 
             occlusionQuery.End();
             occlusionQueryActive = true;
+
+            // デフォルトへ戻す。
+            deviceContext.DepthStencilState = null;
+            deviceContext.BlendState = null;
         }
 
         public override void Draw()
@@ -147,6 +154,10 @@ namespace Noctua.Models
             chunkEffect.Apply(deviceContext);
 
             DrawCore();
+
+            // デフォルトへ戻す。
+            deviceContext.DepthStencilState = null;
+            deviceContext.BlendState = null;
         }
 
         public override void Draw(IEffect effect)

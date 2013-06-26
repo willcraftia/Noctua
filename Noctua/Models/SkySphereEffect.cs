@@ -4,6 +4,7 @@ using System;
 using System.Runtime.InteropServices;
 using Libra;
 using Libra.Graphics;
+using Noctua.Properties;
 
 #endregion
 
@@ -21,35 +22,31 @@ namespace Noctua.Models
 
             public SharedDeviceResource(Device device)
             {
-                //var compiler = ShaderCompiler.CreateShaderCompiler();
-                //compiler.RootPath = "../../Shaders";
-                //compiler.OptimizationLevel = OptimizationLevels.Level3;
-                //compiler.EnableStrictness = true;
-                //compiler.WarningsAreErrors = true;
+                VertexShader = device.CreateVertexShader();
+                VertexShader.Name = "SkySphereVS";
+                VertexShader.Initialize(Resources.SkySphereVS);
 
-                //VertexShader = device.CreateVertexShader();
-                //VertexShader.Initialize(compiler.CompileVertexShader("SkySphere.hlsl"));
-
-                //PixelShader = device.CreatePixelShader();
-                //PixelShader.Initialize(compiler.CompilePixelShader("SkySphere.hlsl"));
+                PixelShader = device.CreatePixelShader();
+                PixelShader.Name = "SkySpherePS";
+                PixelShader.Initialize(Resources.SkySpherePS);
             }
         }
 
         #endregion
 
-        #region VSConstants
+        #region ParametersPerCameraVS
 
-        public struct VSConstants
+        public struct ParametersPerCameraVS
         {
-            public Matrix WorldViewProjection;
+            public Matrix ViewProjection;
         }
 
         #endregion
 
-        #region PSConstants
+        #region ParametersPerObjectPS
 
         [StructLayout(LayoutKind.Explicit, Size = 64)]
-        public struct PSConstants
+        public struct ParametersPerObjectPS
         {
             [FieldOffset(0)]
             public Vector3 SkyColor;
@@ -74,10 +71,9 @@ namespace Noctua.Models
         [Flags]
         enum DirtyFlags
         {
-            ViewProjection = (1 << 0),
-            WorldViewProjection = (1 << 1),
-            VSConstants = (1 << 2),
-            PSConstants = (1 << 3)
+            ConstantBufferPerCameraVS   = (1 << 0),
+            ConstantBufferPerObjectPS   = (1 << 1),
+            ViewProjection              = (1 << 2)
         }
 
         #endregion
@@ -86,33 +82,24 @@ namespace Noctua.Models
 
         SharedDeviceResource sharedDeviceResource;
 
-        ConstantBuffer vsConstantBuffer;
+        ConstantBuffer constantBufferPerCameraVS;
 
-        ConstantBuffer psConstantBuffer;
+        ConstantBuffer constantBufferPerObjectPS;
 
-        VSConstants vsConstants;
+        ParametersPerCameraVS parametersPerCameraVS;
 
-        PSConstants psConstants;
-
-        Matrix world;
+        ParametersPerObjectPS parametersPerObjectPS;
 
         Matrix view;
 
         Matrix projection;
 
-        Matrix viewProjection;
-
         DirtyFlags dirtyFlags;
 
         public Matrix World
         {
-            get { return world; }
-            set
-            {
-                world = value;
-
-                dirtyFlags |= DirtyFlags.WorldViewProjection;
-            }
+            get { return Matrix.Identity; }
+            set { }
         }
 
         public Matrix View
@@ -139,56 +126,56 @@ namespace Noctua.Models
 
         public Vector3 SkyColor
         {
-            get { return psConstants.SkyColor; }
+            get { return parametersPerObjectPS.SkyColor; }
             set
             {
-                psConstants.SkyColor = value;
+                parametersPerObjectPS.SkyColor = value;
 
-                dirtyFlags |= DirtyFlags.PSConstants;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectPS;
             }
         }
 
         public Vector3 SunDirection
         {
-            get { return psConstants.SunDirection; }
+            get { return parametersPerObjectPS.SunDirection; }
             set
             {
-                psConstants.SunDirection = value;
+                parametersPerObjectPS.SunDirection = value;
 
-                dirtyFlags |= DirtyFlags.PSConstants;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectPS;
             }
         }
 
         public Vector3 SunColor
         {
-            get { return psConstants.SunColor; }
+            get { return parametersPerObjectPS.SunColor; }
             set
             {
-                psConstants.SunColor = value;
+                parametersPerObjectPS.SunColor = value;
 
-                dirtyFlags |= DirtyFlags.PSConstants;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectPS;
             }
         }
 
         public float SunThreshold
         {
-            get { return psConstants.SunThreshold; }
+            get { return parametersPerObjectPS.SunThreshold; }
             set
             {
-                psConstants.SunThreshold = value;
+                parametersPerObjectPS.SunThreshold = value;
 
-                dirtyFlags |= DirtyFlags.PSConstants;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectPS;
             }
         }
 
         public bool SunVisible
         {
-            get { return psConstants.SunVisible != 0.0f; }
+            get { return parametersPerObjectPS.SunVisible != 0.0f; }
             set
             {
-                psConstants.SunVisible = (value) ? 1.0f : 0.0f;
+                parametersPerObjectPS.SunVisible = (value) ? 1.0f : 0.0f;
 
-                dirtyFlags |= DirtyFlags.PSConstants;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerObjectPS;
             }
         }
 
@@ -200,65 +187,55 @@ namespace Noctua.Models
 
             sharedDeviceResource = device.GetSharedResource<SkySphereEffect, SharedDeviceResource>();
 
-            vsConstantBuffer = device.CreateConstantBuffer();
-            vsConstantBuffer.Initialize<VSConstants>();
+            constantBufferPerCameraVS = device.CreateConstantBuffer();
+            constantBufferPerCameraVS.Initialize<ParametersPerCameraVS>();
 
-            psConstantBuffer = device.CreateConstantBuffer();
-            psConstantBuffer.Initialize<PSConstants>();
+            constantBufferPerObjectPS = device.CreateConstantBuffer();
+            constantBufferPerObjectPS.Initialize<ParametersPerObjectPS>();
 
-            world = Matrix.Identity;
             view = Matrix.Identity;
             projection = Matrix.Identity;
-            viewProjection = Matrix.Identity;
 
-            vsConstants.WorldViewProjection = Matrix.Identity;
-            psConstants.SkyColor = Vector3.Zero;
-            psConstants.SunDirection = Vector3.Up;
-            psConstants.SunColor = Vector3.One;
-            psConstants.SunThreshold = 0.999f;
-            psConstants.SunVisible = 1.0f;
+            parametersPerCameraVS.ViewProjection = Matrix.Identity;
+            parametersPerObjectPS.SkyColor = Vector3.Zero;
+            parametersPerObjectPS.SunDirection = Vector3.Up;
+            parametersPerObjectPS.SunColor = Vector3.One;
+            parametersPerObjectPS.SunThreshold = 0.999f;
+            parametersPerObjectPS.SunVisible = 1.0f;
 
-            dirtyFlags = DirtyFlags.VSConstants | DirtyFlags.PSConstants;
+            dirtyFlags = DirtyFlags.ConstantBufferPerCameraVS |
+                DirtyFlags.ConstantBufferPerObjectPS;
         }
 
         public void Apply(DeviceContext context)
         {
             if ((dirtyFlags & DirtyFlags.ViewProjection) != 0)
             {
+                Matrix viewProjection;
                 Matrix.Multiply(ref view, ref projection, out viewProjection);
+                Matrix.Transpose(ref viewProjection, out parametersPerCameraVS.ViewProjection);
 
                 dirtyFlags &= ~DirtyFlags.ViewProjection;
-                dirtyFlags |= DirtyFlags.WorldViewProjection;
+                dirtyFlags |= DirtyFlags.ConstantBufferPerCameraVS;
             }
 
-            if ((dirtyFlags & DirtyFlags.WorldViewProjection) != 0)
+            if ((dirtyFlags & DirtyFlags.ConstantBufferPerCameraVS) != 0)
             {
-                Matrix worldViewProjection;
-                Matrix.Multiply(ref world, ref viewProjection, out worldViewProjection);
+                constantBufferPerCameraVS.SetData(context, parametersPerCameraVS);
 
-                Matrix.Transpose(ref worldViewProjection, out vsConstants.WorldViewProjection);
-
-                dirtyFlags &= ~DirtyFlags.WorldViewProjection;
-                dirtyFlags |= DirtyFlags.VSConstants;
+                dirtyFlags &= ~DirtyFlags.ConstantBufferPerCameraVS;
             }
 
-            if ((dirtyFlags & DirtyFlags.VSConstants) != 0)
+            if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectPS) != 0)
             {
-                vsConstantBuffer.SetData(context, vsConstants);
+                constantBufferPerObjectPS.SetData(context, parametersPerObjectPS);
 
-                dirtyFlags &= ~DirtyFlags.VSConstants;
+                dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectPS;
             }
 
-            if ((dirtyFlags & DirtyFlags.PSConstants) != 0)
-            {
-                psConstantBuffer.SetData(context, psConstants);
-
-                dirtyFlags &= ~DirtyFlags.PSConstants;
-            }
-
-            context.VertexShaderConstantBuffers[0] = vsConstantBuffer;
+            context.VertexShaderConstantBuffers[0] = constantBufferPerCameraVS;
             context.VertexShader = sharedDeviceResource.VertexShader;
-            context.PixelShaderConstantBuffers[0] = psConstantBuffer;
+            context.PixelShaderConstantBuffers[0] = constantBufferPerObjectPS;
             context.PixelShader = sharedDeviceResource.PixelShader;
         }
 
@@ -284,7 +261,8 @@ namespace Noctua.Models
             if (disposing)
             {
                 sharedDeviceResource = null;
-                vsConstantBuffer.Dispose();
+                constantBufferPerCameraVS.Dispose();
+                constantBufferPerObjectPS.Dispose();
             }
 
             disposed = true;

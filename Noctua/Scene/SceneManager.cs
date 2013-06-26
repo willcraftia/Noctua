@@ -778,10 +778,10 @@ namespace Noctua.Scene
             // スカイ スフィア
             //
 
-            //foreach (var obj in skySphereNode.Objects)
-            //{
-            //    if (obj.Visible) obj.Draw();
-            //}
+            foreach (var obj in skySphereNode.Objects)
+            {
+                if (obj.Visible) obj.Draw();
+            }
 
             DeviceContext.SetRenderTarget(null);
         }
