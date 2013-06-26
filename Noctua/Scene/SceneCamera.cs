@@ -34,7 +34,7 @@ namespace Noctua.Scene
 
         float aspectRatio = 1.0f;
 
-        float nearClipDistance = 1.0f;
+        float nearClipDistance = 0.1f;
 
         float farClipDistance = 1000.0f;
 
