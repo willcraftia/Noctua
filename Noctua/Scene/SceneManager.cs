@@ -100,9 +100,9 @@ namespace Noctua.Scene
         public const int DefaultShadowMapSize = 1024;
 
         /// <summary>
-        /// 最大分割数。
+        /// シャドウ マップ最大分割数。
         /// </summary>
-        public const int MaxShadowMapCascadeCount = 3;
+        public const int MaxShadowMapSplitCount = 3;
 
         /// <summary>
         /// デフォルトのライト カメラ ビルダ。
@@ -127,8 +127,6 @@ namespace Noctua.Scene
 
         SpriteBatch spriteBatch;
 
-        Postprocess postprocess;
-
         Settings settings;
 
         List<SceneObject> opaqueObjects;
@@ -144,7 +142,7 @@ namespace Noctua.Scene
         /// <summary>
         /// シャドウ マップ分割数。
         /// </summary>
-        int shadowMapCascadeCount = MaxShadowMapCascadeCount;
+        int shadowMapSplitCount = MaxShadowMapSplitCount;
 
         /// <summary>
         /// PSSM 分割機能。
@@ -154,27 +152,27 @@ namespace Noctua.Scene
         /// <summary>
         /// 分割された距離の配列。
         /// </summary>
-        float[] splitDistances = new float[MaxShadowMapCascadeCount + 1];
+        float[] splitDistances = new float[MaxShadowMapSplitCount + 1];
 
         /// <summary>
         /// 分割された射影行列の配列。
         /// </summary>
-        Matrix[] splitProjections = new Matrix[MaxShadowMapCascadeCount];
+        Matrix[] splitProjections = new Matrix[MaxShadowMapSplitCount];
 
         /// <summary>
         /// 分割されたシャドウ マップの配列。
         /// </summary>
-        ShadowMap[] shadowMaps = new ShadowMap[MaxShadowMapCascadeCount];
+        ShadowMap[] shadowMaps = new ShadowMap[MaxShadowMapSplitCount];
 
         /// <summary>
         /// 分割されたシャドウ マップのテクスチャ配列。
         /// </summary>
-        ShaderResourceView[] shadowMapResults = new ShaderResourceView[MaxShadowMapCascadeCount];
+        ShaderResourceView[] shadowMapResults = new ShaderResourceView[MaxShadowMapSplitCount];
 
         /// <summary>
         /// 分割されたライト カメラ空間行列の配列。
         /// </summary>
-        Matrix[] lightViewProjections = new Matrix[MaxShadowMapCascadeCount];
+        Matrix[] lightViewProjections = new Matrix[MaxShadowMapSplitCount];
 
         /// <summary>
         /// シャドウ マップ形式。
@@ -202,19 +200,24 @@ namespace Noctua.Scene
         GaussianFilterSuite vsmGaussianFilterSuite;
 
         /// <summary>
-        /// 深度マップの描画先レンダ ターゲット。
+        /// 深度マップ用レンダ ターゲット。
         /// </summary>
         RenderTarget depthMapRenderTarget;
 
         /// <summary>
-        /// 法線マップの描画先レンダ ターゲット。
+        /// 法線マップ用レンダ ターゲット。
         /// </summary>
         RenderTarget normalMapRenderTarget;
 
         /// <summary>
-        /// シーンの描画先レンダ ターゲット。
+        /// シーン用レンダ ターゲット。
         /// </summary>
         RenderTarget sceneMapRenderTarget;
+
+        /// <summary>
+        /// 閉塞マップ用レンダ ターゲット。
+        /// </summary>
+        RenderTarget occlusionMapRenderTarget;
 
         /// <summary>
         /// 線形深度マップ エフェクト。
@@ -225,6 +228,56 @@ namespace Noctua.Scene
         /// 法線マップ エフェクト。
         /// </summary>
         NormalMapEffect normalMapEffect;
+
+        /// <summary>
+        /// 閉塞マップ用ポストプロセス。
+        /// </summary>
+        Postprocess occlusionMapPostprocess;
+
+        /// <summary>
+        /// 閉塞マップ用ガウシアン フィルタ。
+        /// </summary>
+        GaussianFilter occlusionMapGaussianFilter;
+
+        /// <summary>
+        /// 閉塞マップ用ガウシアン フィルタ水平パス。
+        /// </summary>
+        GaussianFilterPass occlusionMapGaussianFilterPassH;
+
+        /// <summary>
+        /// 閉塞マップ用ガウシアン フィルタ垂直パス。
+        /// </summary>
+        GaussianFilterPass occlusionMapGaussianFilterPassV;
+
+        /// <summary>
+        /// 閉塞マップ用アップ サンプリング フィルタ。
+        /// </summary>
+        UpFilter occlusionMapUpFilter;
+
+        /// <summary>
+        /// 閉塞マップ用ダウン サンプリング フィルタ。
+        /// </summary>
+        DownFilter occlusionMapDownFilter;
+
+        /// <summary>
+        /// シャドウ閉塞マップ機能。
+        /// </summary>
+        ShadowOcclusionMap shadowOcclusionMap;
+
+        /// <summary>
+        /// ポストプロセス適用後の最終閉塞マップ。
+        /// </summary>
+        ShaderResourceView finalOcclusionMap;
+
+        /// <summary>
+        /// シーン用ポストプロセス。
+        /// </summary>
+        Postprocess scenePostprocess;
+
+        /// <summary>
+        /// 閉塞マップ合成フィルタ。
+        /// </summary>
+        OcclusionCombineFilter occlusionCombineFilter;
 
         public DeviceContext DeviceContext { get; private set; }
 
@@ -247,15 +300,15 @@ namespace Noctua.Scene
         /// <summary>
         /// シャドウ マップ分割数を取得または設定します。
         /// </summary>
-        public int ShadowMapCascadeCount
+        public int ShadowMapSplitCount
         {
-            get { return shadowMapCascadeCount; }
+            get { return shadowMapSplitCount; }
             set
             {
-                if (value < 1 || MaxShadowMapCascadeCount < value)
+                if (value < 1 || MaxShadowMapSplitCount < value)
                     throw new ArgumentOutOfRangeException("value");
 
-                shadowMapCascadeCount = value;
+                shadowMapSplitCount = value;
             }
         }
 
@@ -294,7 +347,7 @@ namespace Noctua.Scene
 
         public Postprocess.FilterCollection PostprocessFilters
         {
-            get { return postprocess.Filters; }
+            get { return scenePostprocess.Filters; }
         }
 
         public ShaderResourceView DepthMap
@@ -305,6 +358,14 @@ namespace Noctua.Scene
         public ShaderResourceView NormalMap
         {
             get { return normalMapRenderTarget.GetShaderResourceView(); }
+        }
+
+        /// <summary>
+        /// ポストプロセス適用後の最終閉塞マップを取得します。
+        /// </summary>
+        public ShaderResourceView FinalOcclusionMap
+        {
+            get { return finalOcclusionMap; }
         }
 
         public ShaderResourceView FinalSceneMap { get; private set; }
@@ -426,18 +487,61 @@ namespace Noctua.Scene
             //sceneMapRenderTarget.RenderTargetUsage = RenderTargetUsage.Preserve;
             sceneMapRenderTarget.Initialize();
 
+            // 閉塞マップ
+            occlusionMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
+            occlusionMapRenderTarget.Width = backBuffer.Width;
+            occlusionMapRenderTarget.Height = backBuffer.Height;
+            occlusionMapRenderTarget.Format = SurfaceFormat.Single;
+            occlusionMapRenderTarget.Initialize();
+
             // エフェクト
-            
             depthMapEffect = new LinearDepthMapEffect(DeviceContext.Device);
             normalMapEffect = new NormalMapEffect(DeviceContext.Device);
 
-            // シーンへのポストプロセス
+            // TODO
+            //
+            // オンデマンド生成にする。
 
-            postprocess = new Postprocess(DeviceContext);
-            postprocess.Width = sceneMapRenderTarget.Width;
-            postprocess.Height = sceneMapRenderTarget.Height;
-            postprocess.Format = sceneMapRenderTarget.Format;
-            postprocess.MultisampleCount = sceneMapRenderTarget.MultisampleCount;
+            // 閉塞マップ ポストプロセス
+            occlusionMapPostprocess = new Postprocess(DeviceContext);
+            occlusionMapPostprocess.Width = occlusionMapRenderTarget.Width;
+            occlusionMapPostprocess.Height = occlusionMapRenderTarget.Height;
+            occlusionMapPostprocess.Format = occlusionMapRenderTarget.Format;
+            occlusionMapPostprocess.MultisampleCount = occlusionMapRenderTarget.MultisampleCount;
+
+            // 範囲と標準偏差に適した値は、アップ/ダウン サンプリングを伴うか否かで大きく異なる。
+            occlusionMapGaussianFilter = new GaussianFilter(DeviceContext.Device);
+            occlusionMapGaussianFilter.Radius = 3;
+            occlusionMapGaussianFilter.Sigma = 1;
+            occlusionMapGaussianFilterPassH = new GaussianFilterPass(occlusionMapGaussianFilter, GaussianFilterDirection.Horizon);
+            occlusionMapGaussianFilterPassV = new GaussianFilterPass(occlusionMapGaussianFilter, GaussianFilterDirection.Vertical);
+
+            occlusionMapUpFilter = new UpFilter(DeviceContext.Device);
+            occlusionMapDownFilter = new DownFilter(DeviceContext.Device);
+
+            occlusionMapPostprocess.Filters.Add(occlusionMapDownFilter);
+            occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassH);
+            occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassV);
+            occlusionMapPostprocess.Filters.Add(occlusionMapUpFilter);
+            occlusionMapPostprocess.Enabled = true;
+
+            // 深度バイアスは、主に PCF の際に重要となる。
+            // VSM の場合、あまり意味は無い。
+            shadowOcclusionMap = new ShadowOcclusionMap(DeviceContext);
+            shadowOcclusionMap.SplitCount = shadowMapSplitCount;
+            shadowOcclusionMap.PcfEnabled = false;
+
+            // シーン用ポストプロセス
+            scenePostprocess = new Postprocess(DeviceContext);
+            scenePostprocess.Width = sceneMapRenderTarget.Width;
+            scenePostprocess.Height = sceneMapRenderTarget.Height;
+            scenePostprocess.Format = sceneMapRenderTarget.Format;
+            scenePostprocess.MultisampleCount = sceneMapRenderTarget.MultisampleCount;
+
+            occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext.Device);
+            occlusionCombineFilter.ShadowColor = new Vector3(0.5f, 0.5f, 0.5f);
+
+            scenePostprocess.Filters.Add(occlusionCombineFilter);
 
             // 投影オブジェクト描画コールバック。
             drawShadowCastersCallback = new ShadowMap.DrawShadowCastersCallback(DrawShadowCasters);
@@ -476,7 +580,7 @@ namespace Noctua.Scene
         /// <returns>シャドウ マップ。</returns>
         public ShaderResourceView GetShadowMap(int index)
         {
-            if ((uint) MaxShadowMapCascadeCount <= (uint) index)
+            if ((uint) MaxShadowMapSplitCount <= (uint) index)
                 throw new ArgumentOutOfRangeException("index");
 
             if (shadowMaps[index] == null)
@@ -532,11 +636,8 @@ namespace Noctua.Scene
             // シーン
             DrawScene();
 
-            //
             // シャドウ パス
-            //
-
-            // TODO
+            DrawShadowOcclusion();
 
             //
             // パーティクル
@@ -618,7 +719,7 @@ namespace Noctua.Scene
             Array.Clear(shadowMapResults, 0, shadowMapResults.Length);
 
             // PSSM による距離と射影行列の分割。
-            pssm.Count = shadowMapCascadeCount;
+            pssm.Count = shadowMapSplitCount;
             pssm.Lambda = 0.4f;
             pssm.View = activeCamera.View;
             pssm.Fov = activeCamera.Fov;
@@ -633,7 +734,7 @@ namespace Noctua.Scene
             lightCameraBuilder.LightDirection = activeDirectionalLight.Direction;
             lightCameraBuilder.SceneBox = sceneBox;
 
-            for (int i = 0; i < shadowMapCascadeCount; i++)
+            for (int i = 0; i < shadowMapSplitCount; i++)
             {
                 // 必要となった場合にシャドウ マップ オブジェクトを生成。
                 if (shadowMaps[i] == null)
@@ -836,6 +937,34 @@ namespace Noctua.Scene
             DeviceContext.SetRenderTarget(null);
         }
 
+        void DrawShadowOcclusion()
+        {
+            if (!shadowMapAvailable)
+                return;
+
+            DeviceContext.SetRenderTarget(occlusionMapRenderTarget);
+            DeviceContext.Clear(Vector4.Zero);
+
+            shadowOcclusionMap.ShadowMapForm = shadowMapForm;
+            shadowOcclusionMap.View = activeCamera.View;
+            shadowOcclusionMap.Projection = activeCamera.Projection;
+
+            for (int i = 0; i < MaxShadowMapSplitCount; i++)
+            {
+                shadowOcclusionMap.SetSplitDistance(i, splitDistances[i]);
+                shadowOcclusionMap.SetLightViewProjection(i, lightViewProjections[i]);
+                shadowOcclusionMap.SetShadowMap(i, shadowMaps[i].RenderTarget);
+            }
+            shadowOcclusionMap.SetSplitDistance(MaxShadowMapSplitCount, splitDistances[MaxShadowMapSplitCount]);
+            shadowOcclusionMap.LinearDepthMap = depthMapRenderTarget;
+
+            shadowOcclusionMap.Draw();
+
+            DeviceContext.SetRenderTarget(null);
+
+            finalOcclusionMap = occlusionMapPostprocess.Draw(occlusionMapRenderTarget);
+        }
+
         void DrawParticles(GameTime gameTime)
         {
             DeviceContext.SetRenderTarget(sceneMapRenderTarget);
@@ -857,7 +986,9 @@ namespace Noctua.Scene
 
         void ApplyPostprocess()
         {
-            FinalSceneMap = postprocess.Draw(sceneMapRenderTarget);
+            occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
+
+            FinalSceneMap = scenePostprocess.Draw(sceneMapRenderTarget);
         }
     }
 }

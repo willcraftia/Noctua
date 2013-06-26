@@ -103,7 +103,7 @@ namespace Samples.BlockWorldGame
             graphicsManager.PreferredBackBufferHeight = WindowHeight;
 
             textureDisplay = new TextureDisplay(this);
-            const float scale = 0.2f;
+            const float scale = 0.1f;
             textureDisplay.TextureWidth = (int) (WindowWidth * scale);
             textureDisplay.TextureHeight = (int) (WindowHeight * scale);
             textureDisplay.Visible = false;
@@ -149,14 +149,18 @@ namespace Samples.BlockWorldGame
             // HUD 描画。
             DrawHud();
 
-            textureDisplay.Textures.Add(worldManager.SceneManager.DepthMap);
-            textureDisplay.Textures.Add(worldManager.SceneManager.NormalMap);
-            for (int i = 0; i < worldManager.SceneManager.ShadowMapCascadeCount; i++)
+            var sceneManager = worldManager.SceneManager;
+
+            textureDisplay.Textures.Add(sceneManager.DepthMap);
+            textureDisplay.Textures.Add(sceneManager.NormalMap);
+            for (int i = 0; i < sceneManager.ShadowMapSplitCount; i++)
             {
-                var shadowMap = worldManager.SceneManager.GetShadowMap(i);
+                var shadowMap = sceneManager.GetShadowMap(i);
                 if (shadowMap != null)
                     textureDisplay.Textures.Add(shadowMap);
             }
+            if (sceneManager.FinalOcclusionMap != null)
+                textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
 
             base.Draw(gameTime);
         }
