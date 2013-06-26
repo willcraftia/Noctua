@@ -220,6 +220,11 @@ namespace Noctua.Scene
         RenderTarget occlusionMapRenderTarget;
 
         /// <summary>
+        /// 環境光閉塞マップの描画先レンダ ターゲット。
+        /// </summary>
+        RenderTarget ssaoMapRenderTarget;
+
+        /// <summary>
         /// 線形深度マップ エフェクト。
         /// </summary>
         LinearDepthMapEffect depthMapEffect;
@@ -268,6 +273,43 @@ namespace Noctua.Scene
         /// ポストプロセス適用後の最終閉塞マップ。
         /// </summary>
         ShaderResourceView finalOcclusionMap;
+
+        /// <summary>
+        /// 環境光閉塞マップ シェーダ。
+        /// </summary>
+        SSAOMap ssaoMap;
+
+        /// <summary>
+        /// 環境光閉塞マップ用ポストプロセス。
+        /// </summary>
+        Postprocess ssaoMapPostprocess;
+
+        /// <summary>
+        /// ダウン フィルタ。
+        /// </summary>
+        DownFilter ssaoMapDownFilter;
+
+        /// <summary>
+        /// アップ フィルタ。
+        /// </summary>
+        UpFilter ssaoMapUpFilter;
+
+        /// <summary>
+        /// 法線深度バイラテラル フィルタ。
+        /// </summary>
+        NormalDepthBilateralFilter ssaoMapNormalDepthBilateralFilter;
+
+        /// <summary>
+        /// 環境光閉塞ブラー フィルタ 水平パス。
+        /// </summary>
+        GaussianFilterPass ssaoBlurH;
+
+        /// <summary>
+        /// 環境光閉塞ブラー フィルタ 垂直パス。
+        /// </summary>
+        GaussianFilterPass ssaoBlurV;
+
+        ShaderResourceView finalAmbientOcclusionMap;
 
         /// <summary>
         /// シーン用ポストプロセス。
@@ -352,12 +394,12 @@ namespace Noctua.Scene
 
         public ShaderResourceView DepthMap
         {
-            get { return depthMapRenderTarget.GetShaderResourceView(); }
+            get { return depthMapRenderTarget; }
         }
 
         public ShaderResourceView NormalMap
         {
-            get { return normalMapRenderTarget.GetShaderResourceView(); }
+            get { return normalMapRenderTarget; }
         }
 
         /// <summary>
@@ -366,6 +408,16 @@ namespace Noctua.Scene
         public ShaderResourceView FinalOcclusionMap
         {
             get { return finalOcclusionMap; }
+        }
+
+        public ShaderResourceView AmbientOcclusionMap
+        {
+            get { return ssaoMapRenderTarget; }
+        }
+
+        public ShaderResourceView FinalAmbientOcclusionMap
+        {
+            get { return finalAmbientOcclusionMap; }
         }
 
         public ShaderResourceView FinalSceneMap { get; private set; }
@@ -460,7 +512,7 @@ namespace Noctua.Scene
 
             // レンダ ターゲット
 
-            // 深度
+            // 深度。
             depthMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
             depthMapRenderTarget.Width = backBuffer.Width;
             depthMapRenderTarget.Height = backBuffer.Height;
@@ -468,7 +520,7 @@ namespace Noctua.Scene
             depthMapRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
             depthMapRenderTarget.Initialize();
 
-            // 法線
+            // 法線。
             normalMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
             normalMapRenderTarget.Width = backBuffer.Width;
             normalMapRenderTarget.Height = backBuffer.Height;
@@ -476,7 +528,7 @@ namespace Noctua.Scene
             normalMapRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
             normalMapRenderTarget.Initialize();
 
-            // シーン
+            // シーン。
             sceneMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
             sceneMapRenderTarget.Width = backBuffer.Width;
             sceneMapRenderTarget.Height = backBuffer.Height;
@@ -487,14 +539,22 @@ namespace Noctua.Scene
             //sceneMapRenderTarget.RenderTargetUsage = RenderTargetUsage.Preserve;
             sceneMapRenderTarget.Initialize();
 
-            // 閉塞マップ
+            // 閉塞マップ。
             occlusionMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
             occlusionMapRenderTarget.Width = backBuffer.Width;
             occlusionMapRenderTarget.Height = backBuffer.Height;
             occlusionMapRenderTarget.Format = SurfaceFormat.Single;
             occlusionMapRenderTarget.Initialize();
 
-            // エフェクト
+            // 環境光閉塞マップ。
+            ssaoMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
+            ssaoMapRenderTarget.Width = backBuffer.Width;
+            ssaoMapRenderTarget.Height = backBuffer.Height;
+            ssaoMapRenderTarget.Format = SurfaceFormat.Single;
+            ssaoMapRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
+            ssaoMapRenderTarget.Initialize();
+
+            // エフェクト。
             depthMapEffect = new LinearDepthMapEffect(DeviceContext.Device);
             normalMapEffect = new NormalMapEffect(DeviceContext.Device);
 
@@ -502,7 +562,7 @@ namespace Noctua.Scene
             //
             // オンデマンド生成にする。
 
-            // 閉塞マップ ポストプロセス
+            // 閉塞マップ ポストプロセス。
             occlusionMapPostprocess = new Postprocess(DeviceContext);
             occlusionMapPostprocess.Width = occlusionMapRenderTarget.Width;
             occlusionMapPostprocess.Height = occlusionMapRenderTarget.Height;
@@ -531,7 +591,31 @@ namespace Noctua.Scene
             shadowOcclusionMap.SplitCount = shadowMapSplitCount;
             shadowOcclusionMap.PcfEnabled = false;
 
-            // シーン用ポストプロセス
+            ssaoMap = new SSAOMap(DeviceContext);
+
+            // 環境光閉塞マップ用ポストプロセス。
+            ssaoMapPostprocess = new Postprocess(DeviceContext);
+            ssaoMapPostprocess.Width = ssaoMapRenderTarget.Width;
+            ssaoMapPostprocess.Height = ssaoMapRenderTarget.Height;
+            ssaoMapPostprocess.Format = SurfaceFormat.Single;
+
+            ssaoMapDownFilter = new DownFilter(DeviceContext.Device);
+            ssaoMapUpFilter = new UpFilter(DeviceContext.Device);
+
+            ssaoMapNormalDepthBilateralFilter = new NormalDepthBilateralFilter(DeviceContext.Device);
+            ssaoBlurH = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Horizon);
+            ssaoBlurV = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Vertical);
+
+            ssaoMapPostprocess.Filters.Add(ssaoMapDownFilter);
+            // TODO: ブラー回数。
+            for (int i = 0; i < 3; i++)
+            {
+                ssaoMapPostprocess.Filters.Add(ssaoBlurH);
+                ssaoMapPostprocess.Filters.Add(ssaoBlurV);
+            }
+            ssaoMapPostprocess.Filters.Add(ssaoMapUpFilter);
+
+            // シーン用ポストプロセス。
             scenePostprocess = new Postprocess(DeviceContext);
             scenePostprocess.Width = sceneMapRenderTarget.Width;
             scenePostprocess.Height = sceneMapRenderTarget.Height;
@@ -638,6 +722,7 @@ namespace Noctua.Scene
 
             // シャドウ パス
             DrawShadowOcclusion();
+            DrawAmbientOcclusion();
 
             //
             // パーティクル
@@ -943,7 +1028,7 @@ namespace Noctua.Scene
                 return;
 
             DeviceContext.SetRenderTarget(occlusionMapRenderTarget);
-            DeviceContext.Clear(Vector4.Zero);
+            DeviceContext.Clear(Vector4.One);
 
             shadowOcclusionMap.ShadowMapForm = shadowMapForm;
             shadowOcclusionMap.View = activeCamera.View;
@@ -963,6 +1048,31 @@ namespace Noctua.Scene
             DeviceContext.SetRenderTarget(null);
 
             finalOcclusionMap = occlusionMapPostprocess.Draw(occlusionMapRenderTarget);
+        }
+
+        void DrawAmbientOcclusion()
+        {
+            DeviceContext.SetRenderTarget(ssaoMapRenderTarget);
+            DeviceContext.Clear(Vector4.One);
+
+            ssaoMap.LinearDepthMap = depthMapRenderTarget;
+            ssaoMap.NormalMap = normalMapRenderTarget;
+            ssaoMap.Projection = activeCamera.Projection;
+            ssaoMap.Draw();
+
+            DeviceContext.SetRenderTarget(null);
+
+            ssaoMapPostprocess.Filters.Clear();
+            ssaoMapNormalDepthBilateralFilter.LinearDepthMap = depthMapRenderTarget;
+            ssaoMapNormalDepthBilateralFilter.NormalMap = normalMapRenderTarget;
+            // TODO: 回数。回数固定でも良いか？
+            for (int i = 0; i < 3; i++)
+            {
+                ssaoMapPostprocess.Filters.Add(ssaoBlurH);
+                ssaoMapPostprocess.Filters.Add(ssaoBlurV);
+            }
+
+            finalAmbientOcclusionMap = ssaoMapPostprocess.Draw(ssaoMapRenderTarget);
         }
 
         void DrawParticles(GameTime gameTime)
@@ -986,7 +1096,8 @@ namespace Noctua.Scene
 
         void ApplyPostprocess()
         {
-            occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
+            //occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
+            occlusionCombineFilter.OcclusionMap = finalAmbientOcclusionMap;
 
             FinalSceneMap = scenePostprocess.Draw(sceneMapRenderTarget);
         }

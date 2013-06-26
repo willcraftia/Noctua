@@ -161,6 +161,8 @@ namespace Samples.BlockWorldGame
             }
             if (sceneManager.FinalOcclusionMap != null)
                 textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
+            if (sceneManager.FinalAmbientOcclusionMap != null)
+                textureDisplay.Textures.Add(sceneManager.FinalAmbientOcclusionMap);
 
             base.Draw(gameTime);
         }
