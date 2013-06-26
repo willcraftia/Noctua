@@ -10,7 +10,7 @@ namespace Noctua.Models
 {
     public sealed class ChunkSettings
     {
-        IntVector3 chunkSize = new IntVector3(16);
+        IntVector3 chunkSize = new IntVector3(32);
 
         int vertexBuildConcurrencyLevel = 2;
 
@@ -30,12 +30,6 @@ namespace Noctua.Models
                     value.Y % ChunkMeshManager.MeshSize.Y != 0 ||
                     value.Z % ChunkMeshManager.MeshSize.Z != 0)
                     throw new ArgumentOutOfRangeException("value");
-
-                // 最大配置で ushort の限界を越えるようなサイズは拒否。
-                var maxVertices = Chunk.CalculateMaxVertexCount(chunkSize);
-                var maxIndices = Chunk.CalculateIndexCount(maxVertices);
-                if (ushort.MaxValue < maxIndices)
-                    throw new ArgumentException("The indices over the limit of ushort needed.", "value");
 
                 chunkSize = value;
             }
