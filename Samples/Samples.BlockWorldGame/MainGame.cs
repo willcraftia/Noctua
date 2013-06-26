@@ -85,7 +85,7 @@ namespace Samples.BlockWorldGame
 
         float cameraRotationVelocity = 0.3f;
 
-        float cameraMoveVelocity = 30.0f;
+        float cameraMoveVelocity = 10.0f;
 
         float cameraDashFactor = 2;
 
@@ -192,8 +192,7 @@ namespace Samples.BlockWorldGame
             var distance = cameraMoveVelocity * deltaTime;
 
             // [Shift] 押下中は移動速度が二倍。
-            if (currentKeyboardState.IsKeyDown(Keys.LeftShift) ||
-                currentKeyboardState.IsKeyDown(Keys.RightShift))
+            if (currentKeyboardState.IsKeyDown(Keys.ShiftKey))
             {
                 distance *= cameraDashFactor;
             }
