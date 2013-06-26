@@ -737,12 +737,16 @@ namespace Noctua.Scene
             // オクルージョン クエリでは深度ステンシルへ書き込まない。
             DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
             DeviceContext.BlendState = ColorWriteDisable;
+            DeviceContext.RasterizerState = RasterizerState.CullNone;
 
             for (int i = 0; i < opaqueObjects.Count; i++)
                 opaqueObjects[i].UpdateOcclusion();
 
-            for (int i = 0; i < translucentObjects.Count; i++)
-                translucentObjects[i].UpdateOcclusion();
+            // TODO
+            // 不透明オブジェクトは除外すべきでは？
+
+            //for (int i = 0; i < translucentObjects.Count; i++)
+            //    translucentObjects[i].UpdateOcclusion();
 
             //
             // 不透明オブジェクトの描画
@@ -750,6 +754,7 @@ namespace Noctua.Scene
 
             DeviceContext.DepthStencilState = DepthStencilState.Default;
             DeviceContext.BlendState = BlendState.Opaque;
+            DeviceContext.RasterizerState = RasterizerState.CullBack;
 
             for (int i = 0; i < opaqueObjects.Count; i++)
             {

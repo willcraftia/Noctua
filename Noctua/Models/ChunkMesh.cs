@@ -55,6 +55,11 @@ namespace Noctua.Models
 
         public override void UpdateOcclusion()
         {
+            // TODO
+            //
+            // 閉塞判定には専用のメッシュを用いて描画を試行すること。
+            // チャンク メッシュに関しては、境界ボックスで良いと思われる。
+            
             Occluded = false;
 
             if (occlusionQueryActive)
