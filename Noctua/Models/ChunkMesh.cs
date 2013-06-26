@@ -11,6 +11,22 @@ namespace Noctua.Models
 {
     public sealed class ChunkMesh : ShadowCaster, IDisposable
     {
+        static readonly BlendState ColorWriteDisable = new BlendState
+        {
+            ColorWriteChannels = ColorWriteChannels.None
+        };
+
+        static readonly DepthStencilState DepthWriteWithLessEqual = new DepthStencilState
+        {
+            DepthFunction = ComparisonFunction.LessEqual
+        };
+
+        static readonly DepthStencilState DepthReadWithLessEquals = new DepthStencilState
+        {
+            DepthWriteEnable = false,
+            DepthFunction = ComparisonFunction.LessEqual
+        };
+
         public Matrix World = Matrix.Identity;
 
         ChunkMeshManager meshManager;
@@ -53,13 +69,11 @@ namespace Noctua.Models
             occlusionQuery.Initialize();
         }
 
+        bool depthWritten;
+
         public override void UpdateOcclusion()
         {
-            // TODO
-            //
-            // 閉塞判定には専用のメッシュを用いて描画を試行すること。
-            // チャンク メッシュに関しては、境界ボックスで良いと思われる。
-            
+            depthWritten = false;
             Occluded = false;
 
             if (occlusionQueryActive)
@@ -69,12 +83,29 @@ namespace Noctua.Models
                 Occluded = (occlusionQuery.PixelCount == 0);
             }
 
+            // 前回のクエリが完了しているならば、新たなクエリを試行。
+
             occlusionQuery.Begin(deviceContext);
 
-            // オクルージョン モードで描画。
+            if (!Translucent)
+            {
+                // 不透明ならば深度を書き込む。
+                deviceContext.DepthStencilState = DepthWriteWithLessEqual;
+                depthWritten = true;
+            }
+            else
+            {
+                // 半透明ならば深度を読み取るのみとする。
+                deviceContext.DepthStencilState = DepthStencilState.DepthRead;
+            }
+
+            // レンダ ターゲットへの書き込みは行わない。
+            deviceContext.BlendState = ColorWriteDisable;
+            
             chunkEffect.Mode = ChunkEffectMode.Occlusion;
             chunkEffect.World = World;
             chunkEffect.Apply(deviceContext);
+
             DrawCore();
 
             occlusionQuery.End();
@@ -85,11 +116,36 @@ namespace Noctua.Models
         {
             if (Occluded) return;
 
-            // デフォルト モードで描画。
+            if (!Translucent)
+            {
+                if (depthWritten)
+                {
+                    // オクルージョン クエリで深度書き込み済みならば読み取りのみとする。
+                    deviceContext.DepthStencilState = DepthReadWithLessEquals;
+                }
+                else
+                {
+                    // さもなくば書き込む。
+                    deviceContext.DepthStencilState = DepthWriteWithLessEqual;
+                }
+
+                // 不透明とする。
+                deviceContext.BlendState = BlendState.Opaque;
+            }
+            else
+            {
+                // 半透明ならば深度を読み取るのみとする。
+                deviceContext.DepthStencilState = DepthStencilState.DepthRead;
+
+                // アルファ ブレンドを有効にする。
+                deviceContext.BlendState = BlendState.Additive;
+            }
+
             chunkEffect.Mode = ChunkEffectMode.Default;
             chunkEffect.World = World;
             chunkEffect.Texture = chunk.Region.TileCatalog.TileMap;
             chunkEffect.Apply(deviceContext);
+
             DrawCore();
         }
 

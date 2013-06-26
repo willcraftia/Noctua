@@ -104,11 +104,6 @@ namespace Noctua.Scene
         /// </summary>
         const int MaxSplitCount = 3;
 
-        static readonly BlendState ColorWriteDisable = new BlendState
-        {
-            ColorWriteChannels = ColorWriteChannels.None
-        };
-
         /// <summary>
         /// デフォルトのライト カメラ ビルダ。
         /// </summary>
@@ -734,27 +729,15 @@ namespace Noctua.Scene
             // どこでも良い気はするけど。
             // なお、MRT ならば深度と法線も同時に描画するため、ここで良い気もする。
 
-            // オクルージョン クエリでは深度ステンシルへ書き込まない。
-            DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
-            DeviceContext.BlendState = ColorWriteDisable;
-            DeviceContext.RasterizerState = RasterizerState.CullNone;
-
             for (int i = 0; i < opaqueObjects.Count; i++)
                 opaqueObjects[i].UpdateOcclusion();
 
-            // TODO
-            // 不透明オブジェクトは除外すべきでは？
-
-            //for (int i = 0; i < translucentObjects.Count; i++)
-            //    translucentObjects[i].UpdateOcclusion();
+            for (int i = 0; i < translucentObjects.Count; i++)
+                translucentObjects[i].UpdateOcclusion();
 
             //
             // 不透明オブジェクトの描画
             //
-
-            DeviceContext.DepthStencilState = DepthStencilState.Default;
-            DeviceContext.BlendState = BlendState.Opaque;
-            DeviceContext.RasterizerState = RasterizerState.CullBack;
 
             for (int i = 0; i < opaqueObjects.Count; i++)
             {
@@ -772,8 +755,6 @@ namespace Noctua.Scene
             //
             // 半透明オブジェクトの描画
             //
-
-            DeviceContext.BlendState = BlendState.AlphaBlend;
 
             for (int i = 0; i < translucentObjects.Count; i++)
             {
