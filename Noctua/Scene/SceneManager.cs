@@ -102,7 +102,7 @@ namespace Noctua.Scene
         /// <summary>
         /// 最大分割数。
         /// </summary>
-        const int MaxSplitCount = 3;
+        public const int MaxShadowMapCascadeCount = 3;
 
         /// <summary>
         /// デフォルトのライト カメラ ビルダ。
@@ -142,9 +142,9 @@ namespace Noctua.Scene
         BoundingBox sceneBox;
 
         /// <summary>
-        /// 分割数。
+        /// シャドウ マップ分割数。
         /// </summary>
-        int splitCount = MaxSplitCount;
+        int shadowMapCascadeCount = MaxShadowMapCascadeCount;
 
         /// <summary>
         /// PSSM 分割機能。
@@ -154,22 +154,27 @@ namespace Noctua.Scene
         /// <summary>
         /// 分割された距離の配列。
         /// </summary>
-        float[] splitDistances = new float[MaxSplitCount + 1];
+        float[] splitDistances = new float[MaxShadowMapCascadeCount + 1];
 
         /// <summary>
         /// 分割された射影行列の配列。
         /// </summary>
-        Matrix[] splitProjections = new Matrix[MaxSplitCount];
+        Matrix[] splitProjections = new Matrix[MaxShadowMapCascadeCount];
 
         /// <summary>
         /// 分割されたシャドウ マップの配列。
         /// </summary>
-        ShadowMap[] shadowMaps = new ShadowMap[MaxSplitCount];
+        ShadowMap[] shadowMaps = new ShadowMap[MaxShadowMapCascadeCount];
+
+        /// <summary>
+        /// 分割されたシャドウ マップのテクスチャ配列。
+        /// </summary>
+        ShaderResourceView[] shadowMapResults = new ShaderResourceView[MaxShadowMapCascadeCount];
 
         /// <summary>
         /// 分割されたライト カメラ空間行列の配列。
         /// </summary>
-        Matrix[] lightViewProjections = new Matrix[MaxSplitCount];
+        Matrix[] lightViewProjections = new Matrix[MaxShadowMapCascadeCount];
 
         /// <summary>
         /// シャドウ マップ形式。
@@ -221,6 +226,8 @@ namespace Noctua.Scene
         /// </summary>
         NormalMapEffect normalMapEffect;
 
+        public DeviceContext DeviceContext { get; private set; }
+
         public LightCameraBuilder LightCameraBuilder
         {
             get { return lightCameraBuilder; }
@@ -237,7 +244,20 @@ namespace Noctua.Scene
             }
         }
 
-        public DeviceContext DeviceContext { get; private set; }
+        /// <summary>
+        /// シャドウ マップ分割数を取得または設定します。
+        /// </summary>
+        public int ShadowMapCascadeCount
+        {
+            get { return shadowMapCascadeCount; }
+            set
+            {
+                if (value < 1 || MaxShadowMapCascadeCount < value)
+                    throw new ArgumentOutOfRangeException("value");
+
+                shadowMapCascadeCount = value;
+            }
+        }
 
         public SceneCamera ActiveCamera
         {
@@ -269,8 +289,6 @@ namespace Noctua.Scene
         public ReadOnlyCollection<SceneObject> CurrentTranslucentObjects { get; private set; }
 
         public ReadOnlyCollection<ShadowCaster> CurrentShadowCasters { get; private set; }
-
-        public ShadowMap ShadowMap { get; set; }
 
         public ParticleSystemCollection ParticleSystems { get; private set; }
 
@@ -449,6 +467,24 @@ namespace Noctua.Scene
             octreeManager.Remove(node);
         }
 
+        /// <summary>
+        /// シャドウ マップを取得します。
+        /// シャドウ マップを描画しない場合、あるいは、
+        /// 指定のインデックスで描画していない場合は null を返します。
+        /// </summary>
+        /// <param name="index">シャドウ マップのインデックス。</param>
+        /// <returns>シャドウ マップ。</returns>
+        public ShaderResourceView GetShadowMap(int index)
+        {
+            if ((uint) MaxShadowMapCascadeCount <= (uint) index)
+                throw new ArgumentOutOfRangeException("index");
+
+            if (shadowMaps[index] == null)
+                return null;
+
+            return shadowMaps[index].RenderTarget;
+        }
+
         public void Draw(GameTime gameTime)
         {
             if (gameTime == null) throw new ArgumentNullException("gameTime");
@@ -481,8 +517,7 @@ namespace Noctua.Scene
             //
 
             shadowMapAvailable = false;
-            if (ShadowMap != null && shadowCasters.Count != 0 &&
-                activeDirectionalLight != null && activeDirectionalLight.Enabled)
+            if (shadowCasters.Count != 0 && activeDirectionalLight != null && activeDirectionalLight.Enabled)
             {
                 DrawShadowMap();
                 shadowMapAvailable = true;
@@ -579,8 +614,11 @@ namespace Noctua.Scene
 
         void DrawShadowMap()
         {
+            // シャドウ マップ描画結果のクリア。
+            Array.Clear(shadowMapResults, 0, shadowMapResults.Length);
+
             // PSSM による距離と射影行列の分割。
-            pssm.Count = splitCount;
+            pssm.Count = shadowMapCascadeCount;
             pssm.Lambda = 0.4f;
             pssm.View = activeCamera.View;
             pssm.Fov = activeCamera.Fov;
@@ -595,8 +633,14 @@ namespace Noctua.Scene
             lightCameraBuilder.LightDirection = activeDirectionalLight.Direction;
             lightCameraBuilder.SceneBox = sceneBox;
 
-            for (int i = 0; i < splitCount; i++)
+            for (int i = 0; i < shadowMapCascadeCount; i++)
             {
+                // 必要となった場合にシャドウ マップ オブジェクトを生成。
+                if (shadowMaps[i] == null)
+                {
+                    shadowMaps[i] = new ShadowMap(DeviceContext);
+                }
+
                 // 射影行列は分割毎に異なる。
                 lightCameraBuilder.EyeProjection = splitProjections[i];
 
@@ -634,6 +678,9 @@ namespace Noctua.Scene
 
                     vsmGaussianFilterSuite.Filter(shadowMaps[i].RenderTarget, shadowMaps[i].RenderTarget);
                 }
+
+                // 描画結果を配列へ格納。
+                shadowMapResults[i] = shadowMaps[i].RenderTarget;
             }
         }
 

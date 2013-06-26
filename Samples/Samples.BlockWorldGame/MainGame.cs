@@ -151,6 +151,12 @@ namespace Samples.BlockWorldGame
 
             textureDisplay.Textures.Add(worldManager.SceneManager.DepthMap);
             textureDisplay.Textures.Add(worldManager.SceneManager.NormalMap);
+            for (int i = 0; i < worldManager.SceneManager.ShadowMapCascadeCount; i++)
+            {
+                var shadowMap = worldManager.SceneManager.GetShadowMap(i);
+                if (shadowMap != null)
+                    textureDisplay.Textures.Add(shadowMap);
+            }
 
             base.Draw(gameTime);
         }
@@ -162,6 +168,12 @@ namespace Samples.BlockWorldGame
 
             lastMouseState = currentMouseState;
             currentMouseState = Mouse.GetState();
+
+            if (currentKeyboardState.IsKeyUp(Keys.F1) && lastKeyboardState.IsKeyDown(Keys.F1))
+                hudVisible = !hudVisible;
+
+            if (currentKeyboardState.IsKeyUp(Keys.F2) && lastKeyboardState.IsKeyDown(Keys.F2))
+                textureDisplay.Visible = !textureDisplay.Visible;
 
             if (!worldManager.Closing && !worldManager.Closed && currentKeyboardState.IsKeyDown(Keys.Escape))
                 worldManager.Close();
@@ -232,6 +244,10 @@ namespace Samples.BlockWorldGame
             CreateInformationText();
             spriteBatch.DrawString(spriteFont, hudText, new Vector2(9, 9), Color.Black);
             spriteBatch.DrawString(spriteFont, hudText, new Vector2(8, 8), Color.Yellow);
+
+            CreateHelp2Text();
+            spriteBatch.DrawString(spriteFont, hudText, new Vector2(1050, 550), Color.Black);
+            spriteBatch.DrawString(spriteFont, hudText, new Vector2(1049, 549), Color.Yellow);
 
             spriteBatch.End();
         }
@@ -309,6 +325,14 @@ namespace Samples.BlockWorldGame
             //hudText.AppendNumber(brushManager.ActiveBrush.Position.Z).Append(")").AppendLine();
 
             hudText.Append("Near/Far: ").AppendNumber(camera.NearClipDistance).Append("/").AppendNumber(camera.FarClipDistance);
+        }
+
+        void CreateHelp2Text()
+        {
+            hudText.Length = 0;
+
+            hudText.Append("[F1] HUD On/Off").AppendLine();
+            hudText.Append("[F2] Inter-maps On/Off").AppendLine();
         }
     }
 
