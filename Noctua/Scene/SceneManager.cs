@@ -844,7 +844,7 @@ namespace Noctua.Scene
                 // シャドウ マップを描画。
                 shadowMaps[i].Form = shadowMapForm;
                 shadowMaps[i].Size = shadowMapSize;
-                shadowMaps[i].Draw(DeviceContext, activeCamera.View, splitProjections[i], lightView, lightProjection, drawShadowCastersCallback);
+                shadowMaps[i].Draw(activeCamera.View, splitProjections[i], lightView, lightProjection, drawShadowCastersCallback);
 
                 // VSM の場合は生成したシャドウ マップへブラーを適用。
                 if (shadowMapForm == ShadowMapForm.Variance)
