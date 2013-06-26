@@ -137,6 +137,7 @@
     </None>
     <None Include="Assets\ChunkSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Assets\GraphicsSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

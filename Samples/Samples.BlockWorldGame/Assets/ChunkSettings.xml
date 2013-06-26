@@ -1,9 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ChunkSettingsDefinition>
 	<ChunkSize>
-		<X>16</X>
-		<Y>16</Y>
-		<Z>16</Z>
+		<X>32</X>
+		<Y>32</Y>
+		<Z>32</Z>
 	</ChunkSize>
 	<VertexBuildConcurrencyLevel>2</VertexBuildConcurrencyLevel>
 	<UpdateBufferCountPerFrame>32</UpdateBufferCountPerFrame>
