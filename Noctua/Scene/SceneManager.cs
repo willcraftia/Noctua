@@ -724,7 +724,7 @@ namespace Noctua.Scene
             //
 
             shadowMapAvailable = false;
-            if (shadowCasters.Count != 0 && activeDirectionalLight != null && activeDirectionalLight.Enabled)
+            if (/*shadowCasters.Count != 0 && */activeDirectionalLight != null && activeDirectionalLight.Enabled)
             {
                 DrawShadowMap();
                 shadowMapAvailable = true;
@@ -776,6 +776,70 @@ namespace Noctua.Scene
             shadowCasters.Clear();
         }
 
+        BoundingFrustum lightFrustum = new BoundingFrustum(Matrix.Identity);
+
+        Vector3[] lightFrustumCorners = new Vector3[BoundingFrustum.CornerCount];
+
+        float shadowSceneExtrudeDistance = 500.0f;
+
+        BoundindBoxOctreeQuery boundindBoxOctreeQuery = new BoundindBoxOctreeQuery();
+
+        void CollectShadowCasters(Matrix lightView, Matrix lightProjection)
+        {
+            Matrix frustumMatrix;
+            Matrix.Multiply(ref lightView, ref lightProjection, out frustumMatrix);
+            lightFrustum.Matrix = frustumMatrix;
+            lightFrustum.GetCorners(lightFrustumCorners);
+
+            Matrix inverseLightView;
+            Matrix.Invert(ref lightView, out inverseLightView);
+
+            var lightDirection = inverseLightView.Forward;
+            var extrusion = lightDirection * (-shadowSceneExtrudeDistance);
+
+            BoundingBox box = BoundingBox.Empty;
+            for (int i = 0; i < lightFrustumCorners.Length; i++)
+            {
+                box.Merge(lightFrustumCorners[i]);
+                box.Merge(lightFrustumCorners[i] + extrusion);
+            }
+
+            boundindBoxOctreeQuery.Box = box;
+
+            octreeManager.Execute(boundindBoxOctreeQuery.Contains, CollectShadowCasters);
+        }
+
+        void CollectShadowCasters(Octree octree)
+        {
+            if (octree.Nodes.Count == 0)
+                return;
+
+            for (int i = 0; i < octree.Nodes.Count; i++)
+            {
+                var node = octree.Nodes[i];
+
+                if (node.Objects.Count == 0)
+                    continue;
+
+                foreach (var obj in node.Objects)
+                {
+                    // Visible = false は除外。
+                    if (!obj.Visible)
+                        continue;
+
+                    // 投影可か否か。
+                    var shadowCaster = obj as ShadowCaster;
+                    if (shadowCaster != null)
+                    {
+                        shadowCasters.Add(shadowCaster);
+                    }
+
+                    // シーン領域へ描画オブジェクト領域を追加。
+                    //sceneBox.Merge(ref obj.Box);
+                }
+            }
+        }
+
         void CollectObjects(Octree octree)
         {
             if (octree.Nodes.Count == 0)
@@ -805,11 +869,11 @@ namespace Noctua.Scene
                     }
 
                     // 投影可か否か。
-                    var shadowCaster = obj as ShadowCaster;
-                    if (shadowCaster != null)
-                    {
-                        shadowCasters.Add(shadowCaster);
-                    }
+                    //var shadowCaster = obj as ShadowCaster;
+                    //if (shadowCaster != null)
+                    //{
+                    //    shadowCasters.Add(shadowCaster);
+                    //}
 
                     // シーン領域へ描画オブジェクト領域を追加。
                     sceneBox.Merge(ref obj.Box);
@@ -863,6 +927,11 @@ namespace Noctua.Scene
                 // 視錐台から構築した AABB に含まれる投影オブジェクトを検索し、
                 // それらの深度をシャドウ マップへ描画する。
 
+                // ライト領域に含まれる投影オブジェクトを収集。
+                CollectShadowCasters(lightView, lightProjection);
+
+                DeviceContext.RasterizerState = RasterizerState.CullNone;
+
                 // シャドウ マップを描画。
                 shadowMaps[i].Form = shadowMapForm;
                 shadowMaps[i].Size = shadowMapSize;
@@ -892,19 +961,13 @@ namespace Noctua.Scene
 
                 // 描画結果を配列へ格納。
                 shadowMapResults[i] = shadowMaps[i].RenderTarget;
+
+                shadowCasters.Clear();
             }
         }
 
         void DrawShadowCasters(Matrix eyeView, Matrix eyeProjection, ShadowMapEffect effect)
         {
-            // TODO
-            //
-            // 視錐台カリングはどうする？
-            // 投影オブジェクトは視錐台の外から投影する状態もあるため、
-            // 単純な交差判定では意味が無い。
-            //
-            // ひとまず、負荷を無視し、全ての分割視錐台で全ての投影オブジェクトを描画する。
-
             for (int i = 0; i < shadowCasters.Count; i++)
             {
                 var shadowCaster = shadowCasters[i];

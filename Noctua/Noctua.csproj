@@ -94,7 +94,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="Scene\BoundindBoxSceneQuery.cs" />
+    <Compile Include="Scene\BoundindBoxOctreeQuery.cs" />
     <Compile Include="Scene\BoundingFrustumOctreeQuery.cs" />
     <Compile Include="Scene\SceneCamera.cs" />
     <Compile Include="Scene\DirectionalLight.cs" />
@@ -103,8 +103,6 @@
     <Compile Include="Scene\SceneManager.cs" />
     <Compile Include="Scene\SceneNode.cs" />
     <Compile Include="Scene\SceneObject.cs" />
-    <Compile Include="Scene\SceneQuery.cs" />
-    <Compile Include="Scene\SceneQueryListener.cs" />
     <Compile Include="Scene\ShadowCaster.cs" />
     <Compile Include="Serialization\ChunkSettingsDefinition.cs" />
     <Compile Include="Serialization\ChunkSettingsSerializer.cs" />

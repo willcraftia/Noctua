@@ -11,7 +11,7 @@ namespace Noctua.Scene
     {
         BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
 
-        Vector3[] frustumCorners = new Vector3[BoundingFrustum.CornerCount];
+        Vector3[] corners = new Vector3[BoundingFrustum.CornerCount];
 
         BoundingSphere frustumSphere;
 
@@ -24,8 +24,8 @@ namespace Noctua.Scene
                 frustum.Matrix = value;
 
                 // 視錐台を包む境界球。
-                frustum.GetCorners(frustumCorners);
-                BoundingSphere.CreateFromPoints(frustumCorners, out frustumSphere);
+                frustum.GetCorners(corners);
+                BoundingSphere.CreateFromPoints(corners, out frustumSphere);
             }
         }
 
