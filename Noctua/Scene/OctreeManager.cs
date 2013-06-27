@@ -19,11 +19,11 @@ namespace Noctua.Scene
 
         Pool<Octree> octreePool;
 
-        BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
+        //BoundingFrustum frustum = new BoundingFrustum(Matrix.Identity);
 
-        Vector3[] frustumCorners = new Vector3[BoundingFrustum.CornerCount];
+        //Vector3[] frustumCorners = new Vector3[BoundingFrustum.CornerCount];
 
-        BoundingSphere frustumSphere;
+        //BoundingSphere frustumSphere;
 
         public OctreeManager(Vector3 regionSize, int maxDepth)
         {
@@ -129,38 +129,23 @@ namespace Noctua.Scene
             }
         }
 
-        public void Execute(Matrix view, Matrix projection, Action<Octree> action)
+        /// <summary>
+        /// 判定メソッドを満たす八分木を検索します。
+        /// </summary>
+        /// <param name="predicate">検索条件。</param>
+        /// <param name="action">検索条件に一致した八分木に適用する処理。</param>
+        public void Execute(Predicate<Octree> predicate, Action<Octree> action)
         {
-            Matrix viewProjection;
-            Matrix.Multiply(ref view, ref projection, out viewProjection);
-            frustum.Matrix = viewProjection;
-
-            frustum.GetCorners(frustumCorners);
-
-            // 視錐台球。
-            BoundingSphere.CreateFromPoints(frustumCorners, out frustumSphere);
-
             foreach (var root in rootsByPositionGrid.Values)
             {
-                Execute(action, root);
+                Execute(predicate, action, root);
             }
         }
 
-        void Execute(Action<Octree> action, Octree octree)
+        void Execute(Predicate<Octree> predicate, Action<Octree> action, Octree octree)
         {
-            bool intersected;
-
-            // 視錐台球 vs 八分木球
-            frustumSphere.Intersects(ref octree.Sphere, out intersected);
-            if (!intersected) return;
-
-            // 視錐台 vs 八分木球
-            frustum.Intersects(ref octree.Sphere, out intersected);
-            if (!intersected) return;
-
-            // 視錐台 vs 八分木ボックス
-            frustum.Intersects(ref octree.Box, out intersected);
-            if (!intersected) return;
+            if (!predicate(octree))
+                return;
 
             action(octree);
 
@@ -173,7 +158,7 @@ namespace Noctua.Scene
                         var child = octree[x, y, z];
                         if (child != null)
                         {
-                            Execute(action, child);
+                            Execute(predicate, action, child);
                         }
                     }
                 }

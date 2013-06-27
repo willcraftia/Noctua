@@ -140,6 +140,16 @@ namespace Noctua.Scene
         BoundingBox sceneBox;
 
         /// <summary>
+        /// 視錐台カリング八分木用クエリ。
+        /// </summary>
+        BoundingFrustumOctreeQuery frustumOctreeQuery = new BoundingFrustumOctreeQuery();
+
+        /// <summary>
+        /// 視錐台カリング八分木用クエリ述語メソッド。
+        /// </summary>
+        Predicate<Octree> frustumOctreeQueryMethod;
+
+        /// <summary>
         /// シャドウ マップ分割数。
         /// </summary>
         int shadowMapSplitCount = MaxShadowMapSplitCount;
@@ -512,6 +522,7 @@ namespace Noctua.Scene
             CurrentShadowCasters = new ReadOnlyCollection<ShadowCaster>(shadowCasters);
             
             collectObjectsMethod = new Action<Octree>(CollectObjects);
+            frustumOctreeQueryMethod = new Predicate<Octree>(frustumOctreeQuery.Contains);
 
             var backBuffer = DeviceContext.Device.BackBuffer;
 
@@ -688,10 +699,15 @@ namespace Noctua.Scene
             SceneObjectCount = 0;
             OccludedSceneObjectCount = 0;
 
+            // クエリ更新。
+            Matrix frustumMatrix;
+            Matrix.Multiply(ref activeCamera.View, ref activeCamera.Projection, out frustumMatrix);
+            frustumOctreeQuery.Matrix = frustumMatrix;
+
             // 視錐台に含まれるオブジェクトを収集。
             // その際、シーン領域を同時に算出。
             sceneBox = BoundingBox.Empty;
-            octreeManager.Execute(activeCamera.View, activeCamera.Projection, collectObjectsMethod);
+            octreeManager.Execute(frustumOctreeQueryMethod, collectObjectsMethod);
 
             SceneObjectCount = opaqueObjects.Count + translucentObjects.Count;
 
@@ -840,6 +856,12 @@ namespace Noctua.Scene
 
                 // 後のモデル描画用にライト空間行列を算出。
                 Matrix.Multiply(ref lightView, ref lightProjection, out lightViewProjections[i]);
+
+                // TODO
+                //
+                // ライト空間行列からライトの視錐台を構築し、
+                // 視錐台から構築した AABB に含まれる投影オブジェクトを検索し、
+                // それらの深度をシャドウ マップへ描画する。
 
                 // シャドウ マップを描画。
                 shadowMaps[i].Form = shadowMapForm;
