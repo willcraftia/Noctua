@@ -12,21 +12,6 @@ namespace Noctua.Models
 {
     public sealed class SkySphere : SceneObject
     {
-        /// <summary>
-        /// DepthFunction に LessEqual を用いる読み取り専用深度ステンシル ステート。
-        /// Libra の DepthRead は Less (D3D11 デフォルト) を深度比較に用いるため、
-        /// DepthRead では SkySphere の射影を遠クリップ面に強制する際に
-        /// SkySphere の頂点深度が深度ステンシルのデフォルト深度 1 と等価となり、描画から除外されてしまう。
-        /// そこで、深度比較を LessEqual とし、深度 1 に等しいなら描画対象にする。
-        /// </summary>
-        static readonly DepthStencilState DepthReadWithLessEqual = new DepthStencilState
-        {
-            DepthEnable = true,
-            DepthWriteEnable = false,
-            DepthFunction = ComparisonFunction.LessEqual,
-            Name = "SkySphere.DepthReadWithLessEqual"
-        };
-
         DeviceContext context;
 
         SkySphereEffect skySphereEffect;
@@ -94,7 +79,7 @@ namespace Noctua.Models
 
             // 読み取り専用深度かつ深度比較 LessEqual。
             // 内側 (背面) を描画。
-            context.DepthStencilState = DepthReadWithLessEqual;
+            context.DepthStencilState = DepthStencilState.DepthReadLessEqual;
             context.RasterizerState = RasterizerState.CullFront;
 
             skySphereEffect.Apply(context);

@@ -11,25 +11,6 @@ namespace Noctua.Models
 {
     public sealed class ChunkMesh : ShadowCaster, IDisposable
     {
-        static readonly BlendState ColorWriteDisable = new BlendState
-        {
-            ColorWriteChannels = ColorWriteChannels.None,
-            Name = "ChunkMesh.ColorWriteDisable"
-        };
-
-        static readonly DepthStencilState DepthWriteWithLessEqual = new DepthStencilState
-        {
-            DepthFunction = ComparisonFunction.LessEqual,
-            Name = "ChunkMesh.DepthWriteWithLessEqual"
-        };
-
-        static readonly DepthStencilState DepthReadWithLessEquals = new DepthStencilState
-        {
-            DepthWriteEnable = false,
-            DepthFunction = ComparisonFunction.LessEqual,
-            Name = "ChunkMesh.DepthReadWithLessEquals"
-        };
-
         public Matrix World = Matrix.Identity;
 
         ChunkMeshManager meshManager;
@@ -93,7 +74,7 @@ namespace Noctua.Models
             if (!Translucent)
             {
                 // 不透明ならば深度を書き込む。
-                deviceContext.DepthStencilState = DepthWriteWithLessEqual;
+                deviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
                 depthWritten = true;
             }
             else
@@ -103,7 +84,7 @@ namespace Noctua.Models
             }
 
             // レンダ ターゲットへの書き込みは行わない。
-            deviceContext.BlendState = ColorWriteDisable;
+            deviceContext.BlendState = BlendState.ColorWriteDisable;
             
             chunkEffect.Mode = ChunkEffectMode.Occlusion;
             chunkEffect.World = World;
@@ -128,12 +109,12 @@ namespace Noctua.Models
                 if (depthWritten)
                 {
                     // オクルージョン クエリで深度書き込み済みならば読み取りのみとする。
-                    deviceContext.DepthStencilState = DepthReadWithLessEquals;
+                    deviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
                 }
                 else
                 {
                     // さもなくば書き込む。
-                    deviceContext.DepthStencilState = DepthWriteWithLessEqual;
+                    deviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
                 }
 
                 // 不透明とする。
