@@ -3,6 +3,7 @@
 using System;
 using Libra;
 using Libra.Graphics;
+using Libra.Graphics.Toolkit;
 using Libra.IO;
 using Noctua.Asset;
 using Noctua.Scene;
@@ -21,6 +22,11 @@ namespace Noctua.Models
         AssetContainer assetContainer;
 
         SceneCamera defaultCamera = new SceneCamera("Default");
+
+        /// <summary>
+        /// 線形フォグ ポストプロセス設定。
+        /// </summary>
+        LinearFogSetup linearFogSetup;
 
         public DeviceContext DeviceContext { get; private set; }
 
@@ -68,6 +74,12 @@ namespace Noctua.Models
             // 太陽と月をディレクショナル ライトとして登録。
             SceneManager.DirectionalLights.Add(SceneSettings.Sunlight);
             SceneManager.DirectionalLights.Add(SceneSettings.Moonlight);
+
+            if (SceneSettings.FogEnabled)
+            {
+                linearFogSetup = new LinearFogSetup(DeviceContext.Device);
+                SceneManager.PostprocessSetups.Add(linearFogSetup);
+            }
 
             //----------------------------------------------------------------
             // リージョン マネージャ
@@ -148,15 +160,12 @@ namespace Noctua.Models
             if (SceneSettings.FogEnabled)
             {
                 var far = SceneManager.ActiveCamera.FarClipDistance;
-                SceneManager.FogStart = far * SceneSettings.FogStart;
-                SceneManager.FogEnd = far * SceneSettings.FogEnd;
-                SceneManager.FogColor = SceneSettings.CurrentSkyColor;
+
+                linearFogSetup.FogStart = far * SceneSettings.FogStart;
+                linearFogSetup.FogEnd = far * SceneSettings.FogEnd;
+                linearFogSetup.FogColor = SceneSettings.CurrentSkyColor;
+                linearFogSetup.FarClipDistance = far;
             }
-            SceneManager.FogEnabled = SceneSettings.FogEnabled;
-
-
-            // TODO
-            // 太陽が見える場合にのみレンズ フレアを描画。
 
             //----------------------------------------------------------------
             // チャンク マネージャ

@@ -90,6 +90,15 @@ namespace Noctua.Scene
 
         #endregion
 
+        #region PostprocessSetupCollection
+
+        public sealed class PostprocessSetupCollection : Collection<PostprocessSetup>
+        {
+            internal PostprocessSetupCollection() { }
+        }
+
+        #endregion
+
         public const int InitialSceneObjectCapacity = 500;
 
         public const int InitialShadowCasterCapacity = 500;
@@ -120,8 +129,6 @@ namespace Noctua.Scene
         string activeDirectionalLightName;
 
         DirectionalLight activeDirectionalLight;
-
-        Vector3 fogColor;
 
         bool shadowMapAvailable;
 
@@ -401,10 +408,7 @@ namespace Noctua.Scene
 
         public ParticleSystemCollection ParticleSystems { get; private set; }
 
-        public Postprocess.FilterCollection PostprocessFilters
-        {
-            get { return scenePostprocess.Filters; }
-        }
+        public PostprocessSetupCollection PostprocessSetups { get; private set; }
 
         public ShaderResourceView DepthMap
         {
@@ -477,18 +481,6 @@ namespace Noctua.Scene
             set { ambientLightColor = value; }
         }
 
-        public bool FogEnabled { get; set; }
-
-        public float FogStart { get; set; }
-
-        public float FogEnd { get; set; }
-
-        public Vector3 FogColor
-        {
-            get { return fogColor; }
-            set { fogColor = value; }
-        }
-
         public Vector3 BackgroundColor { get; set; }
 
         public int SceneObjectCount { get; internal set; }
@@ -513,6 +505,7 @@ namespace Noctua.Scene
             Cameras = new SceneCameraCollection();
             DirectionalLights = new DirectionalLightCollection();
             ParticleSystems = new ParticleSystemCollection();
+            PostprocessSetups = new PostprocessSetupCollection();
 
             opaqueObjects = new List<SceneObject>(InitialSceneObjectCapacity);
             translucentObjects = new List<SceneObject>(InitialSceneObjectCapacity);
@@ -605,7 +598,7 @@ namespace Noctua.Scene
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassH);
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassV);
             occlusionMapPostprocess.Filters.Add(occlusionMapUpFilter);
-            occlusionMapPostprocess.Filters.Add(occlusionMergeFilter);
+            //occlusionMapPostprocess.Filters.Add(occlusionMergeFilter);
             occlusionMapPostprocess.Enabled = true;
 
             // 深度バイアスは、主に PCF の際に重要となる。
@@ -638,8 +631,6 @@ namespace Noctua.Scene
 
             occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext.Device);
             occlusionCombineFilter.ShadowColor = new Vector3(0.5f, 0.5f, 0.5f);
-
-            scenePostprocess.Filters.Add(occlusionCombineFilter);
 
             // 投影オブジェクト描画コールバック。
             drawShadowCastersCallback = new ShadowMap.DrawShadowCastersCallback(DrawShadowCasters);
@@ -784,17 +775,17 @@ namespace Noctua.Scene
 
         BoundindBoxOctreeQuery boundindBoxOctreeQuery = new BoundindBoxOctreeQuery();
 
-        void CollectShadowCasters(Matrix lightView, Matrix lightProjection)
+        void CollectShadowCasters(Matrix lightView, Matrix lightProjection, Vector3 lightDirection)
         {
             Matrix frustumMatrix;
             Matrix.Multiply(ref lightView, ref lightProjection, out frustumMatrix);
             lightFrustum.Matrix = frustumMatrix;
             lightFrustum.GetCorners(lightFrustumCorners);
 
-            Matrix inverseLightView;
-            Matrix.Invert(ref lightView, out inverseLightView);
+            //Matrix inverseLightView;
+            //Matrix.Invert(ref lightView, out inverseLightView);
 
-            var lightDirection = inverseLightView.Forward;
+            //var lightDirection = inverseLightView.Forward;
             var extrusion = lightDirection * (-shadowSceneExtrudeDistance);
 
             BoundingBox box = BoundingBox.Empty;
@@ -928,7 +919,7 @@ namespace Noctua.Scene
                 // それらの深度をシャドウ マップへ描画する。
 
                 // ライト領域に含まれる投影オブジェクトを収集。
-                CollectShadowCasters(lightView, lightProjection);
+                CollectShadowCasters(lightView, lightProjection, activeDirectionalLight.Direction);
 
                 DeviceContext.RasterizerState = RasterizerState.CullNone;
 
@@ -1187,10 +1178,23 @@ namespace Noctua.Scene
 
         void ApplyPostprocess()
         {
+            // ビルトイン ポストプロセス。
             occlusionCombineFilter.OcclusionMap = finalOcclusionMap;
             //occlusionCombineFilter.OcclusionMap = finalAmbientOcclusionMap;
+            scenePostprocess.Filters.Add(occlusionCombineFilter);
+
+            // 追加ポストプロセス。
+            foreach (var setup in PostprocessSetups)
+            {
+                if (!setup.Initialized)
+                    setup.Initialize(this);
+
+                setup.Setup(scenePostprocess);
+            }
 
             FinalSceneMap = scenePostprocess.Draw(sceneMapRenderTarget);
+
+            scenePostprocess.Filters.Clear();
         }
     }
 }

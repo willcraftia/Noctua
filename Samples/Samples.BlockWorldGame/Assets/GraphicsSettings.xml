@@ -4,10 +4,10 @@
 		<SplitCount>3</SplitCount>
 		<SplitLambda>0.5</SplitLambda>
 		<ShadowMapResolution>1</ShadowMapResolution>
-		<OcclusionMapResolution>2</OcclusionMapResolution>
+		<OcclusionMapResolution>1</OcclusionMapResolution>
 		<OcclusionMapBlurRadius>3</OcclusionMapBlurRadius>
 		<OcclusionMapBlurSigma>1</OcclusionMapBlurSigma>
-		<DepthBias>0.0001</DepthBias>
+		<DepthBias>0.00001</DepthBias>
 	</Shadow>
 	<Dof>
 		<BlurResolution>2</BlurResolution>
