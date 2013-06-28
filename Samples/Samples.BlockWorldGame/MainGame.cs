@@ -171,6 +171,9 @@ namespace Samples.BlockWorldGame
             if (sceneManager.FinalOcclusionMap != null)
                 textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
 
+            if (sceneManager.BaseSceneMap != null)
+                textureDisplay.Textures.Add(sceneManager.BaseSceneMap);
+
             base.Draw(gameTime);
         }
 

@@ -28,6 +28,11 @@ namespace Noctua.Models
         /// </summary>
         LinearFogSetup linearFogSetup;
 
+        /// <summary>
+        /// 被写界深度合成ポストプロセス設定。
+        /// </summary>
+        DofSetup dofSetup;
+
         public DeviceContext DeviceContext { get; private set; }
 
         public SceneManager SceneManager { get; private set; }
@@ -80,6 +85,14 @@ namespace Noctua.Models
                 linearFogSetup = new LinearFogSetup(DeviceContext.Device);
                 SceneManager.PostprocessSetups.Add(linearFogSetup);
             }
+
+            // TODO
+            // DoF の ON/OFF はどこでやる？
+            dofSetup = new DofSetup(DeviceContext.Device);
+            dofSetup.BlurResolution = GraphicsDofSettings.BlurResolutions[GraphicsSettings.Dof.BlurResolution];
+            dofSetup.BlurRadius = GraphicsSettings.Dof.BlurRadius;
+            dofSetup.BlurSigma = GraphicsSettings.Dof.BlurSigma;
+            SceneManager.PostprocessSetups.Add(dofSetup);
 
             //----------------------------------------------------------------
             // リージョン マネージャ
@@ -165,6 +178,16 @@ namespace Noctua.Models
                 linearFogSetup.FogEnd = far * SceneSettings.FogEnd;
                 linearFogSetup.FogColor = SceneSettings.CurrentSkyColor;
                 linearFogSetup.FarClipDistance = far;
+            }
+
+            // TODO
+            //
+            // ON/OFF
+            {
+                var camera = SceneManager.ActiveCamera;
+
+                dofSetup.FocusDistance = camera.FocusDistance;
+                dofSetup.FocusRange = camera.FocusRange;
             }
 
             //----------------------------------------------------------------

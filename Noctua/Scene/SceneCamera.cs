@@ -37,10 +37,10 @@ namespace Noctua.Scene
         float nearClipDistance = 0.1f;
 
         float farClipDistance = 1000.0f;
-
-        float focusRange = 3.0f;
         
-        float focusDistance = 200.0f;
+        float focusDistance = 3.0f;
+
+        float focusRange = 150.0f;
 
         Vector3[] frustumCorners = new Vector3[BoundingFrustum.CornerCount];
 

@@ -9,7 +9,7 @@ namespace Noctua.Models
 {
     public sealed class GraphicsDofSettings
     {
-        static readonly float[] BlurResolutions =
+        public static readonly float[] BlurResolutions =
         {
             0.25f, 0.5f, 1.0f
         };
@@ -25,7 +25,7 @@ namespace Noctua.Models
             get { return blurResolution; }
             set
             {
-                if (value <= 0) throw new ArgumentOutOfRangeException("value");
+                if ((uint) BlurResolutions.Length < (uint) value) throw new ArgumentOutOfRangeException("value");
 
                 blurResolution = value;
             }

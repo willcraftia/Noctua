@@ -10,8 +10,8 @@
 		<DepthBias>0.00001</DepthBias>
 	</Shadow>
 	<Dof>
-		<BlurResolution>2</BlurResolution>
-		<BlurRadius>7</BlurRadius>
-		<BlurSigma>4</BlurSigma>
+		<BlurResolution>1</BlurResolution>
+		<BlurRadius>3</BlurRadius>
+		<BlurSigma>1</BlurSigma>
 	</Dof>
 </GraphicsSettings>

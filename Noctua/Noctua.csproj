@@ -96,6 +96,7 @@
     </Compile>
     <Compile Include="Scene\BoundindBoxOctreeQuery.cs" />
     <Compile Include="Scene\BoundingFrustumOctreeQuery.cs" />
+    <Compile Include="Scene\DofSetup.cs" />
     <Compile Include="Scene\LinearFogSetup.cs" />
     <Compile Include="Scene\PostprocessSetup.cs" />
     <Compile Include="Scene\SceneCamera.cs" />
