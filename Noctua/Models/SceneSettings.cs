@@ -10,72 +10,21 @@ namespace Noctua.Models
 {
     public sealed class SceneSettings
     {
-        public const float DefaultFogStart = 0.9f;
+        Vector3 midnightSunDirection = new Vector3(0, -1, 1);
 
-        public const float DefaultFogEnd = 1.0f;
+        Vector3 midnightMoonDirection = new Vector3(0, 1, 1);
 
-        public const float DefaultSecondsPerDay = 10.0f;
+        Vector3 shadowColor = Vector3.Zero;
 
-        public const float DefaultFixedSecondsPerDay = 0.0f;
+        Vector3 skyColor = Color.CornflowerBlue.ToVector3();
 
-        public static Vector3 DefaultMidnightSunDirection
-        {
-            get
-            {
-                var direction = new Vector3(0, -1, 1);
-                direction.Normalize();
-                return direction;
-            }
-        }
+        float fogStart = 0.5f;
 
-        public static Vector3 DefaultSunlightDiffuseColor
-        {
-            get { return Vector3.One; }
-        }
+        float fogEnd = 1.0f;
 
-        public static Vector3 DefaultSunlightSpecularColor
-        {
-            get { return Vector3.Zero; }
-        }
+        float secondsPerDay = 10.0f;
 
-        public static Vector3 DefaultMidnightMoonDirection
-        {
-            get
-            {
-                var direction = new Vector3(0, 1, 1);
-                direction.Normalize();
-                return direction;
-            }
-        }
-
-        public static Vector3 DefaultMoonlightDiffuseColor
-        {
-            get { return Vector3.One; }
-        }
-
-        public static Vector3 DefaultMoonlightSpecularColor
-        {
-            get { return Vector3.Zero; }
-        }
-
-        public static Vector3 DefaultShadowColor
-        {
-            get { return Vector3.Zero; }
-        }
-
-        Vector3 midnightSunDirection = DefaultMidnightSunDirection;
-
-        Vector3 midnightMoonDirection = DefaultMidnightMoonDirection;
-
-        Vector3 shadowColor = DefaultShadowColor;
-
-        float fogStart = DefaultFogStart;
-
-        float fogEnd = DefaultFogEnd;
-
-        float secondsPerDay = DefaultSecondsPerDay;
-
-        float fixedSecondsPerDay = DefaultFixedSecondsPerDay;
+        float fixedSecondsPerDay = 0.0f;
 
         Vector3 sunRotationAxis;
 
@@ -147,6 +96,32 @@ namespace Noctua.Models
             }
         }
 
+        public Vector3 SkyColor
+        {
+            get { return skyColor; }
+            set { skyColor = value; }
+        }
+
+        // SunlightEnabled や MoonlightEnabled は、
+        // シーン設定の更新処理の制御を行う。
+        // false の場合、対応するディレクショナル ライトを更新しない。
+        // true の場合、対応するディレクショナル ライトを更新する。
+        // ただし、実際にそれらのディレクショナル ライトが有効であるか否かは、
+        // ディレクショナル ライトの Enabled プロパティに委ねられる。
+        //
+        // なお、ディレクショナル ライトとしての太陽光と、
+        // 大気光としての意味を含む太陽光の使い分けに注意すること。
+        // 例えば、夜間にディレクショナル ライトとしての太陽光を無効化しても、
+        // 大気光を得るために太陽光の拡散反射光に直接アクセスすることがある。
+
+        public bool SunlightEnabled { get; set; }
+
+        public bool MoonlightEnabled { get; set; }
+
+        public TimeColorCollection SunlightDiffuseColors { get; private set; }
+
+        public TimeColorCollection MoonlightDiffuseColors { get; private set; }
+
         public Vector3 SunRotationAxis
         {
             get { return sunRotationAxis; }
@@ -160,10 +135,6 @@ namespace Noctua.Models
         public DirectionalLight Sunlight { get; private set; }
 
         public DirectionalLight Moonlight { get; private set; }
-
-        public TimeColorCollection SkyColors { get; private set; }
-
-        public TimeColorCollection AmbientLightColors { get; private set; }
 
         public float SecondsPerDay
         {
@@ -189,7 +160,15 @@ namespace Noctua.Models
             }
         }
 
+        /// <summary>
+        /// 0 時からの経過時間 (秒) を取得します。
+        /// </summary>
         public float ElapsedSecondsPerDay { get; private set; }
+
+        /// <summary>
+        /// 時間 (0 を 0 時、1 を 24 時とした時間) を取得します。
+        /// </summary>
+        public float Time { get; private set; }
 
         public Vector3 SunDirection
         {
@@ -213,22 +192,23 @@ namespace Noctua.Models
 
         public Vector3 CurrentSkyColor { get; private set; }
 
-        public Vector3 CurrentAmbientLightColor { get; private set; }
-
         public SceneSettings()
         {
+            midnightSunDirection.Normalize();
+            midnightMoonDirection.Normalize();
+
             Sunlight = new DirectionalLight("Sun");
-            Sunlight.Direction = -DefaultMidnightSunDirection;
-            Sunlight.DiffuseColor = DefaultSunlightDiffuseColor;
-            Sunlight.SpecularColor = DefaultSunlightSpecularColor;
+            Sunlight.Direction = -midnightSunDirection;
+            Sunlight.DiffuseColor = Vector3.Zero;
+            Sunlight.SpecularColor = Vector3.Zero;
 
             Moonlight = new DirectionalLight("Moon");
-            Moonlight.Direction = -DefaultMidnightMoonDirection;
-            Moonlight.DiffuseColor = DefaultMoonlightDiffuseColor;
-            Moonlight.SpecularColor = DefaultMoonlightSpecularColor;
+            Moonlight.Direction = -midnightMoonDirection;
+            Moonlight.DiffuseColor = Vector3.One;
+            Moonlight.SpecularColor = Vector3.Zero;
 
-            SkyColors = new TimeColorCollection();
-            AmbientLightColors = new TimeColorCollection();
+            SunlightDiffuseColors = new TimeColorCollection();
+            MoonlightDiffuseColors = new TimeColorCollection();
         }
 
         public void Update(GameTime gameTime)
@@ -248,16 +228,16 @@ namespace Noctua.Models
                 ElapsedSecondsPerDay = fixedSecondsPerDay;
             }
 
+            Time = ElapsedSecondsPerDay / secondsPerDay;
+
             //----------------------------------------------------------------
             // 太陽と月
 
-            UpdateSun();
-            UpdateMoon();
-
-            //----------------------------------------------------------------
-            // 環境光
-
-            UpdateAmbientLightColor();
+            if (SunlightEnabled)
+                UpdateSun();
+            
+            if (MoonlightEnabled)
+                UpdateMoon();
 
             //----------------------------------------------------------------
             // 空の色
@@ -273,6 +253,9 @@ namespace Noctua.Models
             halfDaySeconds = secondsPerDay * 0.5f;
             inverseHalfDaySeconds = 1 / halfDaySeconds;
 
+            Sunlight.Enabled = SunlightEnabled;
+            Moonlight.Enabled = MoonlightEnabled;
+
             initialized = true;
         }
 
@@ -280,44 +263,40 @@ namespace Noctua.Models
         {
             // 0 時での太陽の位置を基点に、設定された軸の周囲で太陽を回転。
 
-            var angle = (ElapsedSecondsPerDay / secondsPerDay) * MathHelper.TwoPi;
+            var angle = Time * MathHelper.TwoPi;
             Matrix transform;
             Matrix.CreateFromAxisAngle(ref sunRotationAxis, angle, out transform);
             Vector3.Transform(ref midnightSunDirection, ref transform, out sunDirection);
             sunDirection.Normalize();
 
             Sunlight.Direction = -sunDirection;
+            Sunlight.DiffuseColor = SunlightDiffuseColors.GetColor(Time);
         }
 
         void UpdateMoon()
         {
             // 0 時での月の位置を基点に、設定された軸の周囲で月を回転。
 
-            var angle = (ElapsedSecondsPerDay / secondsPerDay) * MathHelper.TwoPi;
+            var angle = Time * MathHelper.TwoPi;
             Matrix transform;
             Matrix.CreateFromAxisAngle(ref moonRotationAxis, angle, out transform);
             Vector3.Transform(ref midnightMoonDirection, ref transform, out moonDirection);
             moonDirection.Normalize();
 
             Moonlight.Direction = -moonDirection;
-        }
-
-        void UpdateAmbientLightColor()
-        {
-            // 一日の時間を [0, 1] へ変換。
-            // 0 が 0 時、1 が 24 時。
-            var elapsed = ElapsedSecondsPerDay / SecondsPerDay;
-
-            CurrentAmbientLightColor = AmbientLightColors.GetColor(elapsed);
+            Moonlight.DiffuseColor = MoonlightDiffuseColors.GetColor(Time);
         }
 
         void UpdateSkyColor()
         {
-            // 一日の時間を [0, 1] へ変換。
-            // 0 が 0 時、1 が 24 時。
-            var elapsed = ElapsedSecondsPerDay / SecondsPerDay;
-
-            CurrentSkyColor = SkyColors.GetColor(elapsed);
+            if (SunlightEnabled)
+            {
+                CurrentSkyColor = SkyColor * Sunlight.DiffuseColor;
+            }
+            else
+            {
+                CurrentSkyColor = SkyColor;
+            }
         }
 
         void InitializeSunRotationAxis()

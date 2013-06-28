@@ -10,19 +10,11 @@ namespace Noctua.Serialization
 {
     public sealed class SceneSettingsDefinition
     {
-        public Vector3 MidnightSunDirection;
+        public float SecondsPerDay;
 
-        public Vector3 MidnightMoonDirection;
+        public bool TimeStopped;
 
-        public Vector3 ShadowColor;
-
-        public DirectionalLightDefinition Sunlight;
-
-        public DirectionalLightDefinition Moonlight;
-
-        public TimeColor[] SkyColors;
-
-        public TimeColor[] AmbientLightColors;
+        public float FixedSecondsPerDay;
 
         public bool FogEnabled;
 
@@ -30,10 +22,20 @@ namespace Noctua.Serialization
 
         public float FogEnd;
 
-        public float SecondsPerDay;
+        public Vector3 MidnightSunDirection;
 
-        public bool TimeStopped;
+        public Vector3 MidnightMoonDirection;
 
-        public float FixedSecondsPerDay;
+        public Vector3 ShadowColor;
+
+        public Vector3 SkyColor;
+
+        public bool SunlightEnabled;
+
+        public bool MoonlightEnabled;
+
+        public TimeColor[] SunlightDiffuseColors;
+
+        public TimeColor[] MoonlightDiffuseColors;
     }
 }

@@ -1,5 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SceneSettingsDefinition>
+	<SecondsPerDay>10</SecondsPerDay>
+	<TimeStopped>false</TimeStopped>
+	<FixedSecondsPerDay>4</FixedSecondsPerDay>
+	<FogEnabled>false</FogEnabled>
+	<FogStart>0.5</FogStart>
+	<FogEnd>1</FogEnd>
 	<MidnightSunDirection>
 		<X>0</X>
 		<Y>-0.707106769</Y>
@@ -15,91 +21,14 @@
 		<Y>0</Y>
 		<Z>0</Z>
 	</ShadowColor>
-	<Sunlight>
-		<Enabled>true</Enabled>
-		<DiffuseColor>
-			<X>1</X>
-			<Y>1</Y>
-			<Z>1</Z>
-		</DiffuseColor>
-		<SpecularColor>
-			<X>0</X>
-			<Y>0</Y>
-			<Z>0</Z>
-		</SpecularColor>
-	</Sunlight>
-	<Moonlight>
-		<Enabled>true</Enabled>
-		<DiffuseColor>
-			<X>1</X>
-			<Y>1</Y>
-			<Z>1</Z>
-		</DiffuseColor>
-		<SpecularColor>
-			<X>0</X>
-			<Y>0</Y>
-			<Z>0</Z>
-		</SpecularColor>
-	</Moonlight>
-	<SkyColors>
-		<TimeColor>
-			<Time>0</Time>
-			<Color>
-				<X>0</X>
-				<Y>0</Y>
-				<Z>0</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>0.15</Time>
-			<Color>
-				<X>0</X>
-				<Y>0</Y>
-				<Z>0</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>0.25</Time>
-			<Color>
-				<X>0.392156869</X>
-				<Y>0.58431375</Y>
-				<Z>0.929411769</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>0.5</Time>
-			<Color>
-				<X>0.392156869</X>
-				<Y>0.58431375</Y>
-				<Z>0.929411769</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>0.75</Time>
-			<Color>
-				<X>0.392156869</X>
-				<Y>0.58431375</Y>
-				<Z>0.929411769</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>0.84</Time>
-			<Color>
-				<X>0</X>
-				<Y>0</Y>
-				<Z>0</Z>
-			</Color>
-		</TimeColor>
-		<TimeColor>
-			<Time>1</Time>
-			<Color>
-				<X>0</X>
-				<Y>0</Y>
-				<Z>0</Z>
-			</Color>
-		</TimeColor>
-	</SkyColors>
-	<AmbientLightColors>
+	<SkyColor>
+		<X>0.392156869</X>
+		<Y>0.58431375</Y>
+		<Z>0.929411769</Z>
+	</SkyColor>
+	<SunlightEnabled>true</SunlightEnabled>
+	<MoonlightEnabled>false</MoonlightEnabled>
+	<SunlightDiffuseColors>
 		<TimeColor>
 			<Time>0</Time>
 			<Color>
@@ -140,11 +69,5 @@
 				<Z>0.1</Z>
 			</Color>
 		</TimeColor>
-	</AmbientLightColors>
-	<FogEnabled>true</FogEnabled>
-	<FogStart>0.5</FogStart>
-	<FogEnd>1</FogEnd>
-	<SecondsPerDay>10</SecondsPerDay>
-	<TimeStopped>true</TimeStopped>
-	<FixedSecondsPerDay>4</FixedSecondsPerDay>
+	</SunlightDiffuseColors>
 </SceneSettingsDefinition>

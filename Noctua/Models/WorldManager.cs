@@ -145,17 +145,17 @@ namespace Noctua.Models
                 return;
             }
 
+            var camera = SceneManager.ActiveCamera;
+
             //----------------------------------------------------------------
             // カメラ更新
 
-            SceneManager.ActiveCamera.Update();
+            camera.Update();
 
             //----------------------------------------------------------------
             // シーン設定
 
             SceneSettings.Update(gameTime);
-
-            SceneManager.AmbientLightColor = SceneSettings.CurrentAmbientLightColor;
 
             if (SceneSettings.Sunlight.Enabled && SceneSettings.SunAboveHorizon)
             {
@@ -172,7 +172,7 @@ namespace Noctua.Models
 
             if (SceneSettings.FogEnabled)
             {
-                var far = SceneManager.ActiveCamera.FarClipDistance;
+                var far = camera.FarClipDistance;
 
                 linearFogSetup.FogStart = far * SceneSettings.FogStart;
                 linearFogSetup.FogEnd = far * SceneSettings.FogEnd;
@@ -184,8 +184,6 @@ namespace Noctua.Models
             //
             // ON/OFF
             {
-                var camera = SceneManager.ActiveCamera;
-
                 dofSetup.FocusDistance = camera.FocusDistance;
                 dofSetup.FocusRange = camera.FocusRange;
             }
@@ -193,7 +191,7 @@ namespace Noctua.Models
             //----------------------------------------------------------------
             // チャンク マネージャ
 
-            ChunkManager.Update(SceneManager.ActiveCamera.View, SceneManager.ActiveCamera.Projection);
+            ChunkManager.Update(camera.View, camera.Projection);
 
             //----------------------------------------------------------------
             // リージョン マネージャ

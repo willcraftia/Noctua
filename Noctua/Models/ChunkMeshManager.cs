@@ -371,6 +371,10 @@ namespace Noctua.Models
             // エフェクトのカメラ設定を更新。
             ChunkEffect.View = view;
             ChunkEffect.Projection = projection;
+
+            // 太陽光を更新。
+            var sceneSettings = chunkManager.WorldManager.SceneSettings;
+            ChunkEffect.SunlightDiffuseColor = sceneSettings.SunlightDiffuseColors.GetColor(sceneSettings.Time);
         }
 
         void ProcessUpdateBufferRequests()

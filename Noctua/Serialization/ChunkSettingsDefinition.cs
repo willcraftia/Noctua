@@ -12,13 +12,17 @@ namespace Noctua.Serialization
     {
         public IntVector3 ChunkSize;
 
-        public int VertexBuildConcurrencyLevel;
-
-        public int UpdateBufferCountPerFrame;
+        public IntVector3 ClusterSize;
 
         public int MinActiveRange;
 
         public int MaxActiveRange;
+
+        public float PriorActiveDistance;
+
+        public int VertexBuildConcurrencyLevel;
+
+        public int UpdateBufferCountPerFrame;
 
         public ChunkStoreType ChunkStoreType;
 
@@ -27,9 +31,5 @@ namespace Noctua.Serialization
         public int PassivationCapacity;
 
         public int PassivationSearchCapacity;
-
-        public float PriorActiveDistance;
-
-        public IntVector3 ClusterSize;
     }
 }

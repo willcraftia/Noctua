@@ -1152,18 +1152,12 @@ namespace Samples.AssetSerialization
 
             Console.WriteLine("シーン設定定義");
             {
-                var settings = new SceneSettings();
-                settings.SkyColors.AddColors(new TimeColor[]
+                var settings = new SceneSettings
                 {
-                    new TimeColor(0,        Color.Black.ToVector3()),
-                    new TimeColor(0.15f,    Color.Black.ToVector3()),
-                    new TimeColor(0.25f,    Color.CornflowerBlue.ToVector3()),
-                    new TimeColor(0.5f,     Color.CornflowerBlue.ToVector3()),
-                    new TimeColor(0.75f,    Color.CornflowerBlue.ToVector3()),
-                    new TimeColor(0.84f,    Color.Black.ToVector3()),
-                    new TimeColor(1,        Color.Black.ToVector3())
-                });
-                settings.AmbientLightColors.AddColors(new TimeColor[]
+                    FixedSecondsPerDay = 4,
+                    SunlightEnabled = true
+                };
+                settings.SunlightDiffuseColors.AddColors(new TimeColor[]
                 {
                     new TimeColor(0,        new Vector3(0.1f)),
                     new TimeColor(0.15f,    new Vector3(0.1f)),
@@ -1174,34 +1168,25 @@ namespace Samples.AssetSerialization
 
                 var definition = new SceneSettingsDefinition
                 {
-                    MidnightSunDirection = settings.MidnightSunDirection,
-                    MidnightMoonDirection = settings.MidnightMoonDirection,
-                    ShadowColor = settings.ShadowColor,
-                    Sunlight = new DirectionalLightDefinition
-                    {
-                        Enabled = settings.Sunlight.Enabled,
-                        DiffuseColor = settings.Sunlight.DiffuseColor,
-                        SpecularColor = settings.Sunlight.SpecularColor
-                    },
-                    Moonlight = new DirectionalLightDefinition
-                    {
-                        Enabled = settings.Moonlight.Enabled,
-                        DiffuseColor = settings.Moonlight.DiffuseColor,
-                        SpecularColor = settings.Moonlight.SpecularColor
-                    },
+                    SecondsPerDay = settings.SecondsPerDay,
+                    TimeStopped = settings.TimeStopped,
+                    FixedSecondsPerDay = settings.FixedSecondsPerDay,
                     FogEnabled = settings.FogEnabled,
                     FogStart = settings.FogStart,
                     FogEnd = settings.FogEnd,
-                    SecondsPerDay = settings.SecondsPerDay,
-                    TimeStopped = settings.TimeStopped,
-                    FixedSecondsPerDay = settings.FixedSecondsPerDay
+                    ShadowColor = settings.ShadowColor,
+                    SkyColor = settings.SkyColor,
+                    SunlightEnabled = settings.SunlightEnabled,
+                    MoonlightEnabled = settings.MoonlightEnabled,
+                    MidnightSunDirection = settings.MidnightSunDirection,
+                    MidnightMoonDirection = settings.MidnightMoonDirection,
                 };
 
-                if (settings.SkyColors.Count != 0)
-                    definition.SkyColors = settings.SkyColors.ToArray();
+                if (settings.SunlightDiffuseColors.Count != 0)
+                    definition.SunlightDiffuseColors = settings.SunlightDiffuseColors.ToArray();
 
-                if (settings.AmbientLightColors.Count != 0)
-                    definition.AmbientLightColors = settings.AmbientLightColors.ToArray();
+                if (settings.MoonlightDiffuseColors.Count != 0)
+                    definition.MoonlightDiffuseColors = settings.MoonlightDiffuseColors.ToArray();
 
                 SerializeAndDeserialize<SceneSettingsDefinition>("SceneSettings", definition);
             }

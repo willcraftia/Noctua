@@ -130,8 +130,6 @@ namespace Noctua.Scene
 
         DirectionalLight activeDirectionalLight;
 
-        bool shadowMapAvailable;
-
         /// <summary>
         /// スプライト バッチ。
         /// </summary>
@@ -737,16 +735,8 @@ namespace Noctua.Scene
             opaqueObjects.Sort(DistanceComparer.Instance);
             translucentObjects.Sort(DistanceComparer.Instance);
 
-            //
             // シャドウ マップ
-            //
-
-            shadowMapAvailable = false;
-            if (activeDirectionalLight != null && activeDirectionalLight.Enabled)
-            {
-                DrawShadowMap();
-                shadowMapAvailable = true;
-            }
+            DrawShadowMap();
 
             // 深度
             DrawDepth();
@@ -895,6 +885,9 @@ namespace Noctua.Scene
         {
             // シャドウ マップ描画結果のクリア。
             Array.Clear(shadowMapResults, 0, shadowMapResults.Length);
+
+            if (activeDirectionalLight == null || !activeDirectionalLight.Enabled)
+                return;
 
             // PSSM による距離と射影行列の分割。
             pssm.Count = shadowMapSplitCount;
@@ -1122,26 +1115,26 @@ namespace Noctua.Scene
 
         void DrawShadowOcclusion()
         {
-            if (!shadowMapAvailable)
-                return;
-
             DeviceContext.SetRenderTarget(occlusionMapRenderTarget);
             DeviceContext.Clear(Vector4.One);
 
-            shadowOcclusionMap.ShadowMapForm = shadowMapForm;
-            shadowOcclusionMap.View = activeCamera.View;
-            shadowOcclusionMap.Projection = activeCamera.Projection;
-
-            for (int i = 0; i < MaxShadowMapSplitCount; i++)
+            if (activeDirectionalLight != null && activeDirectionalLight.Enabled)
             {
-                shadowOcclusionMap.SetSplitDistance(i, splitDistances[i]);
-                shadowOcclusionMap.SetLightViewProjection(i, lightViewProjections[i]);
-                shadowOcclusionMap.SetShadowMap(i, shadowMaps[i].RenderTarget);
-            }
-            shadowOcclusionMap.SetSplitDistance(MaxShadowMapSplitCount, splitDistances[MaxShadowMapSplitCount]);
-            shadowOcclusionMap.LinearDepthMap = depthMapRenderTarget;
+                shadowOcclusionMap.ShadowMapForm = shadowMapForm;
+                shadowOcclusionMap.View = activeCamera.View;
+                shadowOcclusionMap.Projection = activeCamera.Projection;
 
-            shadowOcclusionMap.Draw();
+                for (int i = 0; i < MaxShadowMapSplitCount; i++)
+                {
+                    shadowOcclusionMap.SetSplitDistance(i, splitDistances[i]);
+                    shadowOcclusionMap.SetLightViewProjection(i, lightViewProjections[i]);
+                    shadowOcclusionMap.SetShadowMap(i, shadowMaps[i].RenderTarget);
+                }
+                shadowOcclusionMap.SetSplitDistance(MaxShadowMapSplitCount, splitDistances[MaxShadowMapSplitCount]);
+                shadowOcclusionMap.LinearDepthMap = depthMapRenderTarget;
+
+                shadowOcclusionMap.Draw();
+            }
 
             DeviceContext.SetRenderTarget(null);
 

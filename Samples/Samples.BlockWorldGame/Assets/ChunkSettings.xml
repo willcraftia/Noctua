@@ -5,18 +5,18 @@
 		<Y>32</Y>
 		<Z>32</Z>
 	</ChunkSize>
-	<VertexBuildConcurrencyLevel>2</VertexBuildConcurrencyLevel>
-	<UpdateBufferCountPerFrame>32</UpdateBufferCountPerFrame>
-	<MinActiveRange>8</MinActiveRange>
-	<MaxActiveRange>9</MaxActiveRange>
-	<ChunkStoreType>None</ChunkStoreType>
-	<ActivationCapacity>2</ActivationCapacity>
-	<PassivationCapacity>20</PassivationCapacity>
-	<PassivationSearchCapacity>200</PassivationSearchCapacity>
-	<PriorActiveDistance>96</PriorActiveDistance>
 	<ClusterSize>
 		<X>8</X>
 		<Y>8</Y>
 		<Z>8</Z>
 	</ClusterSize>
+	<MinActiveRange>8</MinActiveRange>
+	<MaxActiveRange>9</MaxActiveRange>
+	<PriorActiveDistance>96</PriorActiveDistance>
+	<VertexBuildConcurrencyLevel>2</VertexBuildConcurrencyLevel>
+	<UpdateBufferCountPerFrame>32</UpdateBufferCountPerFrame>
+	<ChunkStoreType>None</ChunkStoreType>
+	<ActivationCapacity>2</ActivationCapacity>
+	<PassivationCapacity>20</PassivationCapacity>
+	<PassivationSearchCapacity>200</PassivationSearchCapacity>
 </ChunkSettingsDefinition>

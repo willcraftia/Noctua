@@ -1,6 +1,6 @@
 cbuffer PerScene : register(b0)
 {
-    float3 AmbientLightColor;
+    float3 SunlightDiffuseColor;
 };
 
 // テクスチャはアルファ値を用いない。
@@ -20,8 +20,7 @@ float4 PS(Input input) : SV_Target0
 {
     float3 color = Texture.Sample(TextureSampler, input.TexCoord);
 
-    color += AmbientLightColor;
-
+    color *= SunlightDiffuseColor;
     color *= input.Color.rgb;
 
     return float4(color, input.Color.a);

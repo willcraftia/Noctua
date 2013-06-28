@@ -18,30 +18,25 @@ namespace Noctua.Serialization
 
             var settings = new SceneSettings
             {
-                MidnightSunDirection = definition.MidnightSunDirection,
-                MidnightMoonDirection = definition.MidnightMoonDirection,
-                ShadowColor = definition.ShadowColor,
+                SecondsPerDay = definition.SecondsPerDay,
+                TimeStopped = definition.TimeStopped,
+                FixedSecondsPerDay = definition.FixedSecondsPerDay,
                 FogEnabled = definition.FogEnabled,
                 FogStart = definition.FogStart,
                 FogEnd = definition.FogEnd,
-                SecondsPerDay = definition.SecondsPerDay,
-                TimeStopped = definition.TimeStopped,
-                FixedSecondsPerDay = definition.FixedSecondsPerDay
+                MidnightSunDirection = definition.MidnightSunDirection,
+                MidnightMoonDirection = definition.MidnightMoonDirection,
+                ShadowColor = definition.ShadowColor,
+                SkyColor = definition.SkyColor,
+                SunlightEnabled = definition.SunlightEnabled,
+                MoonlightEnabled = definition.MoonlightEnabled
             };
 
-            settings.Sunlight.Enabled = definition.Sunlight.Enabled;
-            settings.Sunlight.DiffuseColor = definition.Sunlight.DiffuseColor;
-            settings.Sunlight.SpecularColor = definition.Sunlight.SpecularColor;
+            if (definition.SunlightDiffuseColors != null)
+                settings.SunlightDiffuseColors.AddColors(definition.SunlightDiffuseColors);
 
-            settings.Moonlight.Enabled = definition.Moonlight.Enabled;
-            settings.Moonlight.DiffuseColor = definition.Moonlight.DiffuseColor;
-            settings.Moonlight.SpecularColor = definition.Moonlight.SpecularColor;
-
-            if (definition.SkyColors != null)
-                settings.SkyColors.AddColors(definition.SkyColors);
-
-            if (definition.AmbientLightColors != null)
-                settings.AmbientLightColors.AddColors(definition.AmbientLightColors);
+            if (definition.MoonlightDiffuseColors != null)
+                settings.MoonlightDiffuseColors.AddColors(definition.MoonlightDiffuseColors);
 
             return settings;
         }
@@ -52,34 +47,25 @@ namespace Noctua.Serialization
 
             var definition = new SceneSettingsDefinition
             {
-                MidnightSunDirection = settings.MidnightSunDirection,
-                MidnightMoonDirection = settings.MidnightMoonDirection,
-                ShadowColor = settings.ShadowColor,
-                Sunlight = new DirectionalLightDefinition
-                {
-                    Enabled = settings.Sunlight.Enabled,
-                    DiffuseColor = settings.Sunlight.DiffuseColor,
-                    SpecularColor = settings.Sunlight.SpecularColor
-                },
-                Moonlight = new DirectionalLightDefinition
-                {
-                    Enabled = settings.Moonlight.Enabled,
-                    DiffuseColor = settings.Moonlight.DiffuseColor,
-                    SpecularColor = settings.Moonlight.SpecularColor
-                },
+                SecondsPerDay = settings.SecondsPerDay,
+                TimeStopped = settings.TimeStopped,
+                FixedSecondsPerDay = settings.FixedSecondsPerDay,
                 FogEnabled = settings.FogEnabled,
                 FogStart = settings.FogStart,
                 FogEnd = settings.FogEnd,
-                SecondsPerDay = settings.SecondsPerDay,
-                TimeStopped = settings.TimeStopped,
-                FixedSecondsPerDay = settings.FixedSecondsPerDay
+                MidnightSunDirection = settings.MidnightSunDirection,
+                MidnightMoonDirection = settings.MidnightMoonDirection,
+                ShadowColor = settings.ShadowColor,
+                SkyColor = settings.SkyColor,
+                SunlightEnabled = settings.SunlightEnabled,
+                MoonlightEnabled = settings.MoonlightEnabled,
             };
 
-            if (settings.SkyColors.Count != 0)
-                definition.SkyColors = settings.SkyColors.ToArray();
+            if (settings.SunlightDiffuseColors.Count != 0)
+                definition.SunlightDiffuseColors = settings.SunlightDiffuseColors.ToArray();
 
-            if (settings.AmbientLightColors.Count != 0)
-                definition.AmbientLightColors = settings.AmbientLightColors.ToArray();
+            if (settings.MoonlightDiffuseColors.Count != 0)
+                definition.MoonlightDiffuseColors = settings.MoonlightDiffuseColors.ToArray();
 
             WriteObject(stream, definition);
         }

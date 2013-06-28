@@ -29,11 +29,6 @@ namespace Noctua.Models
         public readonly IntVector3 ChunkSize;
 
         /// <summary>
-        /// リージョン マネージャ。
-        /// </summary>
-        RegionManager regionManager;
-
-        /// <summary>
         /// チャンクのノード名の自動決定で利用する連番の記録。
         /// </summary>
         int nodeIdSequence;
@@ -44,14 +39,24 @@ namespace Noctua.Models
         ChunkMeshManager meshManager;
 
         /// <summary>
-        /// シーン マネージャ。
-        /// </summary>
-        SceneManager sceneManager;
-
-        /// <summary>
         /// デバイス コンテキストを取得します。
         /// </summary>
         public DeviceContext DeviceContext { get; private set; }
+
+        /// <summary>
+        /// リージョン マネージャを取得します。
+        /// </summary>
+        public RegionManager RegionManager { get; private set; }
+
+        /// <summary>
+        /// ワールド マネージャを取得します。
+        /// </summary>
+        public WorldManager WorldManager { get; private set; }
+
+        /// <summary>
+        /// シーン マネージャを取得します。
+        /// </summary>
+        public SceneManager SceneManager { get; private set; }
 
         /// <summary>
         /// チャンク ノードを関連付けるためのノード。
@@ -141,8 +146,9 @@ namespace Noctua.Models
             if (regionManager == null) throw new ArgumentNullException("regionManager");
 
             ChunkSize = settings.ChunkSize;
-            this.regionManager = regionManager;
-            this.sceneManager = sceneManager;
+            RegionManager = regionManager;
+            WorldManager = regionManager.WorldManager;
+            SceneManager = sceneManager;
             DeviceContext = sceneManager.DeviceContext;
 
             switch (settings.ChunkStoreType)
@@ -198,7 +204,7 @@ namespace Noctua.Models
         /// </summary>
         protected override bool CanActivate(IntVector3 position)
         {
-            if (regionManager.GetRegionByChunkPosition(position) == null) return false;
+            if (RegionManager.GetRegionByChunkPosition(position) == null) return false;
 
             return base.CanActivate(position);
         }
@@ -209,7 +215,7 @@ namespace Noctua.Models
         protected override Partition Create(IntVector3 position)
         {
             // 対象リージョンの取得。
-            var region = regionManager.GetRegionByChunkPosition(position);
+            var region = RegionManager.GetRegionByChunkPosition(position);
             if (region == null)
                 throw new InvalidOperationException(string.Format("No region exists for a chunk '{0}'.", position));
 
@@ -261,7 +267,7 @@ namespace Noctua.Models
         internal SceneNode CreateNode()
         {
             nodeIdSequence++;
-            return new SceneNode(sceneManager, "Chunk" + nodeIdSequence);
+            return new SceneNode(SceneManager, "Chunk" + nodeIdSequence);
         }
     }
 }

@@ -73,7 +73,7 @@ namespace Noctua.Models
         [StructLayout(LayoutKind.Sequential, Size = 16)]
         public struct ParametersPerScenePS
         {
-            public Vector3 AmbientLightColor;
+            public Vector3 SunlightDiffuseColor;
         }
 
         #endregion
@@ -146,12 +146,12 @@ namespace Noctua.Models
             }
         }
 
-        public Vector3 AmbientLightColor
+        public Vector3 SunlightDiffuseColor
         {
-            get { return parametersPerScenePS.AmbientLightColor; }
+            get { return parametersPerScenePS.SunlightDiffuseColor; }
             set
             {
-                parametersPerScenePS.AmbientLightColor = value;
+                parametersPerScenePS.SunlightDiffuseColor = value;
 
                 dirtyFlags |= DirtyFlags.ConstantBufferPerScenePS;
             }
