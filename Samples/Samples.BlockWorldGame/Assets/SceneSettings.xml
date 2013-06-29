@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <SceneSettingsDefinition>
 	<SecondsPerDay>10</SecondsPerDay>
-	<TimeStopped>false</TimeStopped>
-	<FixedSecondsPerDay>4</FixedSecondsPerDay>
+	<TimeStopped>true</TimeStopped>
+	<FixedSecondsPerDay>5</FixedSecondsPerDay>
 	<FogEnabled>false</FogEnabled>
 	<FogStart>0.5</FogStart>
 	<FogEnd>1</FogEnd>

@@ -2,7 +2,7 @@
 <Bundle>
 	<Modules>
 		<Module Name="DefaultFadeCurve" Type="SCurve3" />
-		<Module Name="HumidityPerlin" Type="Perlin">
+		<Module Name="HumidityPerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="100" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
@@ -21,7 +21,7 @@
 				<Property Name="Scale" Value="0.5" />
 			</Properties>
 		</Module>
-		<Module Name="TemperaturePerlin" Type="Perlin">
+		<Module Name="TemperaturePerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="200" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />

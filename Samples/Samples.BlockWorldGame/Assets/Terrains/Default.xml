@@ -13,7 +13,7 @@
 				<Property Name="Name" Value="Const One" />
 			</Properties>
 		</Module>
-		<Module Name="LowlandPerlin" Type="Perlin">
+		<Module Name="LowlandPerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="100" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
@@ -43,7 +43,7 @@
 				<Property Name="Name" Value="Lowland Shape" />
 			</Properties>
 		</Module>
-		<Module Name="HighlandPerlin" Type="Perlin">
+		<Module Name="HighlandPerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="200" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
@@ -65,7 +65,7 @@
 				<Property Name="Name" Value="Highland Shape" />
 			</Properties>
 		</Module>
-		<Module Name="MountainPerlin" Type="Perlin">
+		<Module Name="MountainPerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="300" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
@@ -95,7 +95,7 @@
 				<Property Name="Name" Value="Mountain Shape" />
 			</Properties>
 		</Module>
-		<Module Name="TerrainTypePerlin" Type="Perlin">
+		<Module Name="TerrainTypePerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="400" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />
@@ -157,7 +157,7 @@
 				<Property Name="Name" Value="Terrain Density" />
 			</Properties>
 		</Module>
-		<Module Name="CavePerlin" Type="Perlin">
+		<Module Name="CavePerlin" Type="Perlin" InitializeMethodName="Initialize">
 			<Properties>
 				<Property Name="Seed" Value="500" />
 				<Property Name="FadeCurve" Value="DefaultFadeCurve" />

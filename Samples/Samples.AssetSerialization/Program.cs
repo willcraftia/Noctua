@@ -462,6 +462,7 @@ namespace Samples.AssetSerialization
                     Seed = 100
                 };
                 builder.Add("LowlandPerlin", lowlandPerlin);
+                builder.SetInitializeMethodName("LowlandPerlin", "Initialize");
 
                 var lowlandFractal = new Billow
                 {
@@ -502,6 +503,7 @@ namespace Samples.AssetSerialization
                     Seed = 200
                 };
                 builder.Add("HighlandPerlin", highlandPerlin);
+                builder.SetInitializeMethodName("HighlandPerlin", "Initialize");
 
                 var highlandFractal = new SumFractal
                 {
@@ -531,6 +533,7 @@ namespace Samples.AssetSerialization
                     Seed = 300
                 };
                 builder.Add("MountainPerlin", mountainPerlin);
+                builder.SetInitializeMethodName("MountainPerlin", "Initialize");
 
                 var mountainFractal = new RidgedMultifractal
                 {
@@ -568,6 +571,7 @@ namespace Samples.AssetSerialization
                     Seed = 400
                 };
                 builder.Add("TerrainTypePerlin", terrainTypePerlin);
+                builder.SetInitializeMethodName("TerrainTypePerlin", "Initialize");
 
                 var terrainTypeFractal = new SumFractal
                 {
@@ -647,93 +651,6 @@ namespace Samples.AssetSerialization
                 };
                 builder.Add("TerrainDensity", terrainDensity);
 
-                ////------------------------------------------------------------
-                ////
-                //// 洞窟形状
-                ////
-
-                //var cavePerlin = new Perlin
-                //{
-                //    Name = "Cave Perlin",
-                //    Seed = 500
-                //};
-                //builder.Add("CavePerlin", cavePerlin);
-
-                //var caveShape = new RidgedMultifractal
-                //{
-                //    Name = "Cave Shape",
-                //    OctaveCount = 1,
-                //    Frequency = 4,
-                //    Source = cavePerlin
-                //};
-                //builder.Add("CaveShape", caveShape);
-
-                //var caveAttenuateBias = new ScaleBias
-                //{
-                //    Name = "Cave Attenuate ScaleBias",
-                //    Bias = 0.45f,
-                //    Source = terrainSelectCache
-                //};
-                //builder.Add("CaveAttenuateBias", caveAttenuateBias);
-
-                //var caveShapeAttenuate = new Multiply
-                //{
-                //    Name = "Cave Shape Attenuate",
-                //    Source0 = caveShape,
-                //    Source1 = caveAttenuateBias
-                //};
-                //builder.Add("CaveShapeAttenuate", caveShapeAttenuate);
-
-                //var cavePerturbPerlin = new Perlin
-                //{
-                //    Name = "Cave Perturb Perlin",
-                //    Seed = 600
-                //};
-                //builder.Add("CavePerturbPerlin", cavePerturbPerlin);
-
-                //var cavePerturnFractal = new SumFractal
-                //{
-                //    Name = "Cave Perturb Fractal",
-                //    OctaveCount = 6,
-                //    Frequency = 3,
-                //    Source = cavePerturbPerlin
-                //};
-                //builder.Add("CavePerturnFractal", cavePerturnFractal);
-
-                //var cavePerturbScaleBias = new ScaleBias
-                //{
-                //    Name = "Cave Perturb ScaleBias",
-                //    Scale = 0.5f,
-                //    Source = cavePerturnFractal
-                //};
-                //builder.Add("CavePerturbScaleBias", cavePerturbScaleBias);
-
-                //var cavePerturb = new Displace
-                //{
-                //    Name = "Cave Perturb",
-                //    DisplaceX = cavePerturbScaleBias,
-                //    DisplaceY = constZero,
-                //    DisplaceZ = constZero,
-                //    Source = caveShapeAttenuate
-                //};
-                //builder.Add("CavePerturb", cavePerturb);
-
-                ////------------------------------------------------------------
-                ////
-                //// 洞窟密度
-                ////
-
-                //var caveDensity = new Select
-                //{
-                //    Name = "Cave Density",
-                //    LowerBound = 0.2f,
-                //    LowerSource = constOne,
-                //    UpperBound = 1000,
-                //    UpperSource = constZero,
-                //    Controller = cavePerturb
-                //};
-                //builder.Add("CaveDensity", caveDensity);
-
                 //------------------------------------------------------------
                 //
                 // 洞窟形状
@@ -745,6 +662,7 @@ namespace Samples.AssetSerialization
                     Seed = 500
                 };
                 builder.Add("CavePerlin", cavePerlin);
+                builder.SetInitializeMethodName("CavePerlin", "Initialize");
 
                 var caveShape = new SumFractal
                 {
@@ -886,6 +804,7 @@ namespace Samples.AssetSerialization
                     Source = humidityFractal
                 };
                 builder.Add("HumidityPerlin", humidityPerlin);
+                builder.SetInitializeMethodName("HumidityPerlin", "Initialize");
                 builder.Add("HumidityFractal", humidityFractal);
                 builder.Add("Humidity", humidity);
 
@@ -910,6 +829,7 @@ namespace Samples.AssetSerialization
                     Source = temperatureFractal
                 };
                 builder.Add("TemperaturePerlin", temperaturePerlin);
+                builder.SetInitializeMethodName("TemperaturePerlin", "Initialize");
                 builder.Add("TemperatureFractal", temperatureFractal);
                 builder.Add("Temperature", temperature);
 
