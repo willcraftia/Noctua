@@ -5,18 +5,20 @@ cbuffer PerObject : register(b0)
 
 struct Input
 {
-    float4 Position : SV_Position;
-    float3 Normal   : NORMAL0;
-    float4 Color    : COLOR0;
-    float2 TexCoord : TEXCOORD0;
+    float4 Position     : SV_Position;
+    float3 Normal       : NORMAL0;
+    float4 Color        : COLOR0;
+    float2 TexCoord     : TEXCOORD0;
+    int    TileIndex    : TILE_INDEX;
 };
 
 struct Output
 {
-    float4 Position : SV_Position;
-    float3 Normal   : NORMAL0;
-    float4 Color    : COLOR0;
-    float2 TexCoord : TEXCOORD0;
+    float4 Position     : SV_Position;
+    float3 Normal       : NORMAL0;
+    float4 Color        : COLOR0;
+    float2 TexCoord     : TEXCOORD0;
+    int    TileIndex    : TILE_INDEX;
 };
 
 Output VS(Input input)
@@ -27,6 +29,7 @@ Output VS(Input input)
     output.Normal = input.Normal;
     output.Color = input.Color;
     output.TexCoord = input.TexCoord;
+    output.TileIndex = input.TileIndex;
 
     return output;
 }

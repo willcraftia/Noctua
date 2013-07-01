@@ -75,6 +75,7 @@
     <Compile Include="Models\ChunkMeshUpdatePriority.cs" />
     <Compile Include="Models\ChunkSettings.cs" />
     <Compile Include="Models\ChunkStoreType.cs" />
+    <Compile Include="Models\ChunkVertex.cs" />
     <Compile Include="Models\ChunkVertexBuilder.cs" />
     <Compile Include="Models\ChunkVertices.cs" />
     <Compile Include="Models\GraphicsDofSettings.cs" />

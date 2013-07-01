@@ -210,7 +210,12 @@ namespace Noctua.Models
                 {
                     vertices = opaques[segmentX, segmentY, segmentZ];
                 }
-                AddMesh(x, y, z, ref vertexColor, meshPart, vertices);
+
+                var tile = block.Tiles[side];
+                if (tile != null)
+                {
+                    AddMesh(x, y, z, ref vertexColor, tile.Index, meshPart, vertices);
+                }
             }
         }
 
@@ -259,7 +264,7 @@ namespace Noctua.Models
             return occlustion;
         }
 
-        void AddMesh(int x, int y, int z, ref Color color, MeshPart source, ChunkVertices destination)
+        void AddMesh(int x, int y, int z, ref Color color, byte tileIndex, MeshPart source, ChunkVertices destination)
         {
             foreach (var index in source.Indices)
                 destination.AddIndex(index);
@@ -269,12 +274,13 @@ namespace Noctua.Models
             {
                 var sourceVertex = vertices[i];
 
-                var vertex = new VertexPositionNormalColorTexture
+                var vertex = new ChunkVertex
                 {
                     Position = sourceVertex.Position,
                     Normal = sourceVertex.Normal,
                     Color = color,
-                    TexCoord = sourceVertex.TexCoord
+                    TexCoord = sourceVertex.TexCoord,
+                    TileIndex = tileIndex
                 };
 
                 // ブロック位置へ移動。

@@ -33,18 +33,6 @@ namespace Noctua.Models
 
         public bool Translucent { get; set; }
 
-        public Vector2 GetTexCoord(Vector2 baseTexCoord)
-        {
-            if (Catalog == null)
-            {
-                return Vector2.Zero;
-            }
-            else
-            {
-                return Catalog.GetTexCoord(baseTexCoord, Index);
-            }
-        }
-
         #region ToString
 
         public override string ToString()

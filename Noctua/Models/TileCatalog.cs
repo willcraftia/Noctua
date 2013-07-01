@@ -12,6 +12,8 @@ namespace Noctua.Models
 {
     public sealed class TileCatalog : KeyedCollection<byte, Tile>
     {
+        public const int MaxTileCount = byte.MaxValue;
+
         public const int TextureSize = 256;
 
         public const int TileLength = 16;
@@ -45,45 +47,24 @@ namespace Noctua.Models
         {
             var tile = this[index];
 
-            Rectangle bounds;
-            CalculateTileBounds(index, out bounds);
-
             EnsureColorBuffer();
 
-            //------------------------
-            // TileMap
-
             GetColorBuffer(context, tile.Texture);
-            SetColorBuffer(context, TileMap, ref bounds);
+            SetColorBuffer(context, TileMap, tile.Index);
         }
 
         public void ClearMaps(DeviceContext context)
         {
-            for (byte i = 0; i < byte.MaxValue; i++)
+            for (byte i = 0; i < MaxTileCount; i++)
                 ClearMaps(context, i);
         }
 
-        public void ClearMaps(DeviceContext context, byte index)
+        public void ClearMaps(DeviceContext context, byte arrayIndex)
         {
             EnsureColorBuffer();
             ClearColorBuffer();
 
-            Rectangle bounds;
-            CalculateTileBounds(index, out bounds);
-
-            SetColorBuffer(context, TileMap, ref bounds);
-        }
-
-        public Vector2 GetTexCoord(Vector2 baseTexCoord, byte index)
-        {
-            var result = baseTexCoord;
-
-            result.X /= TileLength;
-            result.Y /= TileLength;
-            result.X += (index % TileLength) / (float) TileLength;
-            result.Y += (index / TileLength) / (float) TileLength;
-
-            return result;
+            SetColorBuffer(context, TileMap, arrayIndex);
         }
 
         protected override byte GetKeyForItem(Tile item)
@@ -115,41 +96,31 @@ namespace Noctua.Models
         Texture2D CreateMap(Device device)
         {
             var texture = device.CreateTexture2D();
-            texture.Width = TextureSize;
-            texture.Height = TextureSize;
+            texture.Width = Tile.Size;
+            texture.Height = Tile.Size;
+            texture.ArraySize = MaxTileCount;
             texture.Initialize();
             return texture;
         }
 
-        void CalculateTileBounds(byte index, out Rectangle bounds)
+        void GetColorBuffer(DeviceContext context, Texture2D source)
         {
-            bounds = new Rectangle
-            {
-                X = (index % TileLength) * Tile.Size,
-                Y = (index / TileLength) * Tile.Size,
-                Width = Tile.Size,
-                Height = Tile.Size
-            };
+            if (source == null) return;
+
+            source.GetData(context, colorBuffer);
         }
 
-        void GetColorBuffer(DeviceContext context, Texture2D texture)
+        void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex)
         {
-            if (texture == null) return;
-
-            texture.GetData(context, colorBuffer);
+            destination.SetData(context, arrayIndex, 0, null, colorBuffer, 0, colorBuffer.Length);
         }
 
-        void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds)
-        {
-            texture.SetData(context, 0, 0, bounds, colorBuffer, 0, colorBuffer.Length);
-        }
-
-        void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds, ref Color color)
+        void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex, ref Color color)
         {
             for (int i = 0; i < colorBuffer.Length; i++)
                 colorBuffer[i] = color;
-            
-            SetColorBuffer(context, texture, ref bounds);
+
+            SetColorBuffer(context, destination, arrayIndex);
         }
 
         void EnsureColorBuffer()

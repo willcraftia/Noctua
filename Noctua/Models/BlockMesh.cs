@@ -17,6 +17,11 @@ namespace Noctua.Models
             MeshParts = new SideCollection<MeshPart>();
         }
 
+        // TODO
+        //
+        // タイルによるテクスチャ座標の調整を行わないため、
+        // もはやプロトタイプからインスタンスを生成する必要が無いのでは？
+
         public static BlockMesh Create(Block block)
         {
             var mesh = new BlockMesh();
@@ -27,31 +32,16 @@ namespace Noctua.Models
                 if (prototype == null)
                     continue;
 
-                mesh.MeshParts[i] = Create(prototype, block.Tiles[i]);
+                mesh.MeshParts[i] = Create(prototype);
             }
 
             return mesh;
         }
 
-        static MeshPart Create(MeshPart prototype, Tile tile)
+        static MeshPart Create(MeshPart prototype)
         {
-            var newVertices = new VertexPositionNormalTexture[prototype.Vertices.Length];
-            Array.Copy(prototype.Vertices, newVertices, newVertices.Length);
-
-            for (int j = 0; j < newVertices.Length; j++)
-            {
-                if (tile == null)
-                {
-                    newVertices[j].TexCoord = Vector2.Zero;
-                }
-                else
-                {
-                    newVertices[j].TexCoord = tile.GetTexCoord(newVertices[j].TexCoord);
-                }
-            }
-
             // 全てのメッシュで共通であるため配列を共有。
-            return new MeshPart(newVertices, prototype.Indices);
+            return new MeshPart(prototype.Vertices, prototype.Indices);
         }
     }
 }

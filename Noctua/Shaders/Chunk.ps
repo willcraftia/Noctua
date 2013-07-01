@@ -5,20 +5,21 @@ cbuffer PerScene : register(b0)
 
 // テクスチャはアルファ値を用いない。
 // アルファ値はブロックの頂点色に埋め込んで使用する。
-Texture2D<float3> Texture : register(t0);
+Texture2DArray<float3> Texture : register(t0);
 SamplerState TextureSampler : register(s0);
 
 struct Input
 {
-    float4 Position : SV_Position;
-    float3 Normal   : NORMAL0;
-    float4 Color    : COLOR0;
-    float2 TexCoord : TEXCOORD0;
+    float4 Position     : SV_Position;
+    float3 Normal       : NORMAL0;
+    float4 Color        : COLOR0;
+    float2 TexCoord     : TEXCOORD0;
+    int    TileIndex    : TILE_INDEX;
 };
 
 float4 PS(Input input) : SV_Target0
 {
-    float3 color = Texture.Sample(TextureSampler, input.TexCoord);
+    float3 color = Texture.Sample(TextureSampler, float3(input.TexCoord, input.TileIndex));
 
     color *= SunlightDiffuseColor;
     color *= input.Color.rgb;

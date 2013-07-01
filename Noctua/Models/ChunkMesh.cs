@@ -154,7 +154,7 @@ namespace Noctua.Models
             DrawCore();
         }
 
-        public void SetVertices(VertexPositionNormalColorTexture[] vertices, int vertexCount)
+        public void SetVertices(ChunkVertex[] vertices, int vertexCount)
         {
             if (vertices == null) throw new ArgumentNullException("vertices");
             if (vertexCount < 0 || vertices.Length < vertexCount) throw new ArgumentOutOfRangeException("vertexCount");
@@ -173,7 +173,7 @@ namespace Noctua.Models
                 {
                     vertexBuffer = deviceContext.Device.CreateVertexBuffer();
                     vertexBuffer.Usage = ResourceUsage.Dynamic;
-                    vertexBuffer.Initialize(VertexPositionNormalColorTexture.VertexDeclaration, vertexCount);
+                    vertexBuffer.Initialize(ChunkVertex.VertexDeclaration, vertexCount);
                 }
 
                 vertexBuffer.SetData(deviceContext, vertices, 0, vertexCount, SetDataOptions.Discard);

@@ -17,7 +17,7 @@ namespace Noctua.Models
         /// <summary>
         /// 頂点情報。
         /// </summary>
-        VertexPositionNormalColorTexture[] vertices;
+        ChunkVertex[] vertices;
 
         /// <summary>
         /// インデックス情報。
@@ -73,7 +73,7 @@ namespace Noctua.Models
             if (ushort.MaxValue < IndexCapacity)
                 throw new ArgumentException("The indices over the limit of ushort needed.", "chunkSize");
 
-            vertices = new VertexPositionNormalColorTexture[VertexCapacity];
+            vertices = new ChunkVertex[VertexCapacity];
             indices = new ushort[IndexCapacity];
         }
 
@@ -112,7 +112,7 @@ namespace Noctua.Models
         /// 頂点を追加します。
         /// </summary>
         /// <param name="vertex">頂点。</param>
-        public void AddVertex(ref VertexPositionNormalColorTexture vertex)
+        public void AddVertex(ref ChunkVertex vertex)
         {
             vertices[VertexCount++] = vertex;
 
