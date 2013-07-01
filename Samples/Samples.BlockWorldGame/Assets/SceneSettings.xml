@@ -3,7 +3,7 @@
 	<SecondsPerDay>10</SecondsPerDay>
 	<TimeStopped>true</TimeStopped>
 	<FixedSecondsPerDay>5</FixedSecondsPerDay>
-	<FogEnabled>false</FogEnabled>
+	<FogEnabled>true</FogEnabled>
 	<FogStart>0.5</FogStart>
 	<FogEnd>1</FogEnd>
 	<MidnightSunDirection>
