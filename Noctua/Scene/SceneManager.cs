@@ -563,7 +563,7 @@ namespace Noctua.Scene
             sceneMapRenderTarget.Height = backBuffer.Height;
             sceneMapRenderTarget.Format = backBuffer.Format;
             sceneMapRenderTarget.MipLevels = backBuffer.MipLevels;
-            sceneMapRenderTarget.MultisampleCount = backBuffer.MultisampleCount;
+            sceneMapRenderTarget.PreferredMultisampleCount = backBuffer.MultisampleCount;
             sceneMapRenderTarget.DepthFormat = backBuffer.DepthFormat;
             sceneMapRenderTarget.Initialize();
 
@@ -573,7 +573,7 @@ namespace Noctua.Scene
             lightingSceneMapRenderTarget.Height = sceneMapRenderTarget.Height;
             lightingSceneMapRenderTarget.Format = sceneMapRenderTarget.Format;
             lightingSceneMapRenderTarget.MipLevels = sceneMapRenderTarget.MipLevels;
-            lightingSceneMapRenderTarget.MultisampleCount = sceneMapRenderTarget.MultisampleCount;
+            lightingSceneMapRenderTarget.PreferredMultisampleCount = sceneMapRenderTarget.MultisampleCount;
             lightingSceneMapRenderTarget.DepthFormat = sceneMapRenderTarget.DepthFormat;
             lightingSceneMapRenderTarget.Initialize();
 
@@ -605,7 +605,7 @@ namespace Noctua.Scene
             occlusionMapPostprocess.Width = occlusionMapRenderTarget.Width;
             occlusionMapPostprocess.Height = occlusionMapRenderTarget.Height;
             occlusionMapPostprocess.Format = occlusionMapRenderTarget.Format;
-            occlusionMapPostprocess.MultisampleCount = occlusionMapRenderTarget.MultisampleCount;
+            occlusionMapPostprocess.PreferredMultisampleCount = occlusionMapRenderTarget.MultisampleCount;
 
             // 範囲と標準偏差に適した値は、アップ/ダウン サンプリングを伴うか否かで大きく異なる。
             occlusionMapGaussianFilter = new GaussianFilter(DeviceContext.Device);
@@ -652,7 +652,7 @@ namespace Noctua.Scene
             scenePostprocess.Width = sceneMapRenderTarget.Width;
             scenePostprocess.Height = sceneMapRenderTarget.Height;
             scenePostprocess.Format = sceneMapRenderTarget.Format;
-            scenePostprocess.MultisampleCount = sceneMapRenderTarget.MultisampleCount;
+            scenePostprocess.PreferredMultisampleCount = sceneMapRenderTarget.MultisampleCount;
 
             occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext.Device);
             occlusionCombineFilter.ShadowColor = new Vector3(0.5f, 0.5f, 0.5f);
@@ -1171,6 +1171,8 @@ namespace Noctua.Scene
 
         void DrawSceneShadow()
         {
+            occlusionCombineFilter.Enabled = false;
+
             if (!occlusionCombineFilter.Enabled)
             {
                 BaseSceneMap = sceneMapRenderTarget;

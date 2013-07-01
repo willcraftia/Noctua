@@ -141,6 +141,7 @@
     </None>
     <None Include="Assets\GraphicsSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Assets\Meshes\Cube.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
