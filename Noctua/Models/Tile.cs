@@ -33,15 +33,15 @@ namespace Noctua.Models
 
         public bool Translucent { get; set; }
 
-        public void GetTexCoordOffset(out Vector2 offset)
+        public Vector2 GetTexCoord(Vector2 baseTexCoord)
         {
             if (Catalog == null)
             {
-                offset = Vector2.Zero;
+                return Vector2.Zero;
             }
             else
             {
-                Catalog.GetTexCoordOffset(Index, out offset);
+                return Catalog.GetTexCoord(baseTexCoord, Index);
             }
         }
 

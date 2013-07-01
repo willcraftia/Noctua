@@ -74,13 +74,16 @@ namespace Noctua.Models
             SetColorBuffer(context, TileMap, ref bounds);
         }
 
-        public void GetTexCoordOffset(byte index, out Vector2 offset)
+        public Vector2 GetTexCoord(Vector2 baseTexCoord, byte index)
         {
-            offset = new Vector2
-            {
-                X = (index % TileLength) / (float) TileLength,
-                Y = (index / TileLength) / (float) TileLength
-            };
+            var result = baseTexCoord;
+
+            result.X /= TileLength;
+            result.Y /= TileLength;
+            result.X += (index % TileLength) / (float) TileLength;
+            result.Y += (index / TileLength) / (float) TileLength;
+
+            return result;
         }
 
         protected override byte GetKeyForItem(Tile item)

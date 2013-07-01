@@ -24,30 +24,30 @@ namespace Noctua.Models
             for (int i = 0; i < Side.Count; i++)
             {
                 var prototype = block.MeshPrototype.MeshParts[i];
-                if (prototype == null) continue;
+                if (prototype == null)
+                    continue;
 
-                var texCoordOffset = Vector2.Zero;
-
-                var tile = block.Tiles[i];
-                if (tile != null) tile.GetTexCoordOffset(out texCoordOffset);
-
-                mesh.MeshParts[i] = Create(prototype, ref texCoordOffset);
+                mesh.MeshParts[i] = Create(prototype, block.Tiles[i]);
             }
 
             return mesh;
         }
 
-        static MeshPart Create(MeshPart prototype, ref Vector2 texCoordOffset)
+        static MeshPart Create(MeshPart prototype, Tile tile)
         {
             var newVertices = new VertexPositionNormalTexture[prototype.Vertices.Length];
             Array.Copy(prototype.Vertices, newVertices, newVertices.Length);
 
             for (int j = 0; j < newVertices.Length; j++)
             {
-                newVertices[j].TexCoord.X /= Tile.Size;
-                newVertices[j].TexCoord.Y /= Tile.Size;
-                newVertices[j].TexCoord.X += texCoordOffset.X;
-                newVertices[j].TexCoord.Y += texCoordOffset.Y;
+                if (tile == null)
+                {
+                    newVertices[j].TexCoord = Vector2.Zero;
+                }
+                else
+                {
+                    newVertices[j].TexCoord = tile.GetTexCoord(newVertices[j].TexCoord);
+                }
             }
 
             // 全てのメッシュで共通であるため配列を共有。
