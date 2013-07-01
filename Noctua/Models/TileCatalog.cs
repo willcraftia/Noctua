@@ -141,7 +141,7 @@ namespace Noctua.Models
 
         void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds)
         {
-            texture.SetData(context, 0, bounds, colorBuffer, 0, colorBuffer.Length);
+            texture.SetData(context, 0, 0, bounds, colorBuffer, 0, colorBuffer.Length);
         }
 
         void SetColorBuffer(DeviceContext context, Texture2D texture, ref Rectangle bounds, ref Color color)
