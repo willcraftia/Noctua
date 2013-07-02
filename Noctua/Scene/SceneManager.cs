@@ -648,7 +648,6 @@ namespace Noctua.Scene
             ambientOcclusionMapRenderTarget.Width = backBuffer.Width;
             ambientOcclusionMapRenderTarget.Height = backBuffer.Height;
             ambientOcclusionMapRenderTarget.Format = SurfaceFormat.Single;
-            ambientOcclusionMapRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
             ambientOcclusionMapRenderTarget.Initialize();
 
             // エフェクト。
