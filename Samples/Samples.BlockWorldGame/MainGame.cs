@@ -161,9 +161,12 @@ namespace Samples.BlockWorldGame
                 if (shadowMap != null)
                     textureDisplay.Textures.Add(shadowMap);
             }
+
+            if (sceneManager.BaseShadowSceneMap != null)
+                textureDisplay.Textures.Add(sceneManager.BaseShadowSceneMap);
             
-            if (sceneManager.ShadowOcclusionMap != null)
-                textureDisplay.Textures.Add(sceneManager.ShadowOcclusionMap);
+            if (sceneManager.FinalShadowSceneMap != null)
+                textureDisplay.Textures.Add(sceneManager.FinalShadowSceneMap);
 
             if (sceneManager.BaseAmbientOcclusionMap != null)
                 textureDisplay.Textures.Add(sceneManager.BaseAmbientOcclusionMap);

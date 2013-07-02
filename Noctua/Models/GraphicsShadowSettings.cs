@@ -38,7 +38,7 @@ namespace Noctua.Models
             get { return splitCount; }
             set
             {
-                if (value < 1 || ShadowOcclusionMap.MaxSplitCount < value)
+                if (value < 1 || CascadeShadowMap.MaxSplitCount < value)
                     throw new ArgumentOutOfRangeException("value");
 
                 splitCount = value;
