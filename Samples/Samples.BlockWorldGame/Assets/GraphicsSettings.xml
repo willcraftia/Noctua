@@ -3,15 +3,15 @@
 	<Shadow>
 		<SplitCount>3</SplitCount>
 		<SplitLambda>0.5</SplitLambda>
-		<ShadowMapResolution>1</ShadowMapResolution>
-		<OcclusionMapResolution>1</OcclusionMapResolution>
+		<ShadowMapSizeIndex>1</ShadowMapSizeIndex>
+		<OcclusionMapScaleIndex>2</OcclusionMapScaleIndex>
 		<OcclusionMapBlurRadius>3</OcclusionMapBlurRadius>
 		<OcclusionMapBlurSigma>1</OcclusionMapBlurSigma>
-		<DepthBias>0.00001</DepthBias>
+		<DepthBias>0.0001</DepthBias>
 	</Shadow>
 	<Dof>
-		<BlurResolution>1</BlurResolution>
-		<BlurRadius>3</BlurRadius>
-		<BlurSigma>1</BlurSigma>
+		<BlurResolution>2</BlurResolution>
+		<BlurRadius>7</BlurRadius>
+		<BlurSigma>4</BlurSigma>
 	</Dof>
 </GraphicsSettings>

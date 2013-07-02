@@ -75,6 +75,8 @@ namespace Noctua.Models
             // シーン マネージャ
 
             SceneManager = new SceneManager(SceneManagerSettings, DeviceContext);
+            SceneManager.ShadowMapSize = GraphicsSettings.Shadow.ShadowMapSize;
+            SceneManager.ShadowMapSplitCount = GraphicsSettings.Shadow.SplitCount;
 
             // 太陽と月をディレクショナル ライトとして登録。
             SceneManager.DirectionalLights.Add(SceneSettings.Sunlight);

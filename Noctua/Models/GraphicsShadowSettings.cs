@@ -9,12 +9,12 @@ namespace Noctua.Models
 {
     public sealed class GraphicsShadowSettings
     {
-        static readonly int[] ShadowMapResolutions =
+        static readonly int[] ShadowMapSizes =
         {
             512, 1024, 2048
         };
 
-        static readonly float[] OcclusionMapResolutions =
+        static readonly float[] OcclusionMapScales =
         {
             0.25f, 0.5f, 1.0f
         };
@@ -23,9 +23,9 @@ namespace Noctua.Models
 
         float splitLambda = 0.5f;
 
-        int shadowMapResolution = 1;
+        int shadowMapSizeIndex = 1;
 
-        int occlusionMapResolution = 2;
+        int occlusionMapScaleIndex = 2;
 
         int occlusionMapBlurRadius = 3;
 
@@ -56,27 +56,27 @@ namespace Noctua.Models
             }
         }
 
-        public int ShadowMapResolution
+        public int ShadowMapSizeIndex
         {
-            get { return shadowMapResolution; }
+            get { return shadowMapSizeIndex; }
             set
             {
-                if ((uint) ShadowMapResolutions.Length <= (uint) value)
+                if ((uint) ShadowMapSizes.Length <= (uint) value)
                     throw new ArgumentOutOfRangeException("value");
 
-                shadowMapResolution = value;
+                shadowMapSizeIndex = value;
             }
         }
 
-        public int OcclusionMapResolution
+        public int OcclusionMapScaleIndex
         {
-            get { return occlusionMapResolution; }
+            get { return occlusionMapScaleIndex; }
             set
             {
-                if ((uint) OcclusionMapResolutions.Length <= (uint) value)
+                if ((uint) OcclusionMapScales.Length <= (uint) value)
                     throw new ArgumentOutOfRangeException("value");
 
-                occlusionMapResolution = value;
+                occlusionMapScaleIndex = value;
             }
         }
 
@@ -112,6 +112,16 @@ namespace Noctua.Models
 
                 depthBias = value;
             }
+        }
+
+        public int ShadowMapSize
+        {
+            get { return ShadowMapSizes[shadowMapSizeIndex]; }
+        }
+
+        public float OcclusionMapScale
+        {
+            get { return OcclusionMapScales[occlusionMapScaleIndex]; }
         }
     }
 }
