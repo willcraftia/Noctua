@@ -346,9 +346,9 @@ namespace Noctua.Scene
         ShadowOcclusionMap shadowOcclusionMap;
 
         /// <summary>
-        /// 環境光閉塞マップ レンダラ。
+        /// 環境光閉塞マップ。
         /// </summary>
-        SSAOMapRenderer ssaoMapRenderer;
+        SSAOMap ssaoMap;
 
         /// <summary>
         /// 閉塞マップ合成フィルタ。
@@ -497,13 +497,13 @@ namespace Noctua.Scene
         // ブラー適用前の環境光閉塞マップ。
         public ShaderResourceView BaseAmbientOcclusionMap
         {
-            get { return ssaoMapRenderer.BaseTexture; }
+            get { return ssaoMap.BaseTexture; }
         }
 
         // ブラー適用後の環境光閉塞マップ。
         public ShaderResourceView FinalAmbientOcclusionMap
         {
-            get { return ssaoMapRenderer.FinalTexture; }
+            get { return ssaoMap.FinalTexture; }
         }
 
         // ライト閉塞マップと環境光閉塞マップの合成後のライト閉塞マップ。
@@ -649,10 +649,10 @@ namespace Noctua.Scene
             shadowOcclusionMap.SplitCount = pssm.Count;
             shadowOcclusionMap.PcfEnabled = false;
 
-            ssaoMapRenderer = new SSAOMapRenderer(DeviceContext);
-            ssaoMapRenderer.RenderTargetWidth = backBuffer.Width;
-            ssaoMapRenderer.RenderTargetHeight = backBuffer.Height;
-            ssaoMapRenderer.BlurScale = 0.25f;
+            ssaoMap = new SSAOMap(DeviceContext);
+            ssaoMap.RenderTargetWidth = backBuffer.Width;
+            ssaoMap.RenderTargetHeight = backBuffer.Height;
+            ssaoMap.BlurScale = 0.25f;
 
             // シーン用ポストプロセス。
             scenePostprocess = new Postprocess(DeviceContext);
@@ -1132,7 +1132,7 @@ namespace Noctua.Scene
 
             DeviceContext.SetRenderTarget(null);
 
-            occlusionMergeFilter.OtherOcclusionMap = ssaoMapRenderer.FinalTexture;
+            occlusionMergeFilter.OtherOcclusionMap = ssaoMap.FinalTexture;
             FinalOcclusionMap = lightOcclusionMapPostprocess.Draw(lightOcclusionMapRenderTarget);
         }
 
@@ -1140,12 +1140,12 @@ namespace Noctua.Scene
         {
             // TODO
             // 設定ファイル管理。
-            ssaoMapRenderer.BlurIteration = 3;
-            ssaoMapRenderer.Radius = 2;
-            ssaoMapRenderer.LinearDepthMap = depthMapRenderTarget;
-            ssaoMapRenderer.NormalMap = normalMapRenderTarget;
-            ssaoMapRenderer.Projection = activeCamera.Projection;
-            ssaoMapRenderer.Draw();
+            ssaoMap.BlurIteration = 3;
+            ssaoMap.Radius = 2;
+            ssaoMap.LinearDepthMap = depthMapRenderTarget;
+            ssaoMap.NormalMap = normalMapRenderTarget;
+            ssaoMap.Projection = activeCamera.Projection;
+            ssaoMap.Draw();
         }
 
         void DrawSceneShadow()
