@@ -224,6 +224,31 @@ namespace Noctua.Scene
         ShadowMap.DrawShadowCastersCallback drawShadowCastersCallback;
 
         /// <summary>
+        /// ライト カメラ視錐台。
+        /// </summary>
+        BoundingFrustum lightFrustum = new BoundingFrustum(Matrix.Identity);
+
+        /// <summary>
+        /// ライト カメラ視錐台頂点配列。
+        /// </summary>
+        Vector3[] lightFrustumCorners = new Vector3[BoundingFrustum.CornerCount];
+
+        /// <summary>
+        /// 境界ボックスによる八分木クエリ。
+        /// </summary>
+        BoundindBoxOctreeQuery boundindBoxOctreeQuery = new BoundindBoxOctreeQuery();
+
+        /// <summary>
+        /// 投影オブジェクト検索のための八分木クエリ関数。
+        /// </summary>
+        Predicate<Octree> queryShadowCasterMethod;
+
+        /// <summary>
+        /// 投影オブジェクト収集メソッド。
+        /// </summary>
+        Action<Octree> collectShadowCasterMethod;
+
+        /// <summary>
         /// VSM 用ガウシアン フィルタ。
         /// </summary>
         GaussianFilterSuite vsmGaussianFilterSuite;
@@ -668,6 +693,9 @@ namespace Noctua.Scene
 
             SkySphereNode = new SceneNode(this, "SkySphere");
             LensFlareNode = new SceneNode(this, "LensFlare");
+
+            queryShadowCasterMethod = new Predicate<Octree>(boundindBoxOctreeQuery.Contains);
+            collectShadowCasterMethod = new Action<Octree>(CollectShadowCasters);
         }
 
         public SceneNode CreateSceneNode(string name)
@@ -780,14 +808,6 @@ namespace Noctua.Scene
             shadowCasters.Clear();
         }
 
-        BoundingFrustum lightFrustum = new BoundingFrustum(Matrix.Identity);
-
-        Vector3[] lightFrustumCorners = new Vector3[BoundingFrustum.CornerCount];
-
-        float shadowSceneExtrudeDistance = 500.0f;
-
-        BoundindBoxOctreeQuery boundindBoxOctreeQuery = new BoundindBoxOctreeQuery();
-
         void CollectShadowCasters(Matrix lightView, Matrix lightProjection, Vector3 lightDirection)
         {
             Matrix frustumMatrix;
@@ -795,18 +815,13 @@ namespace Noctua.Scene
             lightFrustum.Matrix = frustumMatrix;
             lightFrustum.GetCorners(lightFrustumCorners);
 
-            var extrusion = lightDirection * (-shadowSceneExtrudeDistance);
-
-            BoundingBox box = BoundingBox.Empty;
-            for (int i = 0; i < lightFrustumCorners.Length; i++)
-            {
-                box.Merge(lightFrustumCorners[i]);
-                box.Merge(lightFrustumCorners[i] + extrusion);
-            }
+            BoundingBox box;
+            BoundingBox.CreateFromPoints(lightFrustumCorners, out box);
 
             boundindBoxOctreeQuery.Box = box;
 
-            octreeManager.Execute(boundindBoxOctreeQuery.Contains, CollectShadowCasters);
+            // ライト カメラに含まれる投影オブジェクトを収集。
+            octreeManager.Execute(queryShadowCasterMethod, collectShadowCasterMethod);
         }
 
         void CollectShadowCasters(Octree octree)
@@ -829,13 +844,10 @@ namespace Noctua.Scene
 
                     // 投影可か否か。
                     var shadowCaster = obj as ShadowCaster;
-                    if (shadowCaster != null)
+                    if (shadowCaster != null && shadowCaster.CastShadow)
                     {
                         shadowCasters.Add(shadowCaster);
                     }
-
-                    // シーン領域へ描画オブジェクト領域を追加。
-                    //sceneBox.Merge(ref obj.Box);
                 }
             }
         }
@@ -905,6 +917,8 @@ namespace Noctua.Scene
             lightCameraBuilder.LightDirection = activeDirectionalLight.Direction;
             lightCameraBuilder.SceneBox = sceneBox;
 
+            DeviceContext.RasterizerState = RasterizerState.CullNone;
+
             for (int i = 0; i < shadowMapSplitCount; i++)
             {
                 // 必要となった場合にシャドウ マップ オブジェクトを生成。
@@ -924,21 +938,13 @@ namespace Noctua.Scene
                 // 後のモデル描画用にライト空間行列を算出。
                 Matrix.Multiply(ref lightView, ref lightProjection, out lightViewProjections[i]);
 
-                // TODO
-                //
-                // ライト空間行列からライトの視錐台を構築し、
-                // 視錐台から構築した AABB に含まれる投影オブジェクトを検索し、
-                // それらの深度をシャドウ マップへ描画する。
-
                 // ライト領域に含まれる投影オブジェクトを収集。
                 CollectShadowCasters(lightView, lightProjection, activeDirectionalLight.Direction);
-
-                DeviceContext.RasterizerState = RasterizerState.CullNone;
 
                 // シャドウ マップを描画。
                 shadowMaps[i].Form = shadowMapForm;
                 shadowMaps[i].Size = shadowMapSize;
-                shadowMaps[i].Draw(activeCamera.View, splitProjections[i], lightView, lightProjection, drawShadowCastersCallback);
+                shadowMaps[i].Draw(lightView, lightProjection, drawShadowCastersCallback);
 
                 // VSM の場合は生成したシャドウ マップへブラーを適用。
                 if (shadowMapForm == ShadowMapForm.Variance)
@@ -967,9 +973,11 @@ namespace Noctua.Scene
 
                 shadowCasters.Clear();
             }
+
+            DeviceContext.RasterizerState = null;
         }
 
-        void DrawShadowCasters(Matrix eyeView, Matrix eyeProjection, ShadowMapEffect effect)
+        void DrawShadowCasters(ShadowMapEffect effect)
         {
             for (int i = 0; i < shadowCasters.Count; i++)
             {
@@ -1128,7 +1136,15 @@ namespace Noctua.Scene
                 {
                     shadowOcclusionMap.SetSplitDistance(i, splitDistances[i]);
                     shadowOcclusionMap.SetLightViewProjection(i, lightViewProjections[i]);
-                    shadowOcclusionMap.SetShadowMap(i, shadowMaps[i].RenderTarget);
+
+                    if (shadowMaps[i] != null)
+                    {
+                        shadowOcclusionMap.SetShadowMap(i, shadowMaps[i].RenderTarget);
+                    }
+                    else
+                    {
+                        shadowOcclusionMap.SetShadowMap(i, null);
+                    }
                 }
                 shadowOcclusionMap.SetSplitDistance(MaxShadowMapSplitCount, splitDistances[MaxShadowMapSplitCount]);
                 shadowOcclusionMap.LinearDepthMap = depthMapRenderTarget;
