@@ -236,11 +236,6 @@ namespace Noctua.Scene
         int shadowMapSize = 1024;
 
         /// <summary>
-        /// 投影オブジェクト描画コールバック。
-        /// </summary>
-        ShadowMap.DrawShadowCastersCallback drawShadowCastersCallback;
-
-        /// <summary>
         /// ライト カメラ視錐台。
         /// </summary>
         BoundingFrustum lightFrustum = new BoundingFrustum(Matrix.Identity);
@@ -664,9 +659,6 @@ namespace Noctua.Scene
             occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext);
             occlusionCombineFilter.ShadowColor = new Vector3(0.5f, 0.5f, 0.5f);
 
-            // 投影オブジェクト描画コールバック。
-            drawShadowCastersCallback = new ShadowMap.DrawShadowCastersCallback(DrawShadowCasters);
-
             // TODO
             octreeManager = new OctreeManager(new Vector3(256), 3);
 
@@ -903,6 +895,7 @@ namespace Noctua.Scene
                 if (shadowMaps[i] == null)
                 {
                     shadowMaps[i] = new ShadowMap(DeviceContext);
+                    shadowMaps[i].DrawShadowCastersMethod = DrawShadowCasters;
                 }
 
                 // 射影行列は分割毎に異なる。
@@ -922,7 +915,9 @@ namespace Noctua.Scene
                 // シャドウ マップを描画。
                 shadowMaps[i].Form = shadowMapForm;
                 shadowMaps[i].Size = shadowMapSize;
-                shadowMaps[i].Draw(lightView, lightProjection, drawShadowCastersCallback);
+                shadowMaps[i].View = lightView;
+                shadowMaps[i].Projection = lightProjection;
+                shadowMaps[i].Draw();
 
                 // VSM の場合は生成したシャドウ マップへブラーを適用。
                 if (shadowMapForm == ShadowMapForm.Variance)
@@ -955,7 +950,7 @@ namespace Noctua.Scene
             DeviceContext.RasterizerState = null;
         }
 
-        void DrawShadowCasters(ShadowMapEffect effect)
+        void DrawShadowCasters(IEffect effect)
         {
             for (int i = 0; i < shadowCasters.Count; i++)
             {
