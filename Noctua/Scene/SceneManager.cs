@@ -296,11 +296,6 @@ namespace Noctua.Scene
         RenderTarget lightOcclusionMapRenderTarget;
 
         /// <summary>
-        /// 環境光閉塞マップの描画先レンダ ターゲット。
-        /// </summary>
-        RenderTarget ambientOcclusionMapRenderTarget;
-
-        /// <summary>
         /// 線形深度マップ エフェクト。
         /// </summary>
         LinearDepthMapEffect depthMapEffect;
@@ -351,41 +346,9 @@ namespace Noctua.Scene
         ShadowOcclusionMap shadowOcclusionMap;
 
         /// <summary>
-        /// 環境光閉塞マップ シェーダ。
+        /// 環境光閉塞マップ レンダラ。
         /// </summary>
-        SSAOMap ssaoMap;
-
-        /// <summary>
-        /// 環境光閉塞マップ用ポストプロセス。
-        /// </summary>
-        Postprocess ssaoMapPostprocess;
-
-        /// <summary>
-        /// ダウン フィルタ。
-        /// </summary>
-        DownFilter ssaoMapDownFilter;
-
-        /// <summary>
-        /// アップ フィルタ。
-        /// </summary>
-        UpFilter ssaoMapUpFilter;
-
-        /// <summary>
-        /// 法線深度バイラテラル フィルタ。
-        /// </summary>
-        NormalDepthBilateralFilter ssaoMapNormalDepthBilateralFilter;
-
-        /// <summary>
-        /// 環境光閉塞ブラー フィルタ 水平パス。
-        /// </summary>
-        GaussianFilterPass ssaoBlurH;
-
-        /// <summary>
-        /// 環境光閉塞ブラー フィルタ 垂直パス。
-        /// </summary>
-        GaussianFilterPass ssaoBlurV;
-
-        int ssaoBlurIteration = 1;
+        SSAOMapRenderer ssaoMapRenderer;
 
         /// <summary>
         /// 閉塞マップ合成フィルタ。
@@ -532,13 +495,16 @@ namespace Noctua.Scene
         }
 
         // ブラー適用前の環境光閉塞マップ。
-        public ShaderResourceView AmbientOcclusionMap
+        public ShaderResourceView BaseAmbientOcclusionMap
         {
-            get { return ambientOcclusionMapRenderTarget; }
+            get { return ssaoMapRenderer.BaseTexture; }
         }
 
         // ブラー適用後の環境光閉塞マップ。
-        public ShaderResourceView FinalAmbientOcclusionMap { get; private set; }
+        public ShaderResourceView FinalAmbientOcclusionMap
+        {
+            get { return ssaoMapRenderer.FinalTexture; }
+        }
 
         // ライト閉塞マップと環境光閉塞マップの合成後のライト閉塞マップ。
         public ShaderResourceView FinalOcclusionMap { get; private set; }
@@ -643,13 +609,6 @@ namespace Noctua.Scene
             lightOcclusionMapRenderTarget.Format = SurfaceFormat.Single;
             lightOcclusionMapRenderTarget.Initialize();
 
-            // 環境光閉塞マップ。
-            ambientOcclusionMapRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            ambientOcclusionMapRenderTarget.Width = backBuffer.Width;
-            ambientOcclusionMapRenderTarget.Height = backBuffer.Height;
-            ambientOcclusionMapRenderTarget.Format = SurfaceFormat.Single;
-            ambientOcclusionMapRenderTarget.Initialize();
-
             // エフェクト。
             depthMapEffect = new LinearDepthMapEffect(DeviceContext);
             normalMapEffect = new NormalMapEffect(DeviceContext);
@@ -690,20 +649,10 @@ namespace Noctua.Scene
             shadowOcclusionMap.SplitCount = pssm.Count;
             shadowOcclusionMap.PcfEnabled = false;
 
-            ssaoMap = new SSAOMap(DeviceContext);
-
-            // 環境光閉塞マップ用ポストプロセス。
-            ssaoMapPostprocess = new Postprocess(DeviceContext);
-            ssaoMapPostprocess.Width = ambientOcclusionMapRenderTarget.Width;
-            ssaoMapPostprocess.Height = ambientOcclusionMapRenderTarget.Height;
-            ssaoMapPostprocess.Format = SurfaceFormat.Single;
-
-            ssaoMapDownFilter = new DownFilter(DeviceContext);
-            ssaoMapUpFilter = new UpFilter(DeviceContext);
-
-            ssaoMapNormalDepthBilateralFilter = new NormalDepthBilateralFilter(DeviceContext);
-            ssaoBlurH = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Horizon);
-            ssaoBlurV = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Vertical);
+            ssaoMapRenderer = new SSAOMapRenderer(DeviceContext);
+            ssaoMapRenderer.RenderTargetWidth = backBuffer.Width;
+            ssaoMapRenderer.RenderTargetHeight = backBuffer.Height;
+            ssaoMapRenderer.BlurScale = 0.25f;
 
             // シーン用ポストプロセス。
             scenePostprocess = new Postprocess(DeviceContext);
@@ -1183,35 +1132,20 @@ namespace Noctua.Scene
 
             DeviceContext.SetRenderTarget(null);
 
-            occlusionMergeFilter.OtherOcclusionMap = FinalAmbientOcclusionMap;
+            occlusionMergeFilter.OtherOcclusionMap = ssaoMapRenderer.FinalTexture;
             FinalOcclusionMap = lightOcclusionMapPostprocess.Draw(lightOcclusionMapRenderTarget);
         }
 
         void DrawAmbientOcclusion()
         {
-            DeviceContext.SetRenderTarget(ambientOcclusionMapRenderTarget);
-            DeviceContext.Clear(Vector4.One);
-
-            ssaoMap.LinearDepthMap = depthMapRenderTarget;
-            ssaoMap.NormalMap = normalMapRenderTarget;
-            ssaoMap.Projection = activeCamera.Projection;
-            ssaoMap.Draw();
-
-            DeviceContext.SetRenderTarget(null);
-
-            ssaoMapPostprocess.Filters.Clear();
-            ssaoMapNormalDepthBilateralFilter.LinearDepthMap = depthMapRenderTarget;
-            ssaoMapNormalDepthBilateralFilter.NormalMap = normalMapRenderTarget;
-
-            ssaoMapPostprocess.Filters.Add(ssaoMapDownFilter);
-            for (int i = 0; i < ssaoBlurIteration; i++)
-            {
-                ssaoMapPostprocess.Filters.Add(ssaoBlurH);
-                ssaoMapPostprocess.Filters.Add(ssaoBlurV);
-            }
-            ssaoMapPostprocess.Filters.Add(ssaoMapUpFilter);
-
-            FinalAmbientOcclusionMap = ssaoMapPostprocess.Draw(ambientOcclusionMapRenderTarget);
+            // TODO
+            // 設定ファイル管理。
+            ssaoMapRenderer.BlurIteration = 3;
+            ssaoMapRenderer.Radius = 2;
+            ssaoMapRenderer.LinearDepthMap = depthMapRenderTarget;
+            ssaoMapRenderer.NormalMap = normalMapRenderTarget;
+            ssaoMapRenderer.Projection = activeCamera.Projection;
+            ssaoMapRenderer.Draw();
         }
 
         void DrawSceneShadow()
