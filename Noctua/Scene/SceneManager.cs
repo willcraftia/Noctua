@@ -593,8 +593,8 @@ namespace Noctua.Scene
             ssaoMapRenderTarget.Initialize();
 
             // エフェクト。
-            depthMapEffect = new LinearDepthMapEffect(DeviceContext.Device);
-            normalMapEffect = new NormalMapEffect(DeviceContext.Device);
+            depthMapEffect = new LinearDepthMapEffect(DeviceContext);
+            normalMapEffect = new NormalMapEffect(DeviceContext);
 
             // TODO
             //
@@ -608,22 +608,22 @@ namespace Noctua.Scene
             occlusionMapPostprocess.PreferredMultisampleCount = occlusionMapRenderTarget.MultisampleCount;
 
             // 範囲と標準偏差に適した値は、アップ/ダウン サンプリングを伴うか否かで大きく異なる。
-            occlusionMapGaussianFilter = new GaussianFilter(DeviceContext.Device);
+            occlusionMapGaussianFilter = new GaussianFilter(DeviceContext);
             occlusionMapGaussianFilter.Radius = 3;
             occlusionMapGaussianFilter.Sigma = 1;
             occlusionMapGaussianFilterPassH = new GaussianFilterPass(occlusionMapGaussianFilter, GaussianFilterDirection.Horizon);
             occlusionMapGaussianFilterPassV = new GaussianFilterPass(occlusionMapGaussianFilter, GaussianFilterDirection.Vertical);
 
-            occlusionMapUpFilter = new UpFilter(DeviceContext.Device);
-            occlusionMapDownFilter = new DownFilter(DeviceContext.Device);
+            occlusionMapUpFilter = new UpFilter(DeviceContext);
+            occlusionMapDownFilter = new DownFilter(DeviceContext);
 
-            occlusionMergeFilter = new OcclusionMergeFilter(DeviceContext.Device);
+            occlusionMergeFilter = new OcclusionMergeFilter(DeviceContext);
 
             occlusionMapPostprocess.Filters.Add(occlusionMapDownFilter);
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassH);
             occlusionMapPostprocess.Filters.Add(occlusionMapGaussianFilterPassV);
             occlusionMapPostprocess.Filters.Add(occlusionMapUpFilter);
-            //occlusionMapPostprocess.Filters.Add(occlusionMergeFilter);
+            occlusionMapPostprocess.Filters.Add(occlusionMergeFilter);
             occlusionMapPostprocess.Enabled = true;
 
             // 深度バイアスは、主に PCF の際に重要となる。
@@ -640,10 +640,10 @@ namespace Noctua.Scene
             ssaoMapPostprocess.Height = ssaoMapRenderTarget.Height;
             ssaoMapPostprocess.Format = SurfaceFormat.Single;
 
-            ssaoMapDownFilter = new DownFilter(DeviceContext.Device);
-            ssaoMapUpFilter = new UpFilter(DeviceContext.Device);
+            ssaoMapDownFilter = new DownFilter(DeviceContext);
+            ssaoMapUpFilter = new UpFilter(DeviceContext);
 
-            ssaoMapNormalDepthBilateralFilter = new NormalDepthBilateralFilter(DeviceContext.Device);
+            ssaoMapNormalDepthBilateralFilter = new NormalDepthBilateralFilter(DeviceContext);
             ssaoBlurH = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Horizon);
             ssaoBlurV = new GaussianFilterPass(ssaoMapNormalDepthBilateralFilter, GaussianFilterDirection.Vertical);
 
@@ -654,7 +654,7 @@ namespace Noctua.Scene
             scenePostprocess.Format = sceneMapRenderTarget.Format;
             scenePostprocess.PreferredMultisampleCount = sceneMapRenderTarget.MultisampleCount;
 
-            occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext.Device);
+            occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext);
             occlusionCombineFilter.ShadowColor = new Vector3(0.5f, 0.5f, 0.5f);
 
             // 投影オブジェクト描画コールバック。
@@ -1171,7 +1171,7 @@ namespace Noctua.Scene
 
         void DrawSceneShadow()
         {
-            occlusionCombineFilter.Enabled = false;
+            //occlusionCombineFilter.Enabled = false;
 
             if (!occlusionCombineFilter.Enabled)
             {
@@ -1188,7 +1188,7 @@ namespace Noctua.Scene
                 occlusionCombineFilter.OcclusionMap = FinalOcclusionMap;
                 //occlusionCombineFilter.OcclusionMap = finalAmbientOcclusionMap;
 
-                occlusionCombineFilter.Apply(DeviceContext);
+                occlusionCombineFilter.Apply();
                 fullScreenQuad.Draw();
 
                 DeviceContext.SetRenderTarget(null);

@@ -12,11 +12,11 @@ namespace Noctua.Models
 {
     public sealed class SkySphere : SceneObject
     {
-        DeviceContext context;
-
         SkySphereEffect skySphereEffect;
 
         SphereMesh sphereMesh;
+
+        public DeviceContext DeviceContext { get; private set; }
 
         public Vector3 SkyColor
         {
@@ -48,15 +48,15 @@ namespace Noctua.Models
             set { skySphereEffect.SunVisible = value; }
         }
 
-        public SkySphere(string name, DeviceContext context)
+        public SkySphere(string name, DeviceContext deviceContext)
             : base(name)
         {
-            if (context == null) throw new ArgumentNullException("context");
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
 
-            this.context = context;
+            DeviceContext = deviceContext;
 
-            skySphereEffect = new SkySphereEffect(context.Device);
-            sphereMesh = new SphereMesh(context, 1, 32);
+            skySphereEffect = new SkySphereEffect(deviceContext);
+            sphereMesh = new SphereMesh(deviceContext, 1, 32);
         }
 
         public override void Draw()
@@ -79,15 +79,15 @@ namespace Noctua.Models
 
             // 読み取り専用深度かつ深度比較 LessEqual。
             // 内側 (背面) を描画。
-            context.DepthStencilState = DepthStencilState.DepthReadLessEqual;
-            context.RasterizerState = RasterizerState.CullFront;
+            DeviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
+            DeviceContext.RasterizerState = RasterizerState.CullFront;
 
-            skySphereEffect.Apply(context);
+            skySphereEffect.Apply();
             sphereMesh.Draw();
 
             // デフォルトへ戻す。
-            context.DepthStencilState = null;
-            context.RasterizerState = null;
+            DeviceContext.DepthStencilState = null;
+            DeviceContext.RasterizerState = null;
         }
     }
 }

@@ -82,13 +82,13 @@ namespace Noctua.Models
 
             if (SceneSettings.FogEnabled)
             {
-                linearFogSetup = new LinearFogSetup(DeviceContext.Device);
+                linearFogSetup = new LinearFogSetup(DeviceContext);
                 SceneManager.PostprocessSetups.Add(linearFogSetup);
             }
 
             // TODO
             // DoF の ON/OFF はどこでやる？
-            dofSetup = new DofSetup(DeviceContext.Device);
+            dofSetup = new DofSetup(DeviceContext);
             dofSetup.BlurResolution = GraphicsDofSettings.BlurResolutions[GraphicsSettings.Dof.BlurResolution];
             dofSetup.BlurRadius = GraphicsSettings.Dof.BlurRadius;
             dofSetup.BlurSigma = GraphicsSettings.Dof.BlurSigma;

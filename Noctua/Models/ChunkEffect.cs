@@ -91,8 +91,6 @@ namespace Noctua.Models
 
         #endregion
 
-        Device device;
-
         SharedDeviceResource sharedDeviceResource;
 
         ConstantBuffer constantBufferPerObjectVS;
@@ -112,6 +110,8 @@ namespace Noctua.Models
         Matrix viewProjection;
 
         DirtyFlags dirtyFlags;
+
+        public DeviceContext DeviceContext { get; private set; }
 
         public Matrix World
         {
@@ -163,18 +163,18 @@ namespace Noctua.Models
 
         public ChunkEffectMode Mode { get; set; }
 
-        public ChunkEffect(Device device)
+        public ChunkEffect(DeviceContext deviceContext)
         {
-            if (device == null) throw new ArgumentNullException("device");
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
 
-            this.device = device;
+            DeviceContext = deviceContext;
 
-            sharedDeviceResource = device.GetSharedResource<ChunkEffect, SharedDeviceResource>();
+            sharedDeviceResource = deviceContext.Device.GetSharedResource<ChunkEffect, SharedDeviceResource>();
 
-            constantBufferPerObjectVS = device.CreateConstantBuffer();
+            constantBufferPerObjectVS = deviceContext.Device.CreateConstantBuffer();
             constantBufferPerObjectVS.Initialize<ParametersPerObjectVS>();
 
-            constantBufferPerScenePS = device.CreateConstantBuffer();
+            constantBufferPerScenePS = deviceContext.Device.CreateConstantBuffer();
             constantBufferPerScenePS.Initialize<ParametersPerScenePS>();
 
             world = Matrix.Identity;
@@ -191,7 +191,7 @@ namespace Noctua.Models
                 DirtyFlags.ConstantBufferPerScenePS;
         }
 
-        public void Apply(DeviceContext context)
+        public void Apply()
         {
             if ((dirtyFlags & DirtyFlags.ViewProjection) != 0)
             {
@@ -214,37 +214,37 @@ namespace Noctua.Models
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectVS) != 0)
             {
-                constantBufferPerObjectVS.SetData(context, parametersPerObjectVS);
+                constantBufferPerObjectVS.SetData(DeviceContext, parametersPerObjectVS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectVS;
             }
 
-            context.VertexShaderConstantBuffers[0] = constantBufferPerObjectVS;
+            DeviceContext.VertexShaderConstantBuffers[0] = constantBufferPerObjectVS;
 
             switch (Mode)
             {
                 case ChunkEffectMode.Default:
                     if ((dirtyFlags & DirtyFlags.ConstantBufferPerScenePS) != 0)
                     {
-                        constantBufferPerScenePS.SetData(context, parametersPerScenePS);
+                        constantBufferPerScenePS.SetData(DeviceContext, parametersPerScenePS);
 
                         dirtyFlags &= ~DirtyFlags.ConstantBufferPerScenePS;
                     }
-                    
-                    context.VertexShader = sharedDeviceResource.VertexShader;
 
-                    context.PixelShaderConstantBuffers[0] = constantBufferPerScenePS;
-                    context.PixelShaderResources[0] = Texture;
-                    context.PixelShaderSamplers[0] = TextureSampler;
-                    context.PixelShader = sharedDeviceResource.PixelShader;
+                    DeviceContext.VertexShader = sharedDeviceResource.VertexShader;
+
+                    DeviceContext.PixelShaderConstantBuffers[0] = constantBufferPerScenePS;
+                    DeviceContext.PixelShaderResources[0] = Texture;
+                    DeviceContext.PixelShaderSamplers[0] = TextureSampler;
+                    DeviceContext.PixelShader = sharedDeviceResource.PixelShader;
                     break;
                 case ChunkEffectMode.Occlusion:
-                    context.VertexShader = sharedDeviceResource.OcclusionVertexShader;
-                    context.PixelShader = sharedDeviceResource.OcclusionPixelShader;
+                    DeviceContext.VertexShader = sharedDeviceResource.OcclusionVertexShader;
+                    DeviceContext.PixelShader = sharedDeviceResource.OcclusionPixelShader;
                     break;
                 case ChunkEffectMode.Wireframe:
-                    context.VertexShader = sharedDeviceResource.WireframeVertexShader;
-                    context.PixelShader = sharedDeviceResource.WireframePixelShader;
+                    DeviceContext.VertexShader = sharedDeviceResource.WireframeVertexShader;
+                    DeviceContext.PixelShader = sharedDeviceResource.WireframePixelShader;
                     break;
             }
         }

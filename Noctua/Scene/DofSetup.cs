@@ -59,14 +59,16 @@ namespace Noctua.Scene
         // TODO
         // ブラー設定用プロパティ。
 
-        public DofSetup(Device device)
+        public DofSetup(DeviceContext deviceContext)
         {
-            downFilter = new DownFilter(device);
-            upFilter = new UpFilter(device);
-            gaussianFilter = new GaussianFilter(device);
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
+
+            downFilter = new DownFilter(deviceContext);
+            upFilter = new UpFilter(deviceContext);
+            gaussianFilter = new GaussianFilter(deviceContext);
             gaussianFilterH = new GaussianFilterPass(gaussianFilter, GaussianFilterDirection.Horizon);
             gaussianFilterV = new GaussianFilterPass(gaussianFilter, GaussianFilterDirection.Vertical);
-            dofCombineFilter = new DofCombineFilter(device);
+            dofCombineFilter = new DofCombineFilter(deviceContext);
 
             FocusRange = dofCombineFilter.FocusRange;
             FocusDistance = dofCombineFilter.FocusDistance;

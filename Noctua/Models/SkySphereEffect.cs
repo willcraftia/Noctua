@@ -78,8 +78,6 @@ namespace Noctua.Models
 
         #endregion
 
-        Device device;
-
         SharedDeviceResource sharedDeviceResource;
 
         ConstantBuffer constantBufferPerCameraVS;
@@ -95,6 +93,8 @@ namespace Noctua.Models
         Matrix projection;
 
         DirtyFlags dirtyFlags;
+
+        public DeviceContext DeviceContext { get; private set; }
 
         public Matrix World
         {
@@ -179,18 +179,18 @@ namespace Noctua.Models
             }
         }
 
-        public SkySphereEffect(Device device)
+        public SkySphereEffect(DeviceContext deviceContext)
         {
-            if (device == null) throw new ArgumentNullException("device");
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
 
-            this.device = device;
+            DeviceContext = deviceContext;
 
-            sharedDeviceResource = device.GetSharedResource<SkySphereEffect, SharedDeviceResource>();
+            sharedDeviceResource = deviceContext.Device.GetSharedResource<SkySphereEffect, SharedDeviceResource>();
 
-            constantBufferPerCameraVS = device.CreateConstantBuffer();
+            constantBufferPerCameraVS = deviceContext.Device.CreateConstantBuffer();
             constantBufferPerCameraVS.Initialize<ParametersPerCameraVS>();
 
-            constantBufferPerObjectPS = device.CreateConstantBuffer();
+            constantBufferPerObjectPS = deviceContext.Device.CreateConstantBuffer();
             constantBufferPerObjectPS.Initialize<ParametersPerObjectPS>();
 
             view = Matrix.Identity;
@@ -207,7 +207,7 @@ namespace Noctua.Models
                 DirtyFlags.ConstantBufferPerObjectPS;
         }
 
-        public void Apply(DeviceContext context)
+        public void Apply()
         {
             if ((dirtyFlags & DirtyFlags.ViewProjection) != 0)
             {
@@ -221,22 +221,22 @@ namespace Noctua.Models
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerCameraVS) != 0)
             {
-                constantBufferPerCameraVS.SetData(context, parametersPerCameraVS);
+                constantBufferPerCameraVS.SetData(DeviceContext, parametersPerCameraVS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerCameraVS;
             }
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectPS) != 0)
             {
-                constantBufferPerObjectPS.SetData(context, parametersPerObjectPS);
+                constantBufferPerObjectPS.SetData(DeviceContext, parametersPerObjectPS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectPS;
             }
 
-            context.VertexShaderConstantBuffers[0] = constantBufferPerCameraVS;
-            context.VertexShader = sharedDeviceResource.VertexShader;
-            context.PixelShaderConstantBuffers[0] = constantBufferPerObjectPS;
-            context.PixelShader = sharedDeviceResource.PixelShader;
+            DeviceContext.VertexShaderConstantBuffers[0] = constantBufferPerCameraVS;
+            DeviceContext.VertexShader = sharedDeviceResource.VertexShader;
+            DeviceContext.PixelShaderConstantBuffers[0] = constantBufferPerObjectPS;
+            DeviceContext.PixelShader = sharedDeviceResource.PixelShader;
         }
 
         #region IDisposable

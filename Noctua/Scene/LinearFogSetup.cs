@@ -21,11 +21,11 @@ namespace Noctua.Scene
 
         public float FarClipDistance { get; set; }
 
-        public LinearFogSetup(Device device)
+        public LinearFogSetup(DeviceContext deviceContext)
         {
-            if (device == null) throw new ArgumentNullException("device");
+            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
 
-            linearFogFilter = new LinearFogFilter(device);
+            linearFogFilter = new LinearFogFilter(deviceContext);
             
             // 初期値はフィルタの初期値に合わせる。
             FogStart = linearFogFilter.FogStart;

@@ -160,6 +160,7 @@
     </None>
     <None Include="Assets\SceneSettings.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <SubType>Designer</SubType>
     </None>
     <None Include="Assets\Terrains\Default.xml">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>

@@ -261,7 +261,7 @@ namespace Noctua.Models
             this.updateBufferCountPerFrame = updateBufferCountPerFrame;
 
             DeviceContext = chunkManager.DeviceContext;
-            ChunkEffect = new ChunkEffect(DeviceContext.Device);
+            ChunkEffect = new ChunkEffect(DeviceContext);
 
             buildVertexRequestPool = new ConcurrentPool<BuildVertexRequest>(() => { return new BuildVertexRequest(); });
             buildVertexRequests = new ConcurrentPriorityQueue<BuildVertexRequest>(new BuildVertexRequestComparer());

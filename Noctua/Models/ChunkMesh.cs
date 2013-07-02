@@ -17,8 +17,6 @@ namespace Noctua.Models
 
         Chunk chunk;
 
-        DeviceContext deviceContext;
-
         ChunkEffect chunkEffect;
 
         OcclusionQuery occlusionQuery;
@@ -33,6 +31,8 @@ namespace Noctua.Models
 
         IndexBuffer indexBuffer;
 
+        public DeviceContext DeviceContext { get; private set; }
+
         public int VertexCount { get; private set; }
 
         public int IndexCount { get; private set; }
@@ -46,10 +46,10 @@ namespace Noctua.Models
             this.meshManager = meshManager;
             this.chunk = chunk;
 
-            deviceContext = meshManager.DeviceContext;
+            DeviceContext = meshManager.DeviceContext;
             chunkEffect = meshManager.ChunkEffect;
 
-            occlusionQuery = deviceContext.Device.CreateOcclusionQuery();
+            occlusionQuery = DeviceContext.Device.CreateOcclusionQuery();
             occlusionQuery.Initialize();
         }
 
@@ -69,26 +69,26 @@ namespace Noctua.Models
 
             // 前回のクエリが完了しているならば、新たなクエリを試行。
 
-            occlusionQuery.Begin(deviceContext);
+            occlusionQuery.Begin(DeviceContext);
 
             if (!Translucent)
             {
                 // 不透明ならば深度を書き込む。
-                deviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
+                DeviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
                 depthWritten = true;
             }
             else
             {
                 // 半透明ならば深度を読み取るのみとする。
-                deviceContext.DepthStencilState = DepthStencilState.DepthRead;
+                DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
             }
 
             // レンダ ターゲットへの書き込みは行わない。
-            deviceContext.BlendState = BlendState.ColorWriteDisable;
+            DeviceContext.BlendState = BlendState.ColorWriteDisable;
             
             chunkEffect.Mode = ChunkEffectMode.Occlusion;
             chunkEffect.World = World;
-            chunkEffect.Apply(deviceContext);
+            chunkEffect.Apply();
 
             DrawCore();
 
@@ -96,8 +96,8 @@ namespace Noctua.Models
             occlusionQueryActive = true;
 
             // デフォルトへ戻す。
-            deviceContext.DepthStencilState = null;
-            deviceContext.BlendState = null;
+            DeviceContext.DepthStencilState = null;
+            DeviceContext.BlendState = null;
         }
 
         public override void Draw()
@@ -109,36 +109,36 @@ namespace Noctua.Models
                 if (depthWritten)
                 {
                     // オクルージョン クエリで深度書き込み済みならば読み取りのみとする。
-                    deviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
+                    DeviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
                 }
                 else
                 {
                     // さもなくば書き込む。
-                    deviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
+                    DeviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
                 }
 
                 // 不透明とする。
-                deviceContext.BlendState = BlendState.Opaque;
+                DeviceContext.BlendState = BlendState.Opaque;
             }
             else
             {
                 // 半透明ならば深度を読み取るのみとする。
-                deviceContext.DepthStencilState = DepthStencilState.DepthRead;
+                DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
 
                 // アルファ ブレンドを有効にする。
-                deviceContext.BlendState = BlendState.Additive;
+                DeviceContext.BlendState = BlendState.Additive;
             }
 
             chunkEffect.Mode = ChunkEffectMode.Default;
             chunkEffect.World = World;
             chunkEffect.Texture = chunk.Region.TileCatalog.TileMap;
-            chunkEffect.Apply(deviceContext);
+            chunkEffect.Apply();
 
             DrawCore();
 
             // デフォルトへ戻す。
-            deviceContext.DepthStencilState = null;
-            deviceContext.BlendState = null;
+            DeviceContext.DepthStencilState = null;
+            DeviceContext.BlendState = null;
         }
 
         public override void Draw(IEffect effect)
@@ -150,7 +150,7 @@ namespace Noctua.Models
                 effectMatrices.World = World;
 
             // 指定のエフェクトで描画。
-            effect.Apply(deviceContext);
+            effect.Apply();
             DrawCore();
         }
 
@@ -171,12 +171,12 @@ namespace Noctua.Models
 
                 if (vertexBuffer == null)
                 {
-                    vertexBuffer = deviceContext.Device.CreateVertexBuffer();
+                    vertexBuffer = DeviceContext.Device.CreateVertexBuffer();
                     vertexBuffer.Usage = ResourceUsage.Dynamic;
                     vertexBuffer.Initialize(ChunkVertex.VertexDeclaration, vertexCount);
                 }
 
-                vertexBuffer.SetData(deviceContext, vertices, 0, vertexCount, SetDataOptions.Discard);
+                vertexBuffer.SetData(DeviceContext, vertices, 0, vertexCount, SetDataOptions.Discard);
             }
             else
             {
@@ -205,12 +205,12 @@ namespace Noctua.Models
 
                 if (indexBuffer == null)
                 {
-                    indexBuffer = deviceContext.Device.CreateIndexBuffer();
+                    indexBuffer = DeviceContext.Device.CreateIndexBuffer();
                     indexBuffer.Usage = ResourceUsage.Dynamic;
                     indexBuffer.Initialize(indexCount);
                 }
 
-                indexBuffer.SetData(deviceContext, indices, 0, indexCount, SetDataOptions.Discard);
+                indexBuffer.SetData(DeviceContext, indices, 0, indexCount, SetDataOptions.Discard);
             }
             else
             {
@@ -224,10 +224,10 @@ namespace Noctua.Models
 
         void DrawCore()
         {
-            deviceContext.SetVertexBuffer(vertexBuffer);
-            deviceContext.IndexBuffer = indexBuffer;
-            deviceContext.PrimitiveTopology = PrimitiveTopology.TriangleList;
-            deviceContext.DrawIndexed(IndexCount);
+            DeviceContext.SetVertexBuffer(vertexBuffer);
+            DeviceContext.IndexBuffer = indexBuffer;
+            DeviceContext.PrimitiveTopology = PrimitiveTopology.TriangleList;
+            DeviceContext.DrawIndexed(IndexCount);
         }
 
         #region IDisposable
