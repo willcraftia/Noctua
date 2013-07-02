@@ -102,8 +102,6 @@ namespace Noctua.Models
 
         public override void Draw()
         {
-            if (Occluded) return;
-
             if (!Translucent)
             {
                 if (depthWritten)
@@ -143,8 +141,6 @@ namespace Noctua.Models
 
         public override void Draw(IEffect effect)
         {
-            if (Occluded) return;
-
             var effectMatrices = effect as IEffectMatrices;
             if (effectMatrices != null)
                 effectMatrices.World = World;
