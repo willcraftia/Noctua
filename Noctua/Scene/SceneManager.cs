@@ -878,7 +878,10 @@ namespace Noctua.Scene
             pssm.Fov = activeCamera.Fov;
             pssm.AspectRatio = activeCamera.AspectRatio;
             pssm.NearClipDistance = activeCamera.NearClipDistance;
-            pssm.FarClipDistance = activeCamera.FarClipDistance;
+            // TODO
+            //
+            // 割合を設定ファイルで管理。
+            pssm.FarClipDistance = activeCamera.FarClipDistance * 0.8f;
             pssm.SceneBox = sceneBox;
             pssm.Split(splitDistances, splitProjections);
 
