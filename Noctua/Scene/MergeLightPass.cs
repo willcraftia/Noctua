@@ -22,12 +22,10 @@ namespace Noctua.Scene
         public MergeLightPass(DeviceContext deviceContext)
             : base(deviceContext)
         {
-            var backBuffer = DeviceContext.Device.BackBuffer;
-
             renderTargetChain = new RenderTargetChain(DeviceContext.Device)
             {
-                Width = backBuffer.Width,
-                Height = backBuffer.Height,
+                Width = DeviceContext.Device.BackBufferWidth,
+                Height = DeviceContext.Device.BackBufferHeight,
                 Format = SurfaceFormat.Single
             };
 

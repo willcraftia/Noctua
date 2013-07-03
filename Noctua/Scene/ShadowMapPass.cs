@@ -228,10 +228,8 @@ namespace Noctua.Scene
 
             cascadeShadowMap.Draw();
 
-            var backBuffer = DeviceContext.Device.BackBuffer;
-
-            shadowSceneMap.RenderTargetWidth = (int) (backBuffer.Width * sceneScale);
-            shadowSceneMap.RenderTargetHeight = (int) (backBuffer.Height * sceneScale);
+            shadowSceneMap.RenderTargetWidth = (int) (DeviceContext.Device.BackBufferWidth * sceneScale);
+            shadowSceneMap.RenderTargetHeight = (int) (DeviceContext.Device.BackBufferHeight * sceneScale);
 
             shadowSceneMap.View = camera.View;
             shadowSceneMap.Projection = camera.Projection;

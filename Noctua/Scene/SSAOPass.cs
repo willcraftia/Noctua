@@ -130,10 +130,8 @@ namespace Noctua.Scene
 
         public override void Draw()
         {
-            var backBuffer = DeviceContext.Device.BackBuffer;
-
-            ssaoMap.RenderTargetWidth = (int) (backBuffer.Width * renderTargetScale);
-            ssaoMap.RenderTargetHeight = (int) (backBuffer.Height * renderTargetScale);
+            ssaoMap.RenderTargetWidth = (int) (DeviceContext.Device.BackBufferWidth * renderTargetScale);
+            ssaoMap.RenderTargetHeight = (int) (DeviceContext.Device.BackBufferHeight * renderTargetScale);
 
             ssaoMap.LinearDepthMap = Manager.DepthMap;
             ssaoMap.NormalMap = Manager.NormalMap;

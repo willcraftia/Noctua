@@ -192,6 +192,11 @@ namespace Noctua.Scene
         Predicate<Octree> frustumOctreeQueryMethod;
 
         /// <summary>
+        /// 深度ステンシル。
+        /// </summary>
+        DepthStencil depthStencil;
+
+        /// <summary>
         /// 深度レンダ ターゲット。
         /// </summary>
         RenderTarget depthRenderTarget;
@@ -374,39 +379,43 @@ namespace Noctua.Scene
             collectObjectsMethod = new Action<Octree>(CollectObjects);
             frustumOctreeQueryMethod = new Predicate<Octree>(frustumOctreeQuery.Contains);
 
-            var backBuffer = DeviceContext.Device.BackBuffer;
-
             // TODO
             //
             // MRT 対応も考慮すべき。
             // 非 MRT の場合、深度、法線、シーンの深度ステンシルを共有すべき。
 
+            depthStencil = DeviceContext.Device.CreateDepthStencil();
+            depthStencil.Width = DeviceContext.Device.BackBufferWidth;
+            depthStencil.Height = DeviceContext.Device.BackBufferHeight;
+            depthStencil.Format = SurfaceFormat.Depth24Stencil8;
+            depthStencil.Initialize();
+
             // レンダ ターゲット
 
             // 深度。
             depthRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            depthRenderTarget.Width = backBuffer.Width;
-            depthRenderTarget.Height = backBuffer.Height;
+            depthRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
+            depthRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
             depthRenderTarget.Format = SurfaceFormat.Single;
             depthRenderTarget.DepthStencilEnabled = true;
             depthRenderTarget.Initialize();
 
             // 法線。
             normalRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            normalRenderTarget.Width = backBuffer.Width;
-            normalRenderTarget.Height = backBuffer.Height;
+            normalRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
+            normalRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
             normalRenderTarget.Format = SurfaceFormat.NormalizedByte4;
             normalRenderTarget.DepthStencilEnabled = true;
             normalRenderTarget.Initialize();
 
             // テクスチャ カラー。
             colorRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            colorRenderTarget.Width = backBuffer.Width;
-            colorRenderTarget.Height = backBuffer.Height;
-            colorRenderTarget.Format = backBuffer.Format;
-            colorRenderTarget.PreferredMultisampleCount = backBuffer.MultisampleCount;
+            colorRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
+            colorRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
+            colorRenderTarget.Format = DeviceContext.Device.BackBufferFormat;
+            colorRenderTarget.PreferredMultisampleCount = DeviceContext.Device.BackBufferMultisampleCount;
             colorRenderTarget.DepthStencilEnabled = true;
-            colorRenderTarget.DepthStencilFormat = backBuffer.DepthStencilFormat;
+            colorRenderTarget.DepthStencilFormat = DeviceContext.Device.BackBufferDepthStencilFormat;
             colorRenderTarget.Initialize();
 
             // シーン。
