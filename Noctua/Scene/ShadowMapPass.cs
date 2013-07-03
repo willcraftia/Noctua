@@ -70,6 +70,16 @@ namespace Noctua.Scene
         List<ShadowCaster> shadowCasters = new List<ShadowCaster>(200);
 
         /// <summary>
+        /// シャドウ マッピング用内部カメラの境界錐台。
+        /// </summary>
+        BoundingFrustum internalFrustum = new BoundingFrustum(Matrix.Identity);
+
+        /// <summary>
+        /// 境界錐台の頂点を取得するための作業配列。
+        /// </summary>
+        Vector3[] frustumCorners = new Vector3[BoundingFrustum.CornerCount];
+
+        /// <summary>
         /// シャドウ マップ分割数を取得または設定します。
         /// </summary>
         public int SplitCount
@@ -214,16 +224,35 @@ namespace Noctua.Scene
             
             var camera = Manager.ActiveCamera;
 
+            // TODO
+            //
+            // 割合を設定ファイルで管理。
+            var internalFarClipDistance = camera.FarClipDistance * 0.8f;
+
+            Matrix internalProjection;
+            Matrix.CreatePerspectiveFieldOfView(
+                camera.Fov,
+                camera.AspectRatio,
+                camera.NearClipDistance,
+                internalFarClipDistance,
+                out internalProjection);
+
+            Matrix frustumMatrix;
+            Matrix.Multiply(ref camera.View, ref internalProjection, out frustumMatrix);
+
+            internalFrustum.Matrix = frustumMatrix;
+            internalFrustum.GetCorners(frustumCorners);
+
+            BoundingBox sceneBox;
+            BoundingBox.CreateFromPoints(frustumCorners, out sceneBox);
+
             cascadeShadowMap.View = camera.View;
             cascadeShadowMap.Fov = camera.Fov;
             cascadeShadowMap.AspectRatio = camera.AspectRatio;
             cascadeShadowMap.NearClipDistance = camera.NearClipDistance;
-            // TODO
-            //
-            // 割合を設定ファイルで管理。
-            cascadeShadowMap.FarClipDistance = camera.FarClipDistance * 0.8f;
+            cascadeShadowMap.FarClipDistance = internalFarClipDistance;
             cascadeShadowMap.LightDirection = light.Direction;
-            cascadeShadowMap.SceneBox = Manager.SceneBox;
+            cascadeShadowMap.SceneBox = sceneBox;
             cascadeShadowMap.LightCameraBuilder = lightCameraBuilder ?? DefaultLightCameraBuilder;
 
             cascadeShadowMap.Draw();
@@ -232,7 +261,7 @@ namespace Noctua.Scene
             shadowSceneMap.RenderTargetHeight = (int) (DeviceContext.Device.BackBufferHeight * sceneScale);
 
             shadowSceneMap.View = camera.View;
-            shadowSceneMap.Projection = camera.Projection;
+            shadowSceneMap.Projection = internalProjection;
             shadowSceneMap.LinearDepthMap = Manager.DepthMap;
             shadowSceneMap.UpdateShadowMapSettings(cascadeShadowMap);
 
