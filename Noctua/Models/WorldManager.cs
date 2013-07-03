@@ -106,6 +106,18 @@ namespace Noctua.Models
             shadowMapPass = new ShadowMapPass(DeviceContext);
             shadowMapPass.ShadowMapSize = GraphicsSettings.Shadow.ShadowMapSize;
             shadowMapPass.SplitCount = GraphicsSettings.Shadow.SplitCount;
+            shadowMapPass.LightCameraBuilder = new BasicLightCameraBuilder
+            {
+                // TODO
+                //
+                // 設定ファイルで管理。
+                SceneExtrudeDistance = 100.0f
+            };
+            // TODO
+            //
+            // 設定ファイルで管理。
+            //shadowMapPass.PcfEnabled = true;
+            shadowMapPass.SceneBlurEnabled = true;
             SceneManager.LightPasses.Add(shadowMapPass);
 
             mergeLightPass = new MergeLightPass(DeviceContext);
