@@ -388,34 +388,33 @@ namespace Noctua.Scene
             depthStencil.Width = DeviceContext.Device.BackBufferWidth;
             depthStencil.Height = DeviceContext.Device.BackBufferHeight;
             depthStencil.Format = SurfaceFormat.Depth24Stencil8;
+            depthStencil.PreferredMultisampleCount = 1;
             depthStencil.Initialize();
 
             // レンダ ターゲット
 
             // 深度。
             depthRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            depthRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
-            depthRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
+            depthRenderTarget.Width = depthStencil.Width;
+            depthRenderTarget.Height = depthStencil.Height;
             depthRenderTarget.Format = SurfaceFormat.Single;
-            depthRenderTarget.DepthStencilEnabled = true;
+            depthRenderTarget.PreferredMultisampleCount = depthStencil.MultisampleCount;
             depthRenderTarget.Initialize();
 
             // 法線。
             normalRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            normalRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
-            normalRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
+            normalRenderTarget.Width = depthStencil.Width;
+            normalRenderTarget.Height = depthStencil.Height;
             normalRenderTarget.Format = SurfaceFormat.NormalizedByte4;
-            normalRenderTarget.DepthStencilEnabled = true;
+            normalRenderTarget.PreferredMultisampleCount = depthStencil.MultisampleCount;
             normalRenderTarget.Initialize();
 
             // テクスチャ カラー。
             colorRenderTarget = DeviceContext.Device.CreateRenderTarget();
-            colorRenderTarget.Width = DeviceContext.Device.BackBufferWidth;
-            colorRenderTarget.Height = DeviceContext.Device.BackBufferHeight;
+            colorRenderTarget.Width = depthStencil.Width;
+            colorRenderTarget.Height = depthStencil.Height;
             colorRenderTarget.Format = DeviceContext.Device.BackBufferFormat;
-            colorRenderTarget.PreferredMultisampleCount = DeviceContext.Device.BackBufferMultisampleCount;
-            colorRenderTarget.DepthStencilEnabled = true;
-            colorRenderTarget.DepthStencilFormat = DeviceContext.Device.BackBufferDepthStencilFormat;
+            colorRenderTarget.PreferredMultisampleCount = depthStencil.MultisampleCount;
             colorRenderTarget.Initialize();
 
             // シーン。
@@ -588,7 +587,7 @@ namespace Noctua.Scene
             DeviceContext.RasterizerState = null;
             DeviceContext.BlendState = null;
             DeviceContext.DepthStencilState = null;
-            DeviceContext.SetRenderTarget(depthRenderTarget);
+            DeviceContext.SetRenderTarget(depthStencil, depthRenderTarget);
             DeviceContext.Clear(new Vector4(float.MaxValue));
 
             depthMapEffect.View = activeCamera.View;
@@ -619,9 +618,9 @@ namespace Noctua.Scene
         {
             DeviceContext.RasterizerState = null;
             DeviceContext.BlendState = null;
-            DeviceContext.DepthStencilState = null;
-            DeviceContext.SetRenderTarget(normalRenderTarget);
-            DeviceContext.Clear(Vector4.One);
+            DeviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
+            DeviceContext.SetRenderTarget(depthStencil, normalRenderTarget);
+            DeviceContext.ClearRenderTarget(normalRenderTarget, Vector4.One);
 
             normalMapEffect.View = activeCamera.View;
             normalMapEffect.Projection = activeCamera.Projection;
@@ -651,9 +650,9 @@ namespace Noctua.Scene
         {
             DeviceContext.RasterizerState = null;
             DeviceContext.BlendState = null;
-            DeviceContext.DepthStencilState = null;
-            DeviceContext.SetRenderTarget(colorRenderTarget);
-            DeviceContext.Clear(new Vector4(BackgroundColor, 1));
+            DeviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
+            DeviceContext.SetRenderTarget(depthStencil, colorRenderTarget);
+            DeviceContext.ClearRenderTarget(colorRenderTarget, new Vector4(BackgroundColor, 1));
 
             //
             // オクルージョン クエリ

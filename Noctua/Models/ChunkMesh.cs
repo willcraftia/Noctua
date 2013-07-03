@@ -53,11 +53,8 @@ namespace Noctua.Models
             occlusionQuery.Initialize();
         }
 
-        bool depthWritten;
-
         public override void UpdateOcclusion()
         {
-            depthWritten = false;
             Occluded = false;
 
             if (occlusionQueryActive)
@@ -70,18 +67,6 @@ namespace Noctua.Models
             // 前回のクエリが完了しているならば、新たなクエリを試行。
 
             occlusionQuery.Begin(DeviceContext);
-
-            if (!Translucent)
-            {
-                // 不透明ならば深度を書き込む。
-                DeviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
-                depthWritten = true;
-            }
-            else
-            {
-                // 半透明ならば深度を読み取るのみとする。
-                DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
-            }
 
             // レンダ ターゲットへの書き込みは行わない。
             DeviceContext.BlendState = BlendState.ColorWriteDisable;
@@ -96,7 +81,6 @@ namespace Noctua.Models
             occlusionQueryActive = true;
 
             // デフォルトへ戻す。
-            DeviceContext.DepthStencilState = null;
             DeviceContext.BlendState = null;
         }
 
@@ -104,25 +88,11 @@ namespace Noctua.Models
         {
             if (!Translucent)
             {
-                if (depthWritten)
-                {
-                    // オクルージョン クエリで深度書き込み済みならば読み取りのみとする。
-                    DeviceContext.DepthStencilState = DepthStencilState.DepthReadLessEqual;
-                }
-                else
-                {
-                    // さもなくば書き込む。
-                    DeviceContext.DepthStencilState = DepthStencilState.DepthReadWriteLessEqual;
-                }
-
                 // 不透明とする。
                 DeviceContext.BlendState = BlendState.Opaque;
             }
             else
             {
-                // 半透明ならば深度を読み取るのみとする。
-                DeviceContext.DepthStencilState = DepthStencilState.DepthRead;
-
                 // アルファ ブレンドを有効にする。
                 DeviceContext.BlendState = BlendState.Additive;
             }
@@ -135,7 +105,6 @@ namespace Noctua.Models
             DrawCore();
 
             // デフォルトへ戻す。
-            DeviceContext.DepthStencilState = null;
             DeviceContext.BlendState = null;
         }
 
