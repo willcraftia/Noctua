@@ -439,7 +439,7 @@ namespace Noctua.Scene
             // TODO
             //
             // サイズを設定ファイルで管理。
-            octreeManager = new OctreeManager(new Vector3(256), 3);
+            octreeManager = new OctreeManager(new Vector3(256), 5);
 
             RootNode = new SceneNode(this, "Root");
             SkySphereNode = new SceneNode(this, "SkySphere");
