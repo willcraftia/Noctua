@@ -33,6 +33,12 @@ namespace Noctua.Models
         /// </summary>
         DofSetup dofSetup;
 
+        SSAOPass ssaoPass;
+
+        ShadowMapPass shadowMapPass;
+
+        MergeLightPass mergeLightPass;
+
         public DeviceContext DeviceContext { get; private set; }
 
         public SceneManager SceneManager { get; private set; }
@@ -75,8 +81,6 @@ namespace Noctua.Models
             // シーン マネージャ
 
             SceneManager = new SceneManager(SceneManagerSettings, DeviceContext);
-            SceneManager.ShadowMapSize = GraphicsSettings.Shadow.ShadowMapSize;
-            SceneManager.ShadowMapSplitCount = GraphicsSettings.Shadow.SplitCount;
 
             // 太陽と月をディレクショナル ライトとして登録。
             SceneManager.DirectionalLights.Add(SceneSettings.Sunlight);
@@ -95,6 +99,17 @@ namespace Noctua.Models
             dofSetup.BlurRadius = GraphicsSettings.Dof.BlurRadius;
             dofSetup.BlurSigma = GraphicsSettings.Dof.BlurSigma;
             SceneManager.PostprocessSetups.Add(dofSetup);
+
+            ssaoPass = new SSAOPass(DeviceContext);
+            SceneManager.LightPasses.Add(ssaoPass);
+
+            shadowMapPass = new ShadowMapPass(DeviceContext);
+            shadowMapPass.ShadowMapSize = GraphicsSettings.Shadow.ShadowMapSize;
+            shadowMapPass.SplitCount = GraphicsSettings.Shadow.SplitCount;
+            SceneManager.LightPasses.Add(shadowMapPass);
+
+            mergeLightPass = new MergeLightPass(DeviceContext);
+            SceneManager.LightPasses.Add(mergeLightPass);
 
             //----------------------------------------------------------------
             // リージョン マネージャ

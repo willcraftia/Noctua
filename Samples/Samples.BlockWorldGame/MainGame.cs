@@ -152,30 +152,16 @@ namespace Samples.BlockWorldGame
             var sceneManager = worldManager.SceneManager;
 
             textureDisplay.Textures.Add(sceneManager.DepthMap);
-            
             textureDisplay.Textures.Add(sceneManager.NormalMap);
             
-            for (int i = 0; i < sceneManager.ShadowMapSplitCount; i++)
+            for (int i = 0; i < sceneManager.LightSceneMaps.Count; i++)
             {
-                var shadowMap = sceneManager.GetShadowMap(i);
-                if (shadowMap != null)
-                    textureDisplay.Textures.Add(shadowMap);
+                if (sceneManager.LightSceneMaps[i] != null)
+                    textureDisplay.Textures.Add(sceneManager.LightSceneMaps[i]);
             }
 
-            if (sceneManager.BaseShadowSceneMap != null)
-                textureDisplay.Textures.Add(sceneManager.BaseShadowSceneMap);
-            
-            if (sceneManager.FinalShadowSceneMap != null)
-                textureDisplay.Textures.Add(sceneManager.FinalShadowSceneMap);
-
-            if (sceneManager.BaseAmbientOcclusionMap != null)
-                textureDisplay.Textures.Add(sceneManager.BaseAmbientOcclusionMap);
-            
-            if (sceneManager.FinalAmbientOcclusionMap != null)
-                textureDisplay.Textures.Add(sceneManager.FinalAmbientOcclusionMap);
-
-            if (sceneManager.FinalOcclusionMap != null)
-                textureDisplay.Textures.Add(sceneManager.FinalOcclusionMap);
+            if (sceneManager.FinalLightSceneMap != null)
+                textureDisplay.Textures.Add(sceneManager.FinalLightSceneMap);
 
             if (sceneManager.BaseSceneMap != null)
                 textureDisplay.Textures.Add(sceneManager.BaseSceneMap);
