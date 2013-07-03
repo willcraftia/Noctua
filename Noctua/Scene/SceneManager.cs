@@ -382,13 +382,11 @@ namespace Noctua.Scene
             // TODO
             //
             // MRT 対応も考慮すべき。
-            // 非 MRT の場合、深度、法線、シーンの深度ステンシルを共有すべき。
 
             depthStencil = DeviceContext.Device.CreateDepthStencil();
             depthStencil.Width = DeviceContext.Device.BackBufferWidth;
             depthStencil.Height = DeviceContext.Device.BackBufferHeight;
             depthStencil.Format = SurfaceFormat.Depth24Stencil8;
-            depthStencil.PreferredMultisampleCount = 1;
             depthStencil.Initialize();
 
             // レンダ ターゲット
