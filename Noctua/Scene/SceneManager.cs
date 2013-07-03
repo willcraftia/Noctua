@@ -388,7 +388,7 @@ namespace Noctua.Scene
             depthRenderTarget.Width = backBuffer.Width;
             depthRenderTarget.Height = backBuffer.Height;
             depthRenderTarget.Format = SurfaceFormat.Single;
-            depthRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
+            depthRenderTarget.DepthStencilEnabled = true;
             depthRenderTarget.Initialize();
 
             // 法線。
@@ -396,7 +396,7 @@ namespace Noctua.Scene
             normalRenderTarget.Width = backBuffer.Width;
             normalRenderTarget.Height = backBuffer.Height;
             normalRenderTarget.Format = SurfaceFormat.NormalizedByte4;
-            normalRenderTarget.DepthFormat = DepthFormat.Depth24Stencil8;
+            normalRenderTarget.DepthStencilEnabled = true;
             normalRenderTarget.Initialize();
 
             // テクスチャ カラー。
@@ -405,7 +405,8 @@ namespace Noctua.Scene
             colorRenderTarget.Height = backBuffer.Height;
             colorRenderTarget.Format = backBuffer.Format;
             colorRenderTarget.PreferredMultisampleCount = backBuffer.MultisampleCount;
-            colorRenderTarget.DepthFormat = backBuffer.DepthFormat;
+            colorRenderTarget.DepthStencilEnabled = true;
+            colorRenderTarget.DepthStencilFormat = backBuffer.DepthStencilFormat;
             colorRenderTarget.Initialize();
 
             // シーン。
