@@ -199,10 +199,10 @@ namespace Samples.BlockWorldGame
             if (initialMousePosition.X != currentMouseState.X ||
                 initialMousePosition.Y != currentMouseState.Y)
             {
-                var yawAmount = -(currentMouseState.X - initialMousePosition.X);
+                var yawAmount = -(currentMouseState.X - initialMousePosition.X) * 0.25f;
                 camera.Yaw(yawAmount * cameraRotationVelocity * deltaTime);
 
-                var pitchAmount = -(currentMouseState.Y - initialMousePosition.Y);
+                var pitchAmount = -(currentMouseState.Y - initialMousePosition.Y) * 0.25f;
                 camera.Pitch(pitchAmount * cameraRotationVelocity * deltaTime);
 
                 Mouse.SetPosition(initialMousePosition.X, initialMousePosition.Y);
