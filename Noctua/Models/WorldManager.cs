@@ -33,6 +33,11 @@ namespace Noctua.Models
         /// </summary>
         DofSetup dofSetup;
 
+        /// <summary>
+        /// ブルーム ポストプロセス設定。
+        /// </summary>
+        BloomSetup bloomSetup;
+
         SSAOPass ssaoPass;
 
         ShadowMapPass shadowMapPass;
@@ -93,9 +98,21 @@ namespace Noctua.Models
             }
 
             // TODO
-            // DoF の ON/OFF はどこでやる？
+            // ON/OFF はどこでやる？
+            // 設定ファイル管理。
+            bloomSetup = new BloomSetup(DeviceContext);
+            bloomSetup.BloomThreshold = 0.5f;
+            bloomSetup.BlurSigma = 4;
+            bloomSetup.BloomIntensity = 1;
+            bloomSetup.BloomSaturation = 1;
+            bloomSetup.BaseIntensity = 1;
+            bloomSetup.BaseSaturation = 1;
+            SceneManager.PostprocessSetups.Add(bloomSetup);
+
+            // TODO
+            // ON/OFF はどこでやる？
             dofSetup = new DofSetup(DeviceContext);
-            dofSetup.BlurResolution = GraphicsDofSettings.BlurResolutions[GraphicsSettings.Dof.BlurResolution];
+            dofSetup.BlurScale = GraphicsDofSettings.BlurResolutions[GraphicsSettings.Dof.BlurResolution];
             dofSetup.BlurRadius = GraphicsSettings.Dof.BlurRadius;
             dofSetup.BlurSigma = GraphicsSettings.Dof.BlurSigma;
             SceneManager.PostprocessSetups.Add(dofSetup);

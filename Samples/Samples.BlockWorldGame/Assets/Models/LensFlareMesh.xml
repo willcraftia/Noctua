@@ -104,7 +104,5 @@
 			<Texture>LensFlare3.png</Texture>
 		</Flare>
 	</Flares>
-	<GlowTexture>LensFlareGlow.png</GlowTexture>
-	<GlowSize>400</GlowSize>
 	<LightName>Sun</LightName>
 </LensFlareMesh>

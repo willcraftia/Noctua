@@ -8,7 +8,7 @@ using Libra.Graphics.Toolkit;
 
 namespace Noctua.Scene
 {
-    public sealed class DofSetup : PostprocessSetup
+    public sealed class BloomSetup : PostprocessSetup
     {
         /// <summary>
         /// ダウン フィルタ。
@@ -36,32 +36,19 @@ namespace Noctua.Scene
         GaussianFilterPass gaussianFilterV;
 
         /// <summary>
-        /// 被写界深度合成フィルタ。
+        /// 輝度抽出フィルタ。
         /// </summary>
-        DofCombineFilter dofCombineFilter;
+        BloomExtractFilter bloomExtractFilter;
+
+        /// <summary>
+        /// ブルーム合成フィルタ。
+        /// </summary>
+        BloomCombineFilter bloomCombineFilter;
 
         /// <summary>
         /// ブラー用レンダ ターゲットのスケール。
         /// </summary>
         float blurScale = 0.25f;
-
-        /// <summary>
-        /// 焦点範囲を取得または設定します。
-        /// </summary>
-        public float FocusRange
-        {
-            get { return dofCombineFilter.FocusRange; }
-            set { dofCombineFilter.FocusRange = value; }
-        }
-
-        /// <summary>
-        /// 焦点距離を取得または設定します。
-        /// </summary>
-        public float FocusDistance
-        {
-            get { return dofCombineFilter.FocusDistance; }
-            set { dofCombineFilter.FocusDistance = value; }
-        }
 
         /// <summary>
         /// ブラー用レンダ ターゲットのスケールを取得または設定します。
@@ -95,35 +82,67 @@ namespace Noctua.Scene
             set { gaussianFilter.Sigma = value; }
         }
 
-        public DofSetup(DeviceContext deviceContext)
+        /// <summary>
+        /// 輝度の閾値を取得または設定します。
+        /// </summary>
+        public float BloomThreshold
+        {
+            get { return bloomExtractFilter.Threshold; }
+            set { bloomExtractFilter.Threshold = value; }
+        }
+
+        public float BaseIntensity
+        {
+            get { return bloomCombineFilter.BaseIntensity; }
+            set { bloomCombineFilter.BaseIntensity = value; }
+        }
+
+        public float BaseSaturation
+        {
+            get { return bloomCombineFilter.BaseSaturation; }
+            set { bloomCombineFilter.BaseSaturation = value; }
+        }
+
+        public float BloomIntensity
+        {
+            get { return bloomCombineFilter.BloomIntensity; }
+            set { bloomCombineFilter.BloomIntensity = value; }
+        }
+
+        public float BloomSaturation
+        {
+            get { return bloomCombineFilter.BloomSaturation; }
+            set { bloomCombineFilter.BloomSaturation = value; }
+        }
+
+        public BloomSetup(DeviceContext deviceContext)
             : base(deviceContext)
         {
-            if (deviceContext == null) throw new ArgumentNullException("deviceContext");
-
             downFilter = new DownFilter(deviceContext);
             upFilter = new UpFilter(deviceContext);
             gaussianFilter = new GaussianFilter(deviceContext);
             gaussianFilterH = new GaussianFilterPass(gaussianFilter, GaussianFilterDirection.Horizon);
             gaussianFilterV = new GaussianFilterPass(gaussianFilter, GaussianFilterDirection.Vertical);
-            dofCombineFilter = new DofCombineFilter(deviceContext);
+            bloomExtractFilter = new BloomExtractFilter(deviceContext);
+            bloomCombineFilter = new BloomCombineFilter(deviceContext);
         }
 
         public override void Setup(Postprocess postprocess)
         {
-            dofCombineFilter.BaseTexture = Manager.BaseSceneMap;
-            dofCombineFilter.LinearDepthMap = Manager.DepthMap;
-
             var upScale = 1.0f / BlurScale;
             downFilter.WidthScale = BlurScale;
             downFilter.HeightScale = BlurScale;
             upFilter.WidthScale = upScale;
             upFilter.HeightScale = upScale;
 
+            bloomCombineFilter.BaseTexture = Manager.BaseSceneMap;
+
             postprocess.Filters.Add(downFilter);
+            postprocess.Filters.Add(bloomExtractFilter);
             postprocess.Filters.Add(gaussianFilterH);
             postprocess.Filters.Add(gaussianFilterV);
             postprocess.Filters.Add(upFilter);
-            postprocess.Filters.Add(dofCombineFilter);
+            postprocess.Filters.Add(bloomCombineFilter);
         }
     }
 }

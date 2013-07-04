@@ -1012,8 +1012,6 @@ namespace Samples.AssetSerialization
                         new LensFlareElementDefinition( 0.0f, 0.6f, new Color( 25,  25,  25).ToVector3(), "LensFlare3.png"),
                         new LensFlareElementDefinition( 2.0f, 1.4f, new Color( 25,  50, 100).ToVector3(), "LensFlare3.png"),
                     },
-                    GlowTexture = "LensFlareGlow.png",
-                    GlowSize = 400,
                     LightName = "Sun",
                 };
                 SerializeAndDeserialize<LensFlareMeshDefinition>("Models/LensFlareMesh", definition);

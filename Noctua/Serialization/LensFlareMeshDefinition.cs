@@ -17,10 +17,6 @@ namespace Noctua.Serialization
         [XmlArrayItem("Flare")]
         public LensFlareElementDefinition[] Flares;
 
-        public string GlowTexture;
-
-        public float GlowSize;
-
         public string LightName;
     }
 }

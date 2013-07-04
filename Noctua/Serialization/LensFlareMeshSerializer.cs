@@ -22,8 +22,6 @@ namespace Noctua.Serialization
             var lensFlareMesh = new LensFlareMesh(definition.Name, DeviceContext)
             {
                 QuerySize = definition.QuerySize,
-                GlowTexture = Load<Texture2D>(resource, definition.GlowTexture),
-                GlowSize = definition.GlowSize,
                 LightName = definition.LightName
             };
 
@@ -48,8 +46,6 @@ namespace Noctua.Serialization
             var definition = new LensFlareMeshDefinition
             {
                 QuerySize = lensFlareMesh.QuerySize,
-                GlowTexture = CreateRelativeUri(resource, lensFlareMesh.GlowTexture),
-                GlowSize = lensFlareMesh.GlowSize,
                 LightName = lensFlareMesh.LightName
             };
 

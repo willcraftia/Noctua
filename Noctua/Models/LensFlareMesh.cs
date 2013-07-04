@@ -27,18 +27,6 @@ namespace Noctua.Models
             get { return lensFlare.Flares; }
         }
 
-        public ShaderResourceView GlowTexture
-        {
-            get { return lensFlare.GlowTexture; }
-            set { lensFlare.GlowTexture = value; }
-        }
-
-        public float GlowSize
-        {
-            get { return lensFlare.GlowSize; }
-            set { lensFlare.GlowSize = value; }
-        }
-
         public string LightName { get; set; }
 
         public LensFlareMesh(string name, DeviceContext context)

@@ -95,6 +95,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="Scene\BloomSetup.cs" />
     <Compile Include="Scene\BoundindBoxOctreeQuery.cs" />
     <Compile Include="Scene\BoundingFrustumOctreeQuery.cs" />
     <Compile Include="Scene\DofSetup.cs" />
