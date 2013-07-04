@@ -214,7 +214,7 @@ namespace Noctua.Models
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectVS) != 0)
             {
-                constantBufferPerObjectVS.SetData(DeviceContext, parametersPerObjectVS);
+                DeviceContext.SetData(constantBufferPerObjectVS, parametersPerObjectVS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectVS;
             }
@@ -226,7 +226,7 @@ namespace Noctua.Models
                 case ChunkEffectMode.Default:
                     if ((dirtyFlags & DirtyFlags.ConstantBufferPerScenePS) != 0)
                     {
-                        constantBufferPerScenePS.SetData(DeviceContext, parametersPerScenePS);
+                        DeviceContext.SetData(constantBufferPerScenePS, parametersPerScenePS);
 
                         dirtyFlags &= ~DirtyFlags.ConstantBufferPerScenePS;
                     }

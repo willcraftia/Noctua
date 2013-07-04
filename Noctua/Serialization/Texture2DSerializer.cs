@@ -23,7 +23,7 @@ namespace Noctua.Serialization
         public override void WriteAsset(Stream stream, IResource resource, object asset)
         {
             var texture2D = asset as Texture2D;
-            texture2D.Save(DeviceContext, stream);
+            DeviceContext.Save(texture2D, stream);
         }
     }
 }

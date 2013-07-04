@@ -107,12 +107,12 @@ namespace Noctua.Models
         {
             if (source == null) return;
 
-            source.GetData(context, colorBuffer);
+            context.GetData(source, colorBuffer);
         }
 
         void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex)
         {
-            destination.SetData(context, arrayIndex, 0, null, colorBuffer, 0, colorBuffer.Length);
+            context.SetData(destination, arrayIndex, 0, null, colorBuffer, 0, colorBuffer.Length);
         }
 
         void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex, ref Color color)

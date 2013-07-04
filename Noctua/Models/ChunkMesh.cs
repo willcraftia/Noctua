@@ -141,7 +141,7 @@ namespace Noctua.Models
                     vertexBuffer.Initialize(ChunkVertex.VertexDeclaration, vertexCount);
                 }
 
-                vertexBuffer.SetData(DeviceContext, vertices, 0, vertexCount, SetDataOptions.Discard);
+                DeviceContext.SetData(vertexBuffer, vertices, 0, vertexCount, SetDataOptions.Discard);
             }
             else
             {
@@ -175,7 +175,7 @@ namespace Noctua.Models
                     indexBuffer.Initialize(indexCount);
                 }
 
-                indexBuffer.SetData(DeviceContext, indices, 0, indexCount, SetDataOptions.Discard);
+                DeviceContext.SetData(indexBuffer, indices, 0, indexCount, SetDataOptions.Discard);
             }
             else
             {

@@ -221,14 +221,14 @@ namespace Noctua.Models
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerCameraVS) != 0)
             {
-                constantBufferPerCameraVS.SetData(DeviceContext, parametersPerCameraVS);
+                DeviceContext.SetData(constantBufferPerCameraVS, parametersPerCameraVS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerCameraVS;
             }
 
             if ((dirtyFlags & DirtyFlags.ConstantBufferPerObjectPS) != 0)
             {
-                constantBufferPerObjectPS.SetData(DeviceContext, parametersPerObjectPS);
+                DeviceContext.SetData(constantBufferPerObjectPS, parametersPerObjectPS);
 
                 dirtyFlags &= ~DirtyFlags.ConstantBufferPerObjectPS;
             }
