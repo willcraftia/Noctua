@@ -1,7 +1,6 @@
 ﻿#region Using
 
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Libra;
 using Libra.Graphics;
@@ -14,11 +13,13 @@ namespace Noctua.Models
     {
         public const int MaxTileCount = byte.MaxValue;
 
-        public const int TextureSize = 256;
+        const int TextureSize = 256;
 
-        public const int TileLength = 16;
+        const int TileLength = 16;
 
-        Color[] colorBuffer;
+        const int TileMipLevels = 5;
+
+        Color[][] tileMipChain;
 
         public string Name { get; set; }
 
@@ -47,9 +48,9 @@ namespace Noctua.Models
         {
             var tile = this[index];
 
-            EnsureColorBuffer();
+            EnsureTileMipChain();
 
-            GetColorBuffer(context, tile.Texture);
+            GetTileMipChain(context, tile.Texture);
             SetColorBuffer(context, TileMap, tile.Index);
         }
 
@@ -61,8 +62,8 @@ namespace Noctua.Models
 
         public void ClearMaps(DeviceContext context, byte arrayIndex)
         {
-            EnsureColorBuffer();
-            ClearColorBuffer();
+            EnsureTileMipChain();
+            ClearTileMipChain();
 
             SetColorBuffer(context, TileMap, arrayIndex);
         }
@@ -99,38 +100,54 @@ namespace Noctua.Models
             texture.Width = Tile.Size;
             texture.Height = Tile.Size;
             texture.ArraySize = MaxTileCount;
+            texture.MipLevels = TileMipLevels;
             texture.Initialize();
             return texture;
         }
 
-        void GetColorBuffer(DeviceContext context, Texture2D source)
+        void GetTileMipChain(DeviceContext context, Texture2D source)
         {
             if (source == null) return;
 
-            context.GetData(source, colorBuffer);
+            for (int i = 0; i < tileMipChain.Length; i++)
+            {
+                var mip = tileMipChain[i];
+                context.GetData(source, 0, i, null, mip, 0, mip.Length);
+            }
         }
 
         void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex)
         {
-            context.SetData(destination, arrayIndex, 0, null, colorBuffer, 0, colorBuffer.Length);
+            for (int i = 0; i < tileMipChain.Length; i++)
+            {
+                var mip = tileMipChain[i];
+                context.SetData(destination, arrayIndex, i, null, mip, 0, mip.Length);
+            }
         }
 
-        void SetColorBuffer(DeviceContext context, Texture2D destination, int arrayIndex, ref Color color)
+        void EnsureTileMipChain()
         {
-            for (int i = 0; i < colorBuffer.Length; i++)
-                colorBuffer[i] = color;
+            if (tileMipChain == null)
+            {
+                tileMipChain = new Color[TileMipLevels][];
 
-            SetColorBuffer(context, destination, arrayIndex);
+                int size = Tile.Size;
+                for (int i = 0; i < TileMipLevels; i++)
+                {
+                    tileMipChain[i] = new Color[size * size];
+                    size /= 2;
+                }
+            }
         }
 
-        void EnsureColorBuffer()
+        void ClearTileMipChain()
         {
-            if (colorBuffer == null) colorBuffer = new Color[Tile.Size * Tile.Size];
-        }
-
-        void ClearColorBuffer()
-        {
-            for (int i = 0; i < colorBuffer.Length; i++) colorBuffer[i] = Color.Black;
+            for (int i = 0; i < tileMipChain.Length; i++)
+            {
+                var mip = tileMipChain[i];
+                for (int j = 0; j < mip.Length; j++)
+                    mip[j] = Color.Black;
+            }
         }
 
         #region ToString
