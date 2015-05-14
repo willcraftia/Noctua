@@ -9,7 +9,7 @@ using Libra.Graphics.Toolkit;
 
 namespace Noctua.Scene
 {
-    public sealed class LinearFogSetup : PostprocessSetup
+    public sealed class LinearFogSetup : FilterChainSetup
     {
         LinearFogFilter linearFogFilter;
 
@@ -35,7 +35,7 @@ namespace Noctua.Scene
             Enabled = true;
         }
 
-        public override void Setup(Postprocess postprocess)
+        public override void Setup(FilterChain filterChain)
         {
             linearFogFilter.FogStart = FogStart;
             linearFogFilter.FogEnd = FogEnd;
@@ -44,7 +44,7 @@ namespace Noctua.Scene
 
             linearFogFilter.LinearDepthMap = Manager.DepthMap;
 
-            postprocess.Filters.Add(linearFogFilter);
+            filterChain.Filters.Add(linearFogFilter);
         }
     }
 }

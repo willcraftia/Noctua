@@ -121,7 +121,6 @@ namespace Samples.BlockWorldGame
 
             worldManager = new WorldManager(DeviceContext);
             worldManager.Load("title:Assets/Regions/Default.xml");
-
         }
 
         protected override void Update(GameTime gameTime)

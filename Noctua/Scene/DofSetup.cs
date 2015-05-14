@@ -8,7 +8,7 @@ using Libra.Graphics.Toolkit;
 
 namespace Noctua.Scene
 {
-    public sealed class DofSetup : PostprocessSetup
+    public sealed class DofSetup : FilterChainSetup
     {
         /// <summary>
         /// ダウン フィルタ。
@@ -108,7 +108,7 @@ namespace Noctua.Scene
             dofCombineFilter = new DofCombineFilter(deviceContext);
         }
 
-        public override void Setup(Postprocess postprocess)
+        public override void Setup(FilterChain filterChain)
         {
             dofCombineFilter.BaseTexture = Manager.BaseSceneMap;
             dofCombineFilter.LinearDepthMap = Manager.DepthMap;
@@ -119,11 +119,11 @@ namespace Noctua.Scene
             upFilter.WidthScale = upScale;
             upFilter.HeightScale = upScale;
 
-            postprocess.Filters.Add(downFilter);
-            postprocess.Filters.Add(gaussianFilterH);
-            postprocess.Filters.Add(gaussianFilterV);
-            postprocess.Filters.Add(upFilter);
-            postprocess.Filters.Add(dofCombineFilter);
+            filterChain.Filters.Add(downFilter);
+            filterChain.Filters.Add(gaussianFilterH);
+            filterChain.Filters.Add(gaussianFilterV);
+            filterChain.Filters.Add(upFilter);
+            filterChain.Filters.Add(dofCombineFilter);
         }
     }
 }

@@ -8,7 +8,7 @@ using Libra.Graphics.Toolkit;
 
 namespace Noctua.Scene
 {
-    public abstract class PostprocessSetup
+    public abstract class FilterChainSetup
     {
         public DeviceContext DeviceContext { get; private set; }
 
@@ -18,7 +18,7 @@ namespace Noctua.Scene
 
         public bool Initialized { get; private set; }
 
-        protected PostprocessSetup(DeviceContext deviceContext)
+        protected FilterChainSetup(DeviceContext deviceContext)
         {
             if (deviceContext == null) throw new ArgumentNullException("deviceContext");
 
@@ -34,6 +34,6 @@ namespace Noctua.Scene
             Initialized = true;
         }
 
-        public abstract void Setup(Postprocess postprocess);
+        public abstract void Setup(FilterChain filterChain);
     }
 }

@@ -8,7 +8,7 @@ using Libra.Graphics.Toolkit;
 
 namespace Noctua.Scene
 {
-    public sealed class BloomSetup : PostprocessSetup
+    public sealed class BloomSetup : FilterChainSetup
     {
         /// <summary>
         /// ダウン フィルタ。
@@ -127,7 +127,7 @@ namespace Noctua.Scene
             bloomCombineFilter = new BloomCombineFilter(deviceContext);
         }
 
-        public override void Setup(Postprocess postprocess)
+        public override void Setup(FilterChain filterChain)
         {
             var upScale = 1.0f / BlurScale;
             downFilter.WidthScale = BlurScale;
@@ -137,12 +137,12 @@ namespace Noctua.Scene
 
             bloomCombineFilter.BaseTexture = Manager.BaseSceneMap;
 
-            postprocess.Filters.Add(downFilter);
-            postprocess.Filters.Add(bloomExtractFilter);
-            postprocess.Filters.Add(gaussianFilterH);
-            postprocess.Filters.Add(gaussianFilterV);
-            postprocess.Filters.Add(upFilter);
-            postprocess.Filters.Add(bloomCombineFilter);
+            filterChain.Filters.Add(downFilter);
+            filterChain.Filters.Add(bloomExtractFilter);
+            filterChain.Filters.Add(gaussianFilterH);
+            filterChain.Filters.Add(gaussianFilterV);
+            filterChain.Filters.Add(upFilter);
+            filterChain.Filters.Add(bloomCombineFilter);
         }
     }
 }

@@ -90,11 +90,11 @@ namespace Noctua.Scene
 
         #endregion
 
-        #region PostprocessSetupCollection
+        #region FilterChainSetupCollection
 
-        public sealed class PostprocessSetupCollection : Collection<PostprocessSetup>
+        public sealed class FilterChainSetupCollection : Collection<FilterChainSetup>
         {
-            internal PostprocessSetupCollection() { }
+            internal FilterChainSetupCollection() { }
         }
 
         #endregion
@@ -227,9 +227,9 @@ namespace Noctua.Scene
         NormalMapEffect normalMapEffect;
 
         /// <summary>
-        /// ポストプロセス。
+        /// フィルタ チェーン。
         /// </summary>
-        Postprocess postprocess;
+        FilterChain filterChain;
 
         /// <summary>
         /// 閉塞マップ合成フィルタ。
@@ -306,7 +306,7 @@ namespace Noctua.Scene
 
         public ParticleSystemCollection ParticleSystems { get; private set; }
 
-        public PostprocessSetupCollection PostprocessSetups { get; private set; }
+        public FilterChainSetupCollection FilterChainSetups { get; private set; }
 
         public LightSceneMapCollection LightSceneMaps { get; private set; }
 
@@ -333,10 +333,10 @@ namespace Noctua.Scene
         /// </summary>
         public ShaderResourceView FinalLightSceneMap { get; set; }
 
-        // ポストプロセス適用前、ライティング適用後のシーン。
+        // フィルタ チェーン適用前、ライティング適用後のシーン。
         public ShaderResourceView BaseSceneMap { get; private set; }
 
-        // ポストプロセス適用後のシーン。
+        // フィルタ チェーン適用後のシーン。
         public ShaderResourceView FinalSceneMap { get; private set; }
 
         public Vector3 AmbientLightColor
@@ -370,7 +370,7 @@ namespace Noctua.Scene
             Cameras = new SceneCameraCollection();
             DirectionalLights = new DirectionalLightCollection();
             ParticleSystems = new ParticleSystemCollection();
-            PostprocessSetups = new PostprocessSetupCollection();
+            FilterChainSetups = new FilterChainSetupCollection();
             opaqueObjects = new List<SceneObject>(InitialSceneObjectCapacity);
             translucentObjects = new List<SceneObject>(InitialSceneObjectCapacity);
             LightSceneMaps = new LightSceneMapCollection();
@@ -426,11 +426,11 @@ namespace Noctua.Scene
             depthMapEffect = new LinearDepthMapEffect(DeviceContext);
             normalMapEffect = new NormalMapEffect(DeviceContext);
 
-            // ポストプロセス。
-            postprocess = new Postprocess(DeviceContext);
-            postprocess.Width = colorRenderTarget.Width;
-            postprocess.Height = colorRenderTarget.Height;
-            postprocess.Format = colorRenderTarget.Format;
+            // フィルタ チェーン。
+            filterChain = new FilterChain(DeviceContext);
+            filterChain.Width = colorRenderTarget.Width;
+            filterChain.Height = colorRenderTarget.Height;
+            filterChain.Format = colorRenderTarget.Format;
 
             // ライト シーンとテクスチャ カラーを合成するフィルタ。
             occlusionCombineFilter = new OcclusionCombineFilter(DeviceContext);
@@ -524,10 +524,9 @@ namespace Noctua.Scene
             //    DrawParticles(gameTime);
 
             //
-            // ポスト プロセス
+            // フィルタ チェーン適用
             //
-
-            ApplyPostprocess();
+            ApplyFilterChain();
 
             // TODO
             // デバック ワイヤフレームの描画はクラス外部で行う。
@@ -730,7 +729,7 @@ namespace Noctua.Scene
                 }
 
                 // パスが最後に設定した FinalLightSceneMap を最終ライト シーンとし、
-                // これをテクスチャ カラーへ合成し、ポストプロセス適用前のシーンとする。
+                // これをテクスチャ カラーへ合成し、フィルタ適用前のシーンとする。
 
                 DeviceContext.BlendState = null;
                 DeviceContext.RasterizerState = null;
@@ -767,19 +766,19 @@ namespace Noctua.Scene
             DeviceContext.SetRenderTarget(null);
         }
 
-        void ApplyPostprocess()
+        void ApplyFilterChain()
         {
-            foreach (var setup in PostprocessSetups)
+            foreach (var setup in FilterChainSetups)
             {
                 if (!setup.Initialized)
                     setup.Initialize(this);
 
-                setup.Setup(postprocess);
+                setup.Setup(filterChain);
             }
 
-            FinalSceneMap = postprocess.Draw(BaseSceneMap);
+            FinalSceneMap = filterChain.Draw(BaseSceneMap);
 
-            postprocess.Filters.Clear();
+            filterChain.Filters.Clear();
         }
     }
 }

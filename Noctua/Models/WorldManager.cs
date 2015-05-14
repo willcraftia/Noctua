@@ -24,17 +24,17 @@ namespace Noctua.Models
         SceneCamera defaultCamera = new SceneCamera("Default");
 
         /// <summary>
-        /// 線形フォグ ポストプロセス設定。
+        /// 線形フォグ フィルタ設定。
         /// </summary>
         LinearFogSetup linearFogSetup;
 
         /// <summary>
-        /// 被写界深度合成ポストプロセス設定。
+        /// 被写界深度合成フィルタ設定。
         /// </summary>
         DofSetup dofSetup;
 
         /// <summary>
-        /// ブルーム ポストプロセス設定。
+        /// ブルーム フィルタ設定。
         /// </summary>
         BloomSetup bloomSetup;
 
@@ -94,7 +94,7 @@ namespace Noctua.Models
             if (SceneSettings.FogEnabled)
             {
                 linearFogSetup = new LinearFogSetup(DeviceContext);
-                SceneManager.PostprocessSetups.Add(linearFogSetup);
+                SceneManager.FilterChainSetups.Add(linearFogSetup);
             }
 
             // TODO
@@ -107,7 +107,7 @@ namespace Noctua.Models
             bloomSetup.BloomSaturation = 1;
             bloomSetup.BaseIntensity = 1;
             bloomSetup.BaseSaturation = 1;
-            SceneManager.PostprocessSetups.Add(bloomSetup);
+            SceneManager.FilterChainSetups.Add(bloomSetup);
 
             // TODO
             // ON/OFF はどこでやる？
@@ -115,7 +115,7 @@ namespace Noctua.Models
             dofSetup.BlurScale = GraphicsDofSettings.BlurResolutions[GraphicsSettings.Dof.BlurResolution];
             dofSetup.BlurRadius = GraphicsSettings.Dof.BlurRadius;
             dofSetup.BlurSigma = GraphicsSettings.Dof.BlurSigma;
-            SceneManager.PostprocessSetups.Add(dofSetup);
+            SceneManager.FilterChainSetups.Add(dofSetup);
 
             ssaoPass = new SSAOPass(DeviceContext);
             SceneManager.LightPasses.Add(ssaoPass);
